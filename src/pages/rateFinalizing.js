@@ -18,6 +18,7 @@ import {
   NotificationManager
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
+import moment from "moment";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -117,7 +118,7 @@ class RateFinalizing extends Component {
       PickUpAddress: "",
       DestinationAddress: "",
       multiCBM: [],
-      todayDate: new Date(),
+      todayDate:moment(new Date(),"DD-MM-YYYY") ,
       cSelectedRow: {},
       selectedDataRow: [],
       modalLoss: false,
@@ -162,10 +163,10 @@ class RateFinalizing extends Component {
   }
 
   componentDidMount() {
-    debugger;
+    
     if (typeof this.props.location.state !== "undefined") {
       if (this.props.location.state.Quote == undefined) {
-        debugger;
+        
         var rateDetails = this.props.location.state.selectedDataRow;
         var newrateDetailsData = this.props.location.state.selectedDataRow;
 
@@ -1293,7 +1294,7 @@ class RateFinalizing extends Component {
   }
 
   RequestChangeMsgModal() {
-    debugger;
+    
     if (this.state.selectedDataRow.length > 0) {
       if (this.state.CompanyID) {
         this.setState(prevState => ({
@@ -1943,7 +1944,7 @@ class RateFinalizing extends Component {
   }
 
   SendRequest() {
-    debugger;
+    
     if (this.state.selectedDataRow.length > 0) {
       if (this.state.CompanyID !== 0) {
         var txtRequestDiscount,
@@ -2622,7 +2623,7 @@ class RateFinalizing extends Component {
           // senrequestpara.Containerdetails = Containerdetails;
 
           var ProfitListarr = [];
-          debugger;
+          
           for (let j = 0; j < this.state.rateOrgDetails.length; j++) {
             var objProfitList = {};
 
@@ -2759,7 +2760,7 @@ class RateFinalizing extends Component {
   }
 
   SendRequestCopy() {
-    debugger;
+    
     if (this.state.selectedDataRow.length > 0) {
       //;
       if (this.state.CompanyID !== 0 || this.state.companyID !== 0) {
@@ -2978,9 +2979,9 @@ class RateFinalizing extends Component {
 
                       self.AcceptQuotes();
 
-                      setTimeout(function() {
-                        window.location.href = "quote-table";
-                      }, 1000);
+                      // setTimeout(function() {
+                      //   window.location.href = "quote-table";
+                      // }, 1000);
                     } else {
                       setTimeout(function() {
                         window.location.href = "quote-table";
@@ -3300,7 +3301,7 @@ class RateFinalizing extends Component {
   }
 
   hanleProfitAmountSubmit() {
-    debugger;
+    
     var rateDetailsarr = this.state.selectedDataRow;
 
     var subratedetails = [];
@@ -3597,7 +3598,7 @@ class RateFinalizing extends Component {
   }
   ////toggle local and surcharge check box
   HandleLocalSearchCharges(element, index,e) {
-    debugger;
+    
     var rateDetailsarr = this.state.selectedDataRow;
     var getindex = 0;
     var BuyRate = 0;
@@ -4380,7 +4381,7 @@ class RateFinalizing extends Component {
               this.setState({
                 cSelectChackBox: newSelected
               });
-              debugger;
+              
             var getindexLocal=  this.state.SurchargeLocalchargeID.findIndex(x=>x.RateQueryid===this.state.rateDetails[getindex].RateLineId && x.SurchargeId===element.ChargeID)
               this.state.SurchargeLocalchargeID.splice(getindexLocal, 1);
               for (var j = 0; j <= this.state.rateSubDetails.length; j++) {
@@ -4858,8 +4859,8 @@ class RateFinalizing extends Component {
         var Messagebody =
           "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
 
-        // self.SendMail(SalesQuoteNumber, Messagebody);
-        window.location.href = "quote-table";
+        self.SendMail("Create");
+        // window.location.href = "quote-table";
       })
       .catch(error => {
         var temperror = error.response.data;
@@ -4869,8 +4870,8 @@ class RateFinalizing extends Component {
       });
   }
 
-  SendMail(SalesQuoteNumber, Messagebody) {
-    debugger;
+  SendMail(action) {
+    
     let self = this;
     this.togglePreview();
 
@@ -4882,25 +4883,30 @@ class RateFinalizing extends Component {
     stringHtmlMain += stringHtmlEnd;
     stringHtmlMain = stringHtmlMain.replace("col-sm-6", "col-md-6");
     stringHtmlMain = stringHtmlMain.replace("col-sm-4", "col-md-4");
-    console.log(stringHtmlMain);
+    
 
     this.togglePreview();
 
-    var fd = new FormData();
-    fd.append("CustomerID", 0);
+    // var fd = new FormData();
+    // fd.append("CustomerID", 0);
+    // fd.append("SalesPersonID", 0);
+    // fd.append("SalesQuoteNumber", SalesQuoteNumber);
+    // fd.append(
+    //   "MyWayUserID",
+    //   encryption(window.localStorage.getItem("userid"), "desc")
+    // );
+    // fd.append("SalesQuotePreviewDoc", this.state.sendFile);
+    var inputParameter={}
+    inputParameter.SalesQuoteType=this.state.containerLoadType;
+    inputParameter.SalesQuoteNo=self.state.SalesQuoteNo;
+    inputParameter.HtmlPdfInput=stringHtmlMain.replace(/"/g, "'");
+    inputParameter.SalesQuoteAction = action;
 
-    fd.append("SalesPersonID", 0);
-    fd.append("SalesQuoteNumber", SalesQuoteNumber);
-    fd.append(
-      "MyWayUserID",
-      encryption(window.localStorage.getItem("userid"), "desc")
-    );
-    fd.append("SalesQuotePreviewDoc", this.state.sendFile);
 
     axios({
       method: "post",
-      url: `${appSettings.APIURL}/SalesQuoteMailAPI`,
-      data: fd,
+      url: `${appSettings.APIURL}/SendEmailWithPDF`,
+      data: inputParameter,
       headers: authHeader()
     })
       .then(function(response) {
@@ -4908,14 +4914,15 @@ class RateFinalizing extends Component {
           if (response.data != null) {
             if (response.data.length > 0) {
               NotificationManager.success(response.data[0].Result);
-              // self.props.history.push("quote-table");
+              self.props.history.push("quote-table");
             }
           }
         }
       })
       .catch(error => {
         var temperror = error.response.data;
-        var err = temperror.split(":");
+        // var err = temperror.split(":");
+        self.props.history.push("quote-table");
       });
   }
 
@@ -5150,7 +5157,7 @@ class RateFinalizing extends Component {
   }
 
   toggleRow(rateID, rowData) {
-    debugger;
+    
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[rateID] = !this.state.cSelectedRow[rateID];
     this.setState({
@@ -5489,7 +5496,7 @@ class RateFinalizing extends Component {
 
   onErrorImg(e) {
     return (e.target.src =
-      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+      appSettings.imageURL+"ATAFreight_console.png");
   }
 
   HandleChangeConNew(name) {
@@ -5556,7 +5563,7 @@ class RateFinalizing extends Component {
   };
 
   HandleCurrencyChange(code) {
-    debugger;
+    
     this.setState({
       currencyCode: code,
       iscurrencyChnage: true,
@@ -5641,6 +5648,7 @@ class RateFinalizing extends Component {
   render() {
     var i = 0;
     var equipVal = "";
+    var tDate=moment(this.state.todayDate).format("L")
 
     if (this.state.selected.length > 0) {
     } else {
@@ -5687,7 +5695,7 @@ class RateFinalizing extends Component {
                 alt={item.LineName}
                 onError={this.onErrorImg.bind(this)}
                 src={
-                  "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                  appSettings.imageURL+"OEAN_LINERS/" +
                   item.LineName.replace(" ", "_") +
                   ".png"
                 }
@@ -5722,7 +5730,7 @@ class RateFinalizing extends Component {
                 title={item.LineName}
                 onError={this.onErrorImg.bind(this)}
                 src={
-                  "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                  appSettings.imageURL+"AIR_LINERS/" +
                   item.LineName.replace(" ", "_") +
                   ".png"
                 }
@@ -5757,7 +5765,7 @@ class RateFinalizing extends Component {
                 alt={item.LineName}
                 onError={this.onErrorImg.bind(this)}
                 src={
-                  "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                  appSettings.imageURL+"ATAFreight_console.png"
                 }
               />
             </span>
@@ -5804,7 +5812,7 @@ class RateFinalizing extends Component {
                 alt={item.LineName}
                 onError={this.onErrorImg.bind(this)}
                 src={
-                  "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                  appSettings.imageURL+"OEAN_LINERS/" +
                   item.LineName.replace(" ", "_") +
                   ".png"
                 }
@@ -5837,7 +5845,7 @@ class RateFinalizing extends Component {
                 alt={item.LineName}
                 onError={this.onErrorImg.bind(this)}
                 src={
-                  "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                  appSettings.imageURL+"AIR_LINERS/" +
                   item.LineName.replace(" ", "_") +
                   ".png"
                 }
@@ -5871,7 +5879,7 @@ class RateFinalizing extends Component {
                 alt={item.LineName}
                 onError={this.onErrorImg.bind(this)}
                 src={
-                  "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                  appSettings.imageURL+"ATAFreight_console.png"
                 }
               />
             </span>
@@ -6101,11 +6109,11 @@ class RateFinalizing extends Component {
                                           this.state.containerLoadType === "FCL"
                                         ) {
                                           url =
-                                            "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                            appSettings.imageURL+"OEAN_LINERS/" +
                                             lname;
                                         } else {
                                           url =
-                                            "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png";
+                                            appSettings.imageURL+"ATAFreight_console.png";
                                         }
 
                                         return (
@@ -6182,7 +6190,7 @@ class RateFinalizing extends Component {
                                                 title={olname}
                                                 alt={olname}
                                                 src={
-                                                  "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                                  appSettings.imageURL+"AIR_LINERS/" +
                                                   lname
                                                 }
                                                 onError={this.onErrorImg.bind(
@@ -6228,7 +6236,7 @@ class RateFinalizing extends Component {
                                               <img
                                                 title={olname}
                                                 src={
-                                                  "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                                  appSettings.imageURL+"ATAFreight_console.png"
                                                 }
                                                 alt={olname}
                                               />
@@ -7396,22 +7404,22 @@ class RateFinalizing extends Component {
                         <div className="col-12 col-md-6">
                           <img
                             src={
-                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                              appSettings.imageURL+"ATAFreight_console.png"
                             }
                             alt="ATAFreight Console"
-                          />
+                          ></img>
                         </div>
                         <div className="col-12 col-md-6">
                           <div className="preview-date-num">
                             <p>
                               Date :{" "}
                               <span>
-                                <Moment format="DD-MMM-YYYY">
-                                  {this.state.todayDate.toString()}
-                                </Moment>
+                                
+                              {tDate}
+                                
                               </span>
                             </p>
-                            <p>Sales Quote No. :</p>
+                          <p>Sales Quote No. :{this.state.SalesQuoteNo}</p>
                           </div>
                         </div>
                       </div>
@@ -7435,7 +7443,7 @@ class RateFinalizing extends Component {
                             {encryption(
                               window.localStorage.getItem("emailid"),
                               "desc"
-                            )}
+                            ).toString()}
                           </span>
                         </label>
                         <label>

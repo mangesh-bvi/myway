@@ -23,7 +23,7 @@ class Comman extends Component {
     };
   }
   componentDidMount() {
-    debugger;
+    
     if (
       this.props.containerLoadType == "LCL" ||
       this.props.containerLoadType == "AIR" ||
@@ -53,7 +53,7 @@ class Comman extends Component {
   }
   ////send back value in parent componenet data
   SendData = () => {
-    debugger;
+    
     if (
       this.props.containerLoadType === "LCL" ||
       this.props.containerLoadType === "AIR" ||
@@ -225,7 +225,7 @@ class Comman extends Component {
   }
 
   addMultiCBM() {
-    debugger;
+    
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,

@@ -1544,7 +1544,7 @@ class RateFinalizingStillBooking extends Component {
   }
 
   toggleEdit(e) {
-    debugger;
+    
     if (!this.state.modalEdit) {
       var multiCBM = this.state.multiCargo;
       this.setState({ multiCBM });
@@ -1614,7 +1614,7 @@ class RateFinalizingStillBooking extends Component {
 
   onErrorImg(e) {
     return (e.target.src =
-      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+      appSettings.imageURL+"ATAFreight_console.png");
   }
 
   callbackFunction = callBackObj => {
@@ -1717,7 +1717,7 @@ class RateFinalizingStillBooking extends Component {
                                                 this
                                               )}
                                               src={
-                                                "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                                appSettings.imageURL+"OEAN_LINERS/" +
                                                 lname
                                               }
                                             />
@@ -1738,7 +1738,7 @@ class RateFinalizingStillBooking extends Component {
                                                 this
                                               )}
                                               src={
-                                                "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                                appSettings.imageURL+"AIR_LINERS/" +
                                                 lname
                                               }
                                             />
@@ -1755,7 +1755,7 @@ class RateFinalizingStillBooking extends Component {
                                                 this
                                               )}
                                               src={
-                                                "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                                appSettings.imageURL+"ATAFreight_console.png"
                                               }
                                               alt={olname}
                                             />

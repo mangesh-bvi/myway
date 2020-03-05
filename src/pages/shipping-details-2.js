@@ -311,7 +311,7 @@ class ShippingDetailsTwo extends Component {
     } else {
       imgType = "ROAD";
     }
-debugger;
+
     localStorage.removeItem("BaloonData");
     localStorage.removeItem("FlagsData");
     localStorage.removeItem("AllLineData");
@@ -433,7 +433,7 @@ debugger;
 
   HandleShipmentDetails(hblno) {
     this.setState({ loding: true });
-    debugger;
+    
     let self = this;
     localStorage.removeItem(
       "AllLineData",
@@ -455,7 +455,7 @@ debugger;
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
+        
         var shipmentdata = response.data;
         var ModeType = response.data.Table[0].ModeOfTransport;
         var POLPODData = response.data.Table5;
@@ -506,7 +506,7 @@ debugger;
     });
   };
   onDocumentClickHandler = () => {
-    debugger;
+    
     let self = this;
     const docData = new FormData();
     var docName = document.getElementById("docName").value;
@@ -906,7 +906,7 @@ debugger;
     let MsgActivityTab = "";
     if (this.state.MessagesActivityDetails != null) {
       if (this.state.MessagesActivityDetails.length > 0) {
-        debugger;
+        
         MsgActivityTab = (
           <div class="d-flex flex-column-reverse">
             {this.state.MessagesActivityDetails.map(team => (

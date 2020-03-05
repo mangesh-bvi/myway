@@ -34,7 +34,7 @@ const MapWithAMakredInfoWindow = compose(
     defaultZoom={2}
   >
     {props.markers.map((marker, i) => {
-      debugger;
+      
       const onClick = props.onClick.bind(this, marker);
       return (
         <Marker

@@ -543,13 +543,13 @@ class SpotRateDetails extends Component {
   }
   /////Handle View Rate Button Click
   HandleViewRateData() {
-    debugger;
+    
     this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 
   onErrorImg(e) {
     return (e.target.src =
-      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+      appSettings.imageURL+"ATAFreight_console.png");
   }
   render() {
     const { spotrateresponseTbl1, spotrateresponseTbl3 } = this.state;
@@ -993,11 +993,11 @@ class SpotRateDetails extends Component {
                                           var url = "";
                                           if (this.state.Mode == "FCL") {
                                             url =
-                                              "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                              appSettings.imageURL+"OEAN_LINERS/" +
                                               lname;
                                           } else {
                                             url =
-                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png";
+                                              appSettings.imageURL+"ATAFreight_console.png";
                                           }
                                           return (
                                             <React.Fragment>
@@ -1027,7 +1027,7 @@ class SpotRateDetails extends Component {
                                                     this
                                                   )}
                                                   src={
-                                                    "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                                    appSettings.imageURL+"AIR_LINERS/" +
                                                     lname
                                                   }
                                                 />
@@ -1044,7 +1044,7 @@ class SpotRateDetails extends Component {
                                                     this
                                                   )}
                                                   src={
-                                                    "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                                    appSettings.imageURL+"ATAFreight_console.png"
                                                   }
                                                   alt={olname}
                                                 />

@@ -221,7 +221,6 @@ class RateTable extends Component {
   }
 
   componentDidMount() {
-    debugger;
     setTimeout(() => {
       this.HandleCommodityData();
       this.HandlePackgeTypeData();
@@ -665,9 +664,8 @@ class RateTable extends Component {
     var baseCurrency = "";
     var multiCBM;
     var multiCBMData = [];
-    debugger;
+
     if (this.props.location.state.isViewRate) {
-      debugger;
       multiCBM = this.props.location.state.spotrateresponseTbl3;
 
       for (let i = 0; i < multiCBM.length; i++) {
@@ -682,10 +680,10 @@ class RateTable extends Component {
         ObjMultiCMB.Volume = multiCBM[i].Volume || 0;
         multiCBMData.push(ObjMultiCMB);
       }
-      this.setState({ multiCBM:multiCBMData });
+      this.setState({ multiCBM: multiCBMData });
     } else {
       multiCBMData = this.state.multiCBM;
-      this.setState({ multiCBM:multiCBMData });
+      this.setState({ multiCBM: multiCBMData });
     }
 
     this.setState({ loading: true });
@@ -814,7 +812,6 @@ class RateTable extends Component {
   }
 
   toggleRow(RateLineID, rowData) {
-    debugger;
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[RateLineID] = !this.state.cSelectedRow[RateLineID];
     var BuyRate = 0;
@@ -951,7 +948,6 @@ class RateTable extends Component {
   }
 
   HandleRateDetailsFCL(paramData) {
-    debugger;
     var dataParameter = {};
     var pickUpAddress = {
       Street: "",
@@ -1087,7 +1083,7 @@ class RateTable extends Component {
       var currencyCode = this.state.currencyCode;
       var newcurrencyCode = window.localStorage.getItem("currencyCode");
       var NewselectedCurrency = "";
-      debugger;
+
       if (newcurrencyCode) {
         if (currencyCode === newcurrencyCode) {
           NewselectedCurrency = this.state.currencyCode;
@@ -1280,7 +1276,6 @@ class RateTable extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
         var ratetable = response.data.Table;
         var ratetable1 = response.data.Table1;
         var ratetable2 = response.data.Table2;
@@ -1335,6 +1330,7 @@ class RateTable extends Component {
       })
       .catch(error => {
         console.log(error.response);
+        self.setState({loading:false})
       });
   }
 
@@ -2685,7 +2681,6 @@ class RateTable extends Component {
     } else this.setState({ filtered });
   }
   filterAll(e) {
-    debugger;
     var CommodityID = parseInt(e.target.value);
     this.setState({
       loading: true,
@@ -3347,8 +3342,7 @@ class RateTable extends Component {
   }
 
   onErrorImg(e) {
-    return (e.target.src =
-      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+    return (e.target.src = appSettings.imageURL + "ATAFreight_console.png");
   }
   handleSelectCon(field, value, e) {
     let fields = this.state.fields;
@@ -3427,7 +3421,7 @@ class RateTable extends Component {
 
   onErrorImg(e) {
     return (e.target.src =
-      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+      appSettings.imageURL+"ATAFreight_console.png");
   }
   HandleBackStage(stageType, e) {
     if (stageType == "shipmentType") {
@@ -4036,7 +4030,7 @@ class RateTable extends Component {
                                           <img
                                             title={row._original.lineName}
                                             src={
-                                              "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                              appSettings.imageURL+"OEAN_LINERS/" +
                                               lname
                                             }
                                             onError={this.onErrorImg.bind(this)}
@@ -4086,7 +4080,7 @@ class RateTable extends Component {
                                           <img
                                             title={row._original.lineName}
                                             src={
-                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                              appSettings.imageURL+"ATAFreight_console.png"
                                             }
                                             alt={row._original.lineName}
                                             onError={this.onErrorImg.bind(this)}
@@ -4135,12 +4129,12 @@ class RateTable extends Component {
                                           <img
                                             title={row._original.lineName}
                                             src={
-                                              "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                              appSettings.imageURL+"AIR_LINERS/" +
                                               lname
                                             }
                                             alt={row._original.lineName}
                                             // ref={img => this.img = img} onError={
-                                            //   () => this.img.src = 'https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png'
+                                            //   () => this.img.src = 'appSettings.imageURL+"ATAFreight_console.png'
                                             // }
                                             onError={this.onErrorImg.bind(this)}
                                           />
@@ -4187,7 +4181,7 @@ class RateTable extends Component {
                                           <img
                                             title={row._original.lineName}
                                             src={
-                                              "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                              appSettings.imageURL+"ATAFreight_console.png"
                                             }
                                             onError={this.onErrorImg.bind(this)}
                                             alt={row._original.lineName}
@@ -4508,8 +4502,6 @@ class RateTable extends Component {
 
                                       {
                                         Cell: row => {
-                                          debugger;
-
                                           if (
                                             row.original.ChargeDesc !==
                                             "No Record Found"

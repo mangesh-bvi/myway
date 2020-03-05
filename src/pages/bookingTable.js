@@ -80,7 +80,7 @@ class BookingTable extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
       var data = [];
       var pending = 0,
         approved = 0,

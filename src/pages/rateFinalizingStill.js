@@ -19,6 +19,7 @@ import ATA from "./../assets/img/ATAFreight_console.png";
 import Download from "./../assets/img/csv.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import PDF from "./../assets/img/pdf.png";
+import moment from "moment";
 
 class RateFinalizingStill extends Component {
   constructor(props) {
@@ -348,6 +349,55 @@ class RateFinalizingStill extends Component {
     });
   };
 
+  SendMail(action) {
+    debugger;
+    let self = this;
+    // self.togglePreview();
+    
+    var stringHtmlMain = "";
+
+    stringHtmlMain =
+      "<!DOCTYPE html><html><head><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif}.row{display:flex;flex-wrap:wrap}.col-12{flex:0 0 100%;max-width:100%}.col-md-6{flex:0 0 50%;max-width:50%}.col-md-4{flex:0 0 33.333333%;max-width:33.333333%}.popupbox{background: #f1f2f2;padding: 20px;} .modal-body{background-color:#f1f2f2;padding:20px;position:relative;border-radius:0}.close{position:absolute;right:-8px;top:-12px;color:#333;font-weight:400;background:#fff !important;opacity:1 !important;border-radius:50%;width:25px;font-size:21px;font-weight:700}.logohheader{background:#fff;margin-bottom:20px;padding:5px;width:100%}.logohheader img{width:200px}.preview-date-num{}.preview-date-num p{font-size:14px;font-weight:600;color:#8f8f8f;margin:5px 0}.preview-date-num p span{color:#333}.firstbox{background:#fff;padding:20px;margin-bottom:20px}.firstbox label{display:block;color:#8f8f8f;font-weight:600;margin-bottom:5px;font-size:14px}.firstbox label span{color:#333}.thirdbox{background:#fff;margin-bottom:20px}.thirdbox h3{font-size:18px;font-weight:bold;text-align:center;padding:20px 20px 0;margin-bottom:15px;color:#333;background:transparent}.thirdbox .table-responsive{display:table}.table-responsive{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.table{width:100%;font-size:14px;width:100%;border-spacing:inherit;margin-bottom:1rem;color:#212529}.thirdbox table thead{background:#cbcbcb;font-size:12px}.thirdbox table tbody{font-size:12px}table thead th{vertical-align:bottom;border-bottom:2px solid #dee2e6;text-align:left}.table td,.table th{padding: .75rem;vertical-align:top}table tbody tr:last-child{border-bottom:0}table td{color:#696969;background-color:#fff;padding:12px}.secondbox{background:#fff;padding:20px;margin-bottom:20px}.secondbox h3{font-size:18px;margin:0;font-weight:bold;padding:0;margin-bottom:15px;text-align:center;background:transparent;color:#333}hr{margin-top:1rem;margin-bottom:1rem;border:0;border-top:1px solid rgba(0, 0, 0, .1)}table td{color:#696969;background-color:#fff;font-weight:600;padding:12px;font-size:14px}.table td,.table th{vertical-align:top}.secondbox label{display:block;color:#8f8f8f;margin-bottom:5px;font-weight:600;font-size:14px}.secondbox label span{color:#333}.mb-0{margin-bottom:0}.txt-right{text-align:right}</style></head><body> <div class='popupbox'>";
+    var stringHtmlBody = document.getElementById("printDiv1").innerHTML;
+    stringHtmlMain += stringHtmlBody;
+    var stringHtmlEnd = "</div></body></html>";
+    stringHtmlMain += stringHtmlEnd;
+    stringHtmlMain = stringHtmlMain.replace("col-sm-6", "col-md-6");
+    stringHtmlMain = stringHtmlMain.replace("col-sm-4", "col-md-4");
+    stringHtmlMain = stringHtmlMain.replace("alt='ATAFreight Console'>", "alt='ATAFreight Console'></img>");
+
+    // self.togglePreview();
+
+    var inputParameter = {};
+    inputParameter.SalesQuoteType = this.state.ContainerLoad;
+    inputParameter.SalesQuoteNo = this.state.QuoteNumber;
+    inputParameter.HtmlPdfInput = stringHtmlMain.replace(/"/g, "'");
+    inputParameter.SalesQuoteAction = action;
+    
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/SendEmailWithPDF`,
+      data: inputParameter,
+      headers: authHeader()
+    })
+      .then(function(response) {
+        if (response != null) {
+          if (response.data != null) {
+            if (response.data.length > 0) {
+              NotificationManager.success(response.data[0].Result);
+              self.props.history.push("quote-table");
+            }
+          }
+        }
+      })
+      .catch(error => {
+        var temperror = error.response.data;
+        // var err = temperror.split(":");
+        self.props.history.push("quote-table");
+      });
+  }
+
   AcceptQuotes() {
     this.setState({ btnloding: true });
 
@@ -380,9 +430,10 @@ class RateFinalizingStill extends Component {
                 NotificationManager.success(response.data.Table[0].Message);
                 self.setState({ btnloding: false });
                 self.toggleAcceptModal();
-                setTimeout(function() {
-                  window.location.href = "quote-table";
-                }, 1000);
+                self.SendMail("Approve");
+                // setTimeout(function() {
+                //   window.location.href = "quote-table";
+                // }, 1000);
               }
             }
           }
@@ -390,14 +441,11 @@ class RateFinalizingStill extends Component {
 
         var Messagebody =
           "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
-
-        self.SendMail(SalesQuoteNumber, Messagebody);
       })
       .catch(error => {
-        var temperror = error.response.data;
-        var err = temperror.split(":");
-
-        NotificationManager.error(err[1].replace("}", ""));
+        // var temperror = error.response.data;
+        // var err = temperror.split(":");
+        // NotificationManager.error(err[1].replace("}", ""));
       });
   }
 
@@ -438,10 +486,10 @@ class RateFinalizingStill extends Component {
                   var Messagebody =
                     "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent has been rejected</td></tr></table></body></html>";
 
-                  self.SendMail(SalesQuoteNumber, Messagebody);
-                  setTimeout(function() {
-                    window.location.href = "quote-table";
-                  }, 5000);
+                  self.SendMail("Reject");
+                  // setTimeout(function() {
+                  //   window.location.href = "quote-table";
+                  // }, 5000);
                 }
               }
             }
@@ -459,35 +507,56 @@ class RateFinalizingStill extends Component {
     }
   }
 
-  SendMail(SalesQuoteNumber, Messagebody) {
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/SalesQuoteMailAPI`,
-      data: {
-        CustomerID: 0,
-        SalesPersonID: 0,
-        SalesQuoteNumber: SalesQuoteNumber,
-        Body: Messagebody,
-        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
-      },
-      headers: authHeader()
-    })
-      .then(function(response) {
-        if (response != null) {
-          if (response.data != null) {
-            if (response.data.length > 0) {
-              NotificationManager.success(response.data[0].Result);
-            }
-          }
-        }
-      })
-      .catch(error => {
-        var temperror = error.response.data;
-        var err = temperror.split(":");
+  // SendMail(SalesQuoteNumber, Messagebody) {
+  //   
+  //   let self = this;
+  //   this.togglePreview();
 
-        NotificationManager.error(err[1].replace("}", ""));
-      });
-  }
+  //   var stringHtmlMain =
+  //     "<!DOCTYPE html><html><head><style>body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;}.row {display: flex;flex-wrap: wrap;}.col-12 {flex: 0 0 100%;max-width: 100%;}.col-md-6 {flex: 0 0 50%;max-width: 50%;}.col-md-4 {flex: 0 0 33.333333%;max-width: 33.333333%;}.popupbox .modal-body {background-color: #f1f2f2;padding: 20px;position: relative;border-radius: 0;}.close {position: absolute;right: -8px;top: -12px;color: #333;font-weight: 400;background: #fff !important;opacity: 1 !important;border-radius: 50%;width: 25px;font-size: 21px;font-weight: 700;}.logohheader {background: #fff;margin-bottom: 20px;padding: 5px;width: 100%;}.logohheader img {width: 200px;}.preview-date-num {padding: 0 20px;}.preview-date-num p {font-size: 14px;font-weight: 600;color: #8f8f8f;margin: 5px 0;}.preview-date-num p span {color: #333;}.firstbox {background: #fff;padding: 20px;margin-bottom: 20px;}.firstbox label {display: block;color: #8f8f8f;font-weight: 600;margin-bottom: 5px;font-size: 14px;}.firstbox label span {color: #333;}.thirdbox {background: #fff;margin-bottom: 20px;}.thirdbox h3 {font-size: 18px;font-weight: bold;text-align: center;padding: 20px 20px 0;margin-bottom: 15px;color: #333;background: transparent;}.thirdbox .table-responsive {display: table;}.table-responsive {display: block;width: 100%;overflow-x: auto;-webkit-overflow-scrolling: touch;}.table {width: 100%;font-size: 14px;width: 100%;border-spacing: inherit;margin-bottom: 1rem;color: #212529;}.thirdbox table thead {background: #cbcbcb;font-size: 12px;}.thirdbox table tbody {font-size: 12px;}table thead th {vertical-align: bottom;border-bottom: 2px solid #dee2e6;text-align: left;}.table td,.table th {padding: .75rem;vertical-align: top;}table tbody tr:last-child {border-bottom: 0;}table td {color: #696969;background-color: #fff;padding: 12px;}.secondbox {background: #fff;padding: 20px;margin-bottom: 20px;}.secondbox h3 {font-size: 18px;margin: 0;font-weight: bold;padding: 0;margin-bottom: 15px;text-align: center;background: transparent;color: #333;}hr {margin-top: 1rem;margin-bottom: 1rem;border: 0;border-top: 1px solid rgba(0, 0, 0, .1);}table td {color: #696969;background-color: #fff;font-weight: 600;padding: 12px;font-size: 14px;}.table td,.table th {vertical-align: top;}.secondbox label {display: block;color: #8f8f8f;margin-bottom: 5px;font-weight: 600;font-size: 14px;}.secondbox label span {color: #333;}.mb-0{margin-bottom:0;}.txt-right {text-align:right;}</style></head><body> <div class='popupbox'>";
+  //   var stringHtmlBody = document.getElementById("printdiv").innerHTML;
+  //   stringHtmlMain += stringHtmlBody;
+  //   var stringHtmlEnd = "</div></body></html>";
+  //   stringHtmlMain += stringHtmlEnd;
+  //   stringHtmlMain = stringHtmlMain.replace("col-sm-6", "col-md-6");
+  //   stringHtmlMain = stringHtmlMain.replace("col-sm-4", "col-md-4");
+
+  //   this.togglePreview();
+
+  //   var inputParameter = {};
+  //   inputParameter.SalesQuoteType = this.state.containerLoadType;
+  //   inputParameter.SalesQuoteNo = this.state.SaleQuoteID;
+  //   inputParameter.HtmlPdfInput = stringHtmlMain;
+  //   axios({
+  //     method: "post",
+  //     url: `${appSettings.APIURL}/SendEmailWithPDF`,
+  //     data: {
+  //       CustomerID: 0,
+  //       SalesPersonID: 0,
+  //       SalesQuoteNumber: SalesQuoteNumber,
+  //       Body: Messagebody,
+  //       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+  //     },
+  //     headers: authHeader()
+  //   })
+  //     .then(function(response) {
+  //       if (response != null) {
+  //         if (response.data != null) {
+  //           if (response.data.length > 0) {
+  //             NotificationManager.success(response.data[0].Result);
+  //             self.props.history.push("quote-table");
+  //           }
+  //         }
+  //       }
+  //     })
+  //     .catch(error => {
+  //       var temperror = error.response.data;
+
+  //       // var err = temperror.split(":");
+
+  //       // NotificationManager.error(err[1].replace("}", ""));
+  //     });
+  // }
 
   //// start dynamic element for LCL-AIR-LTL
 
@@ -752,7 +821,7 @@ class RateFinalizingStill extends Component {
   }
 
   onDocumentSaleQuoteHandler = () => {
-    debugger;
+    
     const docData = new FormData();
     var docName = this.state.selectedFileName;
 
@@ -1217,9 +1286,7 @@ class RateFinalizingStill extends Component {
   }
 
   togglePreview() {
-    this.setState(prevState => ({
-      modalPreview: !prevState.modalPreview
-    }));
+    this.setState({ modalPreview: !this.state.modalPreview });
   }
 
   HandleSalesQuoteConditions() {
@@ -1288,11 +1355,12 @@ class RateFinalizingStill extends Component {
   }
 
   onErrorImg(e) {
-    return (e.target.src =
-      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+    return (e.target.src =appSettings.imageURL+"ATAFreight_console.png");
   }
 
   render() {
+
+    var tDate=moment(this.state.todayDate).format("L")
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
@@ -1401,10 +1469,12 @@ class RateFinalizingStill extends Component {
                                         var url = "";
                                         if (this.state.ContainerLoad == "LCL") {
                                           url =
-                                            "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png";
+                                            appSettings.imageURL +
+                                            "ATAFreight_console.png";
                                         } else {
                                           url =
-                                            "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                            appSettings.imageURL +
+                                            "OEAN_LINERS/" +
                                             lname;
                                         }
                                         return (
@@ -1435,7 +1505,8 @@ class RateFinalizingStill extends Component {
                                                   this
                                                 )}
                                                 src={
-                                                  "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                                  appSettings.imageURL +
+                                                  "AIR_LINERS/" +
                                                   lname
                                                 }
                                               />
@@ -1452,7 +1523,8 @@ class RateFinalizingStill extends Component {
                                                   this
                                                 )}
                                                 src={
-                                                  "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                                  appSettings.imageURL +
+                                                  "ATAFreight_console.png"
                                                 }
                                                 alt={olname}
                                               />
@@ -2023,7 +2095,6 @@ class RateFinalizingStill extends Component {
                                         : "CBM",
                                     accessor: "ChgWeight",
                                     Cell: row => {
-                                      debugger;
                                       if (
                                         this.state.ContainerLoad === "AIR" ||
                                         this.state.ContainerLoad === "LTL"
@@ -2347,9 +2418,9 @@ class RateFinalizingStill extends Component {
                       <p>
                         Date :{" "}
                         <span>
-                          <Moment format="DD-MMM-YYYY">
-                            {this.state.todayDate.toString()}
-                          </Moment>
+                          {/* <Moment format="DD-MMM-YYYY"> */}
+                            {tDate}
+                          {/* </Moment> */}
                         </span>
                       </p>
                       <p>
@@ -2792,7 +2863,460 @@ class RateFinalizingStill extends Component {
             </div>
           </ModalBody>
         </Modal>
+        <div style={{ display: "none" }}>
+          <div id="printDiv1">
+            <div className="row" style={{ margin: 0 }}>
+              <div className="logohheader">
+                <div className="row align-items-center" style={{ margin: 0 }}>
+                  <div className="col-12 col-md-6">
+                    <img
+                      src={appSettings.imageURL + "ATAFreight_console.png"}
+                      alt="ATAFreight Console"
+                    />
+                  </div>
+                  <div className="col-12 col-md-6 preview-date-num">
+                    <p>
+                      Date :{" "}
+                      <span>
+                      {tDate}
+                      </span>
+                    </p>
+                    <p>
+                      Sales Quote No. :<span>{this.state.SaleQuoteID}</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-12 col-md-6">
+                <div className="firstbox">
+                  <label>
+                    Sales Person :{" "}
+                    <span>
+                      {encryption(
+                        window.localStorage.getItem("username"),
+                        "desc"
+                      )}
+                    </span>
+                  </label>
+                  <label>
+                    E-Mail :{" "}
+                    <span>
+                      {encryption(
+                        window.localStorage.getItem("emailid"),
+                        "desc"
+                      )}
+                    </span>
+                  </label>
+                  <label>
+                    Phone : <span></span>
+                  </label>
+                  <label>
+                    Fax : <span></span>
+                  </label>
+                </div>
+              </div>
+              <div className="col-12 col-md-6">
+                <div className="firstbox">
+                  <label>
+                    ATNN : <span>{this.state.custNotification}</span>
+                  </label>
+                  <label>
+                    E-Mail : <span>{this.state.Contact_Email}</span>
+                  </label>
+                  <label>
+                    Phone : <span>{this.state.Contact_Phone}</span>
+                  </label>
+                  <label>
+                    Fax : <span></span>
+                  </label>
+                </div>
+              </div>
+            </div>
 
+            <div className="row">
+              <div className="col-12">
+                <div className="thirdbox">
+                  {this.state.ContainerLoad.toUpperCase() === "LCL" ||
+                  this.state.ContainerLoad.toUpperCase() === "AIR" ||
+                  this.state.ContainerLoad.toUpperCase() === "LTL" ||
+                  this.state.ContainerLoad.toUpperCase() === "FCL" ? (
+                    <>
+                      <h3>Dimensions</h3>
+                      <div className="table-responsive">
+                        <table className="table table-responsive">
+                          <thead>
+                            <tr>
+                              <th>Package Type</th>
+                              <th>Quantity</th>
+                              <th>Length</th>
+                              <th>Width</th>
+                              <th>Height</th>
+                              <th>Gross Weight</th>
+                              {this.state.ContainerLoad.toUpperCase() ===
+                                "FCL" ||
+                              this.state.ContainerLoad.toUpperCase() ===
+                                "FTL" ? (
+                                ""
+                              ) : (
+                                <th>
+                                  {this.state.ContainerLoad.toUpperCase() ===
+                                    "AIR" ||
+                                  this.state.ContainerLoad.toUpperCase() ===
+                                    "LTL"
+                                    ? "Volume Weight"
+                                    : "CBM"}
+                                </th>
+                              )}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {this.state.CargoDetailsArr.length > 0
+                              ? this.state.CargoDetailsArr.map(item1 => (
+                                  <tr>
+                                    <td>{item1.ContainerType}</td>
+                                    <td>{item1.Quantity}</td>
+                                    <td>{item1.Lenght}</td>
+                                    <td>{item1.Width}</td>
+                                    <td>{item1.Height}</td>
+                                    <td>{item1.Weight}</td>
+                                    {this.state.ContainerLoad.toUpperCase() ===
+                                      "FCL" ||
+                                    this.state.ContainerLoad.toUpperCase() ===
+                                      "FTL" ? (
+                                      ""
+                                    ) : (
+                                      <td>
+                                        {this.state.ContainerLoad.toUpperCase() ===
+                                        "AIR"
+                                          ? item1.VolumeWeight
+                                          : item1.Volume}
+                                      </td>
+                                    )}
+                                  </tr>
+                                ))
+                              : ""}
+                          </tbody>
+                        </table>
+                      </div>
+                    </>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+
+            {this.state.RateDetails.map(item => (
+              <>
+                <div className="row">
+                  <div className="col-12">
+                    <div className="secondbox">
+                      <h3>Service Details</h3>
+                      <hr />
+                      <div className="row">
+                        <div className="col-12 col-md-4">
+                          <label>
+                            Type of Move :<span>{this.state.TypeofMove}</span>
+                          </label>
+                          <label>
+                            POL : <span>{item.POL}</span>
+                          </label>
+                          <label>
+                            POD : <span>{item.POD}</span>
+                          </label>
+                        </div>
+                        <div className="col-12 col-md-4">
+                          <label>
+                            Service Type :{" "}
+                            <span>
+                              {item.TransshipmentPort === null
+                                ? "Direct"
+                                : "Transit"}
+                            </span>
+                          </label>
+                          <label>
+                            Inco Terms : <span>{this.state.IncoTerms}</span>
+                          </label>
+                        </div>
+                        <div className="col-12 col-md-4">
+                          <label>
+                            Liner : <span>{item.Linename}</span>
+                          </label>
+                        </div>
+                      </div>
+                      <hr />
+                      <div className="row">
+                        <div className="col-12 col-md-4">
+                          <label>
+                            Transit Time :{" "}
+                            <span>{item.TransitTime + " Days"}</span>
+                          </label>
+                        </div>
+                        <div className="col-12 col-md-4">
+                          <label>
+                            Free Time : <span>{item.FreeTime}</span>
+                          </label>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="row">
+                        <div className="col-12">
+                          <label>
+                            Expiry Date : <span>{item.ExpiryDate}</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-12">
+                    <div className="thirdbox">
+                      {this.state.ContainerLoad.toUpperCase() === "LCL" ||
+                      this.state.ContainerLoad.toUpperCase() === "AIR" ||
+                      this.state.ContainerLoad.toUpperCase() === "LTL" ? (
+                        <>
+                          <h3>Cargo Details</h3>
+                          <div className="table-responsive">
+                            <table className="table table-responsive">
+                              <thead>
+                                <tr>
+                                  <th>Package Type</th>
+                                  <th>Quantity</th>
+                                  <th>Length</th>
+                                  <th>Width</th>
+                                  <th>Height</th>
+                                  <th>Gross Weight</th>
+                                  <th>
+                                    {this.state.ContainerLoad.toUpperCase() ===
+                                      "AIR" ||
+                                    this.state.ContainerLoad.toUpperCase() ===
+                                      "LTL"
+                                      ? "Volume Weight"
+                                      : "CBM"}
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {this.state.CargoDetailsArr.length > 0
+                                  ? this.state.CargoDetailsArr.map(item1 => (
+                                      <tr>
+                                        <td>{item1.PackageType}</td>
+                                        <td>{item1.Quantity}</td>
+                                        <td>{item1.Lenght}</td>
+                                        <td>{item1.Width}</td>
+                                        <td>{item1.Height}</td>
+                                        <td>{item1.Weight}</td>
+                                        <td>
+                                          {this.state.ContainerLoad.toUpperCase() ===
+                                          "AIR"
+                                            ? item1.VolumeWeight
+                                            : item1.Volume}
+                                        </td>
+                                      </tr>
+                                    ))
+                                  : ""}
+                              </tbody>
+                            </table>
+                          </div>
+                        </>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-12">
+                    <div className="thirdbox">
+                      <h3>
+                        {this.state.ContainerLoad.toUpperCase() === "FCL"
+                          ? item.ContainerType
+                          : null}
+                      </h3>
+
+                      <div className="table-responsive">
+                        <table className="table table-responsive">
+                          {(() => {
+                            this.state.filterrateSubDetails =
+                              this.state.ContainerLoad !== "FCL" &&
+                              this.state.ContainerLoad !== "AIR"
+                                ? this.state.ContainerLoad !== "INLAND"
+                                  ? this.state.SubRateDetails.filter(
+                                      d =>
+                                        d.saleQuoteLineID ===
+                                        item.SaleQuoteIDLineID
+                                    )
+                                  : this.state.SubRateDetails.filter(
+                                      d =>
+                                        d.SaleQuoteIDLineID ===
+                                        item.SaleQuoteIDLineID
+                                    )
+                                : this.state.SubRateDetails.filter(
+                                    d =>
+                                      d.saleQuoteLineID === item.saleQuoteLineID
+                                  );
+                          })()}
+
+                          {(() => {
+                            DocumentCharges = this.state.filterrateSubDetails.filter(
+                              d =>
+                                (d.ChargeItem || d.Chargeitem) === "Per HBL" ||
+                                (d.ChargeItem || d.Chargeitem) === "Per BL" ||
+                                (d.ChargeItem || d.Chargeitem) ===
+                                  "Per Shipment" ||
+                                (d.ChargeItem || d.Chargeitem) === "Per Set"
+                            );
+                          })()}
+
+                          {(() => {
+                            this.state.filterrateSubDetails = this.state.filterrateSubDetails.filter(
+                              d =>
+                                (d.ChargeItem || d.Chargeitem) !== "Per HBL" &&
+                                (d.ChargeItem || d.Chargeitem) !== "Per BL" &&
+                                (d.ChargeItem || d.Chargeitem) !==
+                                  "Per Shipment" &&
+                                (d.ChargeItem || d.Chargeitem) !== "Per Set"
+                            );
+                          })()}
+
+                          <thead>
+                            <tr>
+                              <th>Description</th>
+                              <th>Price</th>
+                              <th>Units</th>
+                              <th>Tax</th>
+                              <th>Total(USD)</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {this.state.filterrateSubDetails.length > 0 &&
+                            this.state.filterrateSubDetails !== undefined
+                              ? this.state.filterrateSubDetails.map(item1 => (
+                                  <tr>
+                                    <td>{item1.ChargeDesc}</td>
+                                    <td>{item1.Amount}</td>
+                                    <td>{item1.Chargeitem}</td>
+                                    <td>{item1.Tax}</td>
+                                    <td>{item1.Total}</td>
+                                  </tr>
+                                ))
+                              : ""}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-12">
+                    <div className="thirdbox">
+                      <div className="table-responsive">
+                        <table className="table table-responsive">
+                          <thead>
+                            <tr>
+                              <th>Total</th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+
+                              <th>
+                                {this.state.filterrateSubDetails.length > 0 &&
+                                this.state.filterrateSubDetails !== undefined
+                                  ? this.state.filterrateSubDetails.reduce(
+                                      (sum, filterrateSubDetails) =>
+                                        sum +
+                                        parseFloat(
+                                          filterrateSubDetails.Total.split(
+                                            " "
+                                          )[0]
+                                        ),
+                                      0
+                                    ) +
+                                    " " +
+                                    this.state.filterrateSubDetails[0]
+                                      .BaseCurrency
+                                  : null}
+                              </th>
+                            </tr>
+                          </thead>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {DocumentCharges.length !== 0 ? (
+                  <div className="row">
+                    <div className="col-12">
+                      <div className="thirdbox">
+                        <h3>Documentation Charges</h3>
+                        <div className="table-responsive">
+                          <table className="table table-responsive">
+                            <thead>
+                              <tr>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Units</th>
+                                <th>Tax</th>
+                                <th>Total(USD)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {DocumentCharges.map(item => (
+                                <tr>
+                                  <td>{item.Type}</td>
+                                  <td>
+                                    {item.Amount === null ? " " : item.Amount}
+                                  </td>
+                                  <td>{item.Chargeitem}</td>
+                                  <td>{item.Tax}</td>
+                                  <td>
+                                    {item.Total === null ? " " : item.Total}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </>
+            ))}
+            <div className="row">
+              <div className="col-12">
+                <div className="thirdbox">
+                  <div className="table-responsive">
+                    <table className="table table-responsive">
+                      <thead>
+                        <tr>
+                          <th>Terms and Conditions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>{this.state.ConditionDesc}</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <a
+                              href="http://www.atafreight.com/Document/terms.pdf"
+                              target="_blank"
+                              style={{ cursor: "pointer", color: "blue" }}
+                            >
+                              terms and conditions
+                            </a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <NotificationContainer leaveTimeout="3000" />
       </React.Fragment>
     );

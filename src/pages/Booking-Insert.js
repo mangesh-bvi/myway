@@ -461,7 +461,7 @@ class BookingInsert extends Component {
       data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
       var QuotationData = response.data.Table1;
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
@@ -585,7 +585,7 @@ class BookingInsert extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
       var QuotationData = response.data.Table1;
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
@@ -925,7 +925,7 @@ class BookingInsert extends Component {
   }
   ////toggle edit cargo details
   toggleEdit(e) {
-    debugger;
+    
 
     this.setState(prevState => ({
       modalEdit: !prevState.modalEdit
@@ -1171,7 +1171,7 @@ class BookingInsert extends Component {
   }
 
   AddressChange(type, e) {
-    debugger;
+    
     var companyID = e.target.value;
     if (e.target.selectedOptions[0].label === "Other") {
       if (type == "Consignee") {
@@ -1695,7 +1695,7 @@ class BookingInsert extends Component {
   }
   ////Handle Submit Cargo Details
   SubmitCargoDetails(e) {
-    debugger;
+    
     // this.callbackFunction()
     var data = this.state.multiCBM;
     var multiCBM = [];
@@ -1909,12 +1909,12 @@ class BookingInsert extends Component {
     window.history.back();
   }
   onErrorImg(e) {
-    return (e.target.src =
-      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+    return (e.target.src =appSettings.imageURL+
+      "ATAFreight_console.png");
   }
 
   callbackFunction = callBackObj => {
-    debugger;
+    
     var multiCBM = callBackObj;
     this.setState({ multiCBM });
   };
@@ -2020,8 +2020,7 @@ class BookingInsert extends Component {
                                               onError={this.onErrorImg.bind(
                                                 this
                                               )}
-                                              src={
-                                                "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                              src={appSettings.imageURL+"OEAN_LINERS/" +
                                                 lname
                                               }
                                             />
@@ -2058,8 +2057,7 @@ class BookingInsert extends Component {
                                               onError={this.onErrorImg.bind(
                                                 this
                                               )}
-                                              src={
-                                                "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                              src={appSettings.imageURL+"AIR_LINERS/" +
                                                 lname
                                               }
                                             />
@@ -2095,8 +2093,7 @@ class BookingInsert extends Component {
                                               onError={this.onErrorImg.bind(
                                                 this
                                               )}
-                                              src={
-                                                "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                              src={appSettings.imageURL+"ATAFreight_console.png"
                                               }
                                               alt={olname}
                                             />

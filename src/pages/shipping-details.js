@@ -160,7 +160,7 @@ class ShippingDetails extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      debugger;
+      
       var data = response.data.Table1;
       var inland = data.filter(x => x.ModeOfTransport === "Inland").length;
       var air = data.filter(x => x.ModeOfTransport === "Air").length;
@@ -276,7 +276,7 @@ class ShippingDetails extends Component {
         headers: authHeader()
       })
         .then(function(response) {
-          debugger;
+          
           if (field === "Consignee") {
             self.setState({
               Consignee: response.data,
@@ -290,7 +290,7 @@ class ShippingDetails extends Component {
           }
         })
         .catch(error => {
-          debugger;
+          
           var temperror = error.response.data;
           var err = temperror.split(":");
         });
@@ -633,7 +633,7 @@ class ShippingDetails extends Component {
     //   },
     //   headers: authHeader()
     // }).then(function(response) {
-    //   debugger;
+    //   
     //   var data = response.data.Table1;
     //   self.setState({ shipmentSummary: data });
 

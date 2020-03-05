@@ -122,7 +122,7 @@ class Header extends Component {
       this.setState({ profileImgURL });
     }
     this.BindCurrencyData();
-    debugger;
+    
     var iscurrencydrp = false;
     var pathName = this.props.location.pathname;
     if (pathName !== "/rate-table" && pathName !== "/rate-finalizing") {
@@ -177,7 +177,7 @@ class Header extends Component {
   }
 
   HandleCheckNotificationView() {
-    debugger;
+    
     axios({
       method: "post",
       url: `${appSettings.APIURL}/TopNotificationData`,
@@ -496,8 +496,7 @@ class Header extends Component {
   }
 
   onErrorImg(e) {
-    return (e.target.src =
-      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+    return (e.target.src =appSettings.imageURL+"ATAFreight_console.png");
   }
 
   HandleCurrencyChange(e) {

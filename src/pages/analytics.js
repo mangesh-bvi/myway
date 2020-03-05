@@ -335,7 +335,7 @@ class Analytics extends Component {
   }
 
   setShipmentGraph(axiosdata) {
-    debugger;
+    
     this.setState({ loding: true });
     let self = this;
 

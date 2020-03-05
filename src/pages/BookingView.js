@@ -368,7 +368,7 @@ class BookingView extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        debugger;
+        
         QuotationData = response.data.Table4;
         var QuotationSubData = response.data.Table5;
         var Booking = response.data.Table;
@@ -813,8 +813,7 @@ class BookingView extends Component {
   }
 
   onErrorImg(e) {
-    return (e.target.src =
-      "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png");
+    return (e.target.src =appSettings.imageURL+"ATAFreight_console.png");
   }
 
   render() {
@@ -909,8 +908,7 @@ class BookingView extends Component {
                                               onError={this.onErrorImg.bind(
                                                 this
                                               )}
-                                              src={
-                                                "https://vizio.atafreight.com/MyWayFiles/OEAN_LINERS/" +
+                                              src={appSettings.imageURL+"OEAN_LINERS/" +
                                                 lname
                                               }
                                             />
@@ -930,8 +928,7 @@ class BookingView extends Component {
                                               onError={this.onErrorImg.bind(
                                                 this
                                               )}
-                                              src={
-                                                "https://vizio.atafreight.com/MyWayFiles/AIR_LINERS/" +
+                                              src={appSettings.imageURL+"AIR_LINERS/" +
                                                 lname
                                               }
                                             />
@@ -947,8 +944,7 @@ class BookingView extends Component {
                                               onError={this.onErrorImg.bind(
                                                 this
                                               )}
-                                              src={
-                                                "https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                                              src={appSettings.imageURL+"ATAFreight_console.png"
                                               }
                                               alt={olname}
                                             />

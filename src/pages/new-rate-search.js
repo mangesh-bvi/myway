@@ -611,7 +611,7 @@ class NewRateSearch extends Component {
 
   /////Handle set select type CBM or DIM
   cmbTypeRadioChange(e) {
-    debugger;
+    
     var value = e.target.value;
     if (value == "ALL") {
       this.setState({ cmbTypeRadio: value, cbmVal: "" });
@@ -2627,7 +2627,7 @@ class NewRateSearch extends Component {
   }
 
   callbackFunction = callBackObj => {
-    debugger;
+    
     if (
       this.state.containerLoadType === "LCL" ||
       this.state.containerLoadType === "AIR" ||
