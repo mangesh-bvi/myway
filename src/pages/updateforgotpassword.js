@@ -2,13 +2,9 @@ import React from "react";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
-
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
-
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 class Updateforgotpassword extends React.Component {
   constructor(props) {
     super(props);
@@ -34,12 +30,21 @@ class Updateforgotpassword extends React.Component {
     if (this.state.password === this.state.confirmPassword) {
       ValidatePassCode(userid, this.state.password);
     } else {
-      NotificationManager.error("New password and Confirm password Not Match");
+      store.addNotification({
+        // title: "Error",
+        message: "New password and Confirm password Not Match",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
   render() {
     return (
       <section className="login-between">
+        <ReactNotification />
         <div className="login-sect">
           <div className="logo">
             <img src={Logo} alt="logo" />
@@ -80,7 +85,6 @@ class Updateforgotpassword extends React.Component {
             </div>
           </div>
         </div>
-         <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </section>
     );
   }
@@ -88,7 +92,6 @@ class Updateforgotpassword extends React.Component {
 
 ////Validate pass code funcation
 function ValidatePassCode(UserId, Password) {
-  
   const requestOptions = {
     method: "POST",
     headers: authHeader("no"),
@@ -108,9 +111,25 @@ function HandleResponse(response) {
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
-      NotificationManager.error("Oops! error occured");
+      store.addNotification({
+        // title: "Error",
+        message: "Oops! error occured",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     } else {
-      NotificationManager.success("Password has been updated successfully");
+      store.addNotification({
+        // title: "Success",
+        message: "Password has been updated successfully",
+        type: "success", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       setTimeout(() => {
         window.location.href = "./login";
       }, 1000);

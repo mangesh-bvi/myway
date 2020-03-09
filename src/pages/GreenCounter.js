@@ -6,7 +6,7 @@ import { Bar, Line, Doughnut } from "react-chartjs-2";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
 import Logo from "./../assets/img/logo.png";
-import "react-rangeslider/lib/index.css";
+
 import { encryption } from "../helpers/encryption";
 import CountUp from "react-countup";
 import Image from "./../assets/img/Tree.png";

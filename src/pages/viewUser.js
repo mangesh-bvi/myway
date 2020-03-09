@@ -12,12 +12,10 @@ import { Button, Modal, ModalBody } from "reactstrap";
 import Pencil from "./../assets/img/pencil.png";
 import Deactivate from "./../assets/img/deactivate.png";
 import DeactivateGray from "./../assets/img/deactivate-gray.png";
-
 import ReactTable from "react-table";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 import matchSorter from "match-sorter";
 class ViewUser extends Component {
   constructor(props) {
@@ -35,7 +33,7 @@ class ViewUser extends Component {
     this.filterAll = this.filterAll.bind(this);
     this.onFilteredChange = this.onFilteredChange.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
-  } 
+  }
   toggleEdit() {
     this.setState(prevState => ({
       modalEdit: !prevState.modalEdit
@@ -46,7 +44,7 @@ class ViewUser extends Component {
       modalDel: !prevState.modalDel
     }));
   }
-////toggle Details User
+  ////toggle Details User
   toggleDeactivate() {
     let self = this;
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
@@ -59,19 +57,25 @@ class ViewUser extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      
       self.BindViewUserData();
-      NotificationManager.success(response.data.Table[0].Result);
+
+      store.addNotification({
+        // title: "Success",
+        message: response.data.Table[0].Result,
+        type: "success", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     });
 
     this.setState(prevState => ({
       modalDel: !prevState.modalDel
     }));
   }
-////Handle Detactive User
+  ////Handle Detactive User
   HandleDeactiveUser(evt, row) {
-    
-    
     var UserId = row.original["UserId"];
     this.setState({ modalDel: true, deactivateId: UserId });
   }
@@ -79,7 +83,7 @@ class ViewUser extends Component {
   componentDidMount() {
     this.BindViewUserData();
   }
-////Bind User Data List
+  ////Bind User Data List
   BindViewUserData() {
     let self = this;
     axios({
@@ -91,12 +95,12 @@ class ViewUser extends Component {
         UserID: encryption(window.localStorage.getItem("userid"), "desc")
       },
       headers: authHeader()
-    }).then(function(response) {      
+    }).then(function(response) {
       self.setState({ viewData: response.data });
     });
   }
-////Handle Edit User Detials
-  HandleEditUserDetails(evt, row) {    
+  ////Handle Edit User Detials
+  HandleEditUserDetails(evt, row) {
     var userId = row.original["UserId"];
     if (row.original["UserType"] === "Sales User") {
       this.props.history.push({
@@ -138,13 +142,13 @@ class ViewUser extends Component {
     }
     return (
       <div>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
             <AdminSideMenu />
           </div>
           <div className="cls-rt no-bg min-hei-auto">
-             <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
             <div className="title-sect">
               <h2>View Users</h2>
               <div className="col-12 col-sm-4">
@@ -180,7 +184,6 @@ class ViewUser extends Component {
                         Header: "Is Enabled",
                         accessor: "IsEnabled",
                         Cell: row => {
-                          
                           if (row.row.IsEnabled !== "No Record Found") {
                             return (
                               <>{row.original.IsEnabled ? "True" : "False"}</>

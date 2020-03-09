@@ -6,13 +6,10 @@ import AdminSideMenu from "../component/adminSideMenu";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
 import FileUpload from "./../assets/img/file.png";
-
 import { encryption } from "../helpers/encryption";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 var string = "";
 class AddSalesUser extends React.Component {
@@ -21,7 +18,7 @@ class AddSalesUser extends React.Component {
     this.state = {
       loading: false,
       values: [],
-      selectCountry:[],
+      selectCountry: [],
       selectIsEnable: [
         { key: false, value: "False" },
         { key: true, value: "True" }
@@ -400,8 +397,7 @@ class AddSalesUser extends React.Component {
       }
     }
 
-
-   var RegisteredCompany = this.state.RegCompany.toString();
+    var RegisteredCompany = this.state.RegCompany.toString();
     this.state.hideDocument.map((hideDocument, index) => {
       if (this.state.hideDocument[index].IsSelected == true) {
         Document += this.state.hideDocument[index].DocumentID + ",";
@@ -487,11 +483,19 @@ class AddSalesUser extends React.Component {
         headers: authHeader()
       })
         .then(function(response) {
-          NotificationManager.success(response.data[0].Message);
+          store.addNotification({
+            // title: "Success",
+            message: response.data[0].Message,
+            type: "success", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
           self.setState({ loading: false });
           setTimeout(() => {
             self.props.history.push("view-user");
-          }, 1000);
+          }, appSettings.NotficationTime);
         })
         .catch(error => console.log(error.response));
     } else {
@@ -596,7 +600,15 @@ class AddSalesUser extends React.Component {
         headers: authHeader()
       })
         .then(function(response) {
-          NotificationManager.success(response.data[0].Result);
+          store.addNotification({
+            // title: "Success",
+            message: response.data[0].Result,
+            type: "success", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
         })
         .catch(error => console.log(error.response));
     } else {
@@ -708,6 +720,7 @@ class AddSalesUser extends React.Component {
     }
     return (
       <div>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -826,9 +839,7 @@ class AddSalesUser extends React.Component {
                       value={this.state.fields["country"]}
                     >
                       {" "}
-                      <option value="Select">
-                        select
-                      </option>
+                      <option value="Select">select</option>
                       {this.state.selectCountry.map(team => (
                         <option key={team.SUCountry} value={team.SUCountry}>
                           {team.CountryName}
@@ -1163,7 +1174,6 @@ class AddSalesUser extends React.Component {
                 </div>
               </div>
             </div>
-             <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
           </div>
         </div>
       </div>

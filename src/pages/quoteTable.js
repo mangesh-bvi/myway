@@ -5,19 +5,18 @@ import axios from "axios";
 import "../styles/custom.css";
 import "../assets/css/react-table.css";
 import { encryption } from "../helpers/encryption";
-
 import { Button, Modal, ModalBody } from "reactstrap";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-
 import Copy from "./../assets/img/copy.png";
-
 import Eye from "./../assets/img/eye.png";
 import matchSorter from "match-sorter";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import DatePicker from "react-datepicker";
-import { NotificationManager } from "react-notifications";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 class QuoteTable extends Component {
   constructor(props) {
@@ -76,7 +75,6 @@ class QuoteTable extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      
       var data = [];
 
       var resData = response.data.Table;
@@ -129,8 +127,6 @@ class QuoteTable extends Component {
   }
 
   HandleRowClickEvt = (rowInfo, column) => {
-    
-
     var QuoteNo = column.original["Quote#"];
     var Type = column.original["type"];
     var Status = column.original["Status"];
@@ -156,7 +152,6 @@ class QuoteTable extends Component {
   }
 
   handleChangeStart = e => {
-    
     var strt = this.state.startDate;
     var thisE = e;
     this.setState({
@@ -166,14 +161,21 @@ class QuoteTable extends Component {
       thisE.setHours(0, 0, 0, 0) >
       new Date(this.state.endDate).setHours(0, 0, 0, 0)
     ) {
-      NotificationManager.error("From Date needs to be smaller than To Date");
+      store.addNotification({
+        // title: "Error",
+        message: "From Date needs to be smaller than To Date",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       this.setState({
         startDate: strt
       });
     }
   };
   handleChangeEnd = e => {
-    
     var ennd = this.state.endDate;
     var thisE = e;
     this.setState({
@@ -183,7 +185,15 @@ class QuoteTable extends Component {
       new Date(this.state.startDate).setHours(0, 0, 0, 0) >
       thisE.setHours(0, 0, 0, 0)
     ) {
-      NotificationManager.error("To Date needs to be greater than From Date");
+      store.addNotification({
+        // title: "Error",
+        message: "To Date needs to be greater than From Date",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       this.setState({
         endDate: ennd
       });
@@ -202,8 +212,6 @@ class QuoteTable extends Component {
         new Moment(a.CreatedDate).format("YYYYMMDD")
     );
     if (dataQuote.length > 0) {
-      
-
       NewdataQuote = dataQuote.filter(
         d =>
           new Date(d.CreatedDate) >=
@@ -212,9 +220,8 @@ class QuoteTable extends Component {
             new Date(this.state.endDate).setHours(0, 0, 0, 0)
       );
     } else {
-     
     }
-     
+
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
@@ -224,6 +231,7 @@ class QuoteTable extends Component {
 
     return (
       <div>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -317,7 +325,6 @@ class QuoteTable extends Component {
                         Header: "Action",
                         sortable: false,
                         Cell: row => {
-                          
                           if (row.row.POD === "No Record Found") {
                             return <></>;
                           } else {

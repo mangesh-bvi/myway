@@ -6,11 +6,9 @@ import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import { encryption } from "../helpers/encryption";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 class myWayMessage extends Component {
   constructor(props) {
@@ -44,7 +42,6 @@ class myWayMessage extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        
         var Message = "";
         var MessageArr = [];
 
@@ -54,15 +51,22 @@ class myWayMessage extends Component {
         self.BindMyWayMessageById(response.data.Table[0]);
       })
       .catch(error => {
-        
         var temperror = error.response.data;
         var err = temperror.split(":");
-        NotificationManager.error(err[1].replace("}", ""));
+
+        store.addNotification({
+          // title: "Error",
+          message: err[1].replace("}", ""),
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       });
   }
   ////bind message by id data
   BindMyWayMessageById(item, e) {
-    
     let self = this;
     self.setState({ selectedItem: item });
     axios({
@@ -76,7 +80,6 @@ class myWayMessage extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        
         self.setState({
           CommunicationUser: item.LastCommunicationUser,
           MessageLogArr: response.data,
@@ -84,15 +87,22 @@ class myWayMessage extends Component {
         });
       })
       .catch(error => {
-        
         var temperror = error.response.data;
         var err = temperror.split(":");
-        NotificationManager.error(err[1].replace("}", ""));
+
+        store.addNotification({
+          // title: "Error",
+          message: err[1].replace("}", ""),
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       });
   }
   ////Handle Send replay to Common message
   SendMessage = () => {
-    
     let self = this;
     var hbllNo = this.state.ReferenceNo;
     var msgg = this.state.msgg;
@@ -107,7 +117,15 @@ class myWayMessage extends Component {
     };
 
     if (msgg === "" || msgg === null) {
-      NotificationManager.error("Please enter the message.");
+      store.addNotification({
+        // title: "Error",
+        message: "Please enter the message.",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     } else {
       axios({
         method: "post",
@@ -115,14 +133,21 @@ class myWayMessage extends Component {
         data: paramdata,
         headers: authHeader()
       }).then(function(response) {
-        
         if (response != null) {
           if (response.data != null) {
             if (response.data.length > 0) {
               if (response.data[0] != null) {
                 var message = response.data[0].Result;
                 if (response.data[0].Result === "Message Send Successfully") {
-                  NotificationManager.success(response.data[0].Result);
+                  store.addNotification({
+                    // title: "Success",
+                    message: response.data[0].Result,
+                    type: "success", // 'default', 'success', 'info', 'warning','danger'
+                    container: "top-right", // where to position the notifications
+                    dismiss: {
+                      duration: appSettings.NotficationTime
+                    }
+                  });
                 }
                 var item = self.state.selectedItem;
                 self.setState({ msgg: "" });
@@ -150,6 +175,7 @@ class myWayMessage extends Component {
     }
     return (
       <div>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -244,7 +270,6 @@ class myWayMessage extends Component {
             </div>
           </div>
         </div>
-         <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </div>
     );
   }

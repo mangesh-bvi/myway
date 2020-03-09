@@ -13,7 +13,9 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { encryption } from "../helpers/encryption";
 import DatePicker from "react-datepicker";
-import { NotificationManager } from "react-notifications";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 class SpotRateTable extends Component {
   constructor(props) {
     var someDate = new Date();
@@ -119,7 +121,15 @@ class SpotRateTable extends Component {
       thisE.setHours(0, 0, 0, 0) >
       new Date(this.state.endDate).setHours(0, 0, 0, 0)
     ) {
-      NotificationManager.error("From Date needs to be smaller than To Date");
+      store.addNotification({
+        // title: "Error",
+        message: "From Date needs to be smaller than To Date",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       this.setState({
         startDate: strt
       });
@@ -136,7 +146,15 @@ class SpotRateTable extends Component {
       new Date(this.state.startDate).setHours(0, 0, 0, 0) >
       thisE.setHours(0, 0, 0, 0)
     ) {
-      NotificationManager.error("To Date needs to be greater than From Date");
+      store.addNotification({
+        // title: "Error",
+        message: "To Date needs to be greater than From Date",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       this.setState({
         endDate: ennd
       });
@@ -161,6 +179,7 @@ class SpotRateTable extends Component {
     }
     return (
       <div>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>

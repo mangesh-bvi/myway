@@ -9,10 +9,11 @@ import SideMenu from "../component/sidemenu";
 
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
+
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+
 import { encryption } from "../helpers/encryption";
 
 const animatedComponents = makeAnimated();
@@ -96,10 +97,9 @@ class Reports extends Component {
         self.setState({ reportName: optionItems });
       })
       .catch(error => {
-        
         var temperror = error.response.data;
         var err = temperror.split(":");
-        
+
         var optionItems = [];
         optionItems.push({ value: 0, label: "No Data Found" });
         self.setState({
@@ -329,21 +329,16 @@ class Reports extends Component {
 
         self.setState({ toggleExtraInvoiceNoFilter: InvoiceNo });
         self.setState({ toggleExtraModeTransportFilter: ModeTransport });
-
-        
       })
       .catch(error => {
-        
         var temperror = error.response.data;
         var err = temperror.split(":");
-        
+
         var optionItems = [];
       });
   }
 
   changesModeOfTransport(val) {
-    
-
     this.setState({ valModeOfTransport: val.value });
 
     var oceanPortDepature = false;
@@ -371,7 +366,6 @@ class Reports extends Component {
   }
 
   changesOriginCountry(val) {
-    
     var OriginCountryarr = "";
     var filterpo = [];
     if (val != null) {
@@ -492,13 +486,29 @@ class Reports extends Component {
   ///Handle Submit Data
   HandleSubmit = () => {
     if (this.state.valReportName == null || this.state.valReportName == "") {
-      
-      NotificationManager.error("Select Report Name");
+      store.addNotification({
+        // title: "Error",
+        message: "Select Report Name",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
+
       return false;
     }
     if (this.state.valRegCompany == null || this.state.valRegCompany == "") {
-      
-      NotificationManager.error("Select Reg. Company");
+      store.addNotification({
+        // title: "Error",
+        message: "Select Reg. Company",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
+
       return false;
     }
 
@@ -553,6 +563,7 @@ class Reports extends Component {
     }
     return (
       <div>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -734,7 +745,6 @@ class Reports extends Component {
             </div>
           </div>
         </div>
-         <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </div>
     );
   }

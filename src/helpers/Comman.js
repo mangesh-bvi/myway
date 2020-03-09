@@ -23,7 +23,6 @@ class Comman extends Component {
     };
   }
   componentDidMount() {
-    
     if (
       this.props.containerLoadType == "LCL" ||
       this.props.containerLoadType == "AIR" ||
@@ -53,7 +52,6 @@ class Comman extends Component {
   }
   ////send back value in parent componenet data
   SendData = () => {
-    
     if (
       this.props.containerLoadType === "LCL" ||
       this.props.containerLoadType === "AIR" ||
@@ -171,6 +169,7 @@ class Comman extends Component {
             />
           </div>
         </div>
+
         <div className="col-md">
           <div className="spe-equ">
             <input
@@ -198,6 +197,7 @@ class Comman extends Component {
             />
           </div>
         </div>
+
         {i === 0 ? (
           <div className="">
             <div className="spe-equ">
@@ -225,7 +225,6 @@ class Comman extends Component {
   }
 
   addMultiCBM() {
-    
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,
@@ -307,36 +306,42 @@ class Comman extends Component {
     }
 
     this.setState({ multiCBM });
-    if (this.props.containerLoadType !== "LCL") {
-      var decVolumeWeight =
-        (multiCBM[i].Quantity *
-          (parseFloat(multiCBM[i].Lengths) *
-            parseFloat(multiCBM[i].Width) *
-            parseFloat(multiCBM[i].Height))) /
-        6000;
-      if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
-        multiCBM[i] = {
-          ...multiCBM[i],
-          ["VolumeWeight"]: multiCBM[i].GrossWt
-        };
-      } else {
-        multiCBM[i] = {
-          ...multiCBM[i],
-          ["VolumeWeight"]: parseFloat(decVolumeWeight.toFixed(2))
-        };
-      }
-    } else {
-      var decVolume =
-        multiCBM[i].Quantity *
-        ((parseFloat(multiCBM[i].Lengths) / 100) *
-          (parseFloat(multiCBM[i].Width) / 100) *
-          (parseFloat(multiCBM[i].Height) / 100));
+    if (this.props.containerLoadType === "FCL") {
       multiCBM[i] = {
         ...multiCBM[i],
-        ["Volume"]: parseFloat(decVolume.toFixed(2))
+        ["VolumeWeight"]: 0
       };
+    } else {
+      if (this.props.containerLoadType !== "LCL") {
+        var decVolumeWeight =
+          (multiCBM[i].Quantity *
+            (parseFloat(multiCBM[i].Lengths) *
+              parseFloat(multiCBM[i].Width) *
+              parseFloat(multiCBM[i].Height))) /
+          6000;
+        if (multiCBM[i].GrossWt > parseFloat(decVolumeWeight)) {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            ["VolumeWeight"]: multiCBM[i].GrossWt
+          };
+        } else {
+          multiCBM[i] = {
+            ...multiCBM[i],
+            ["VolumeWeight"]: parseFloat(decVolumeWeight.toFixed(2))
+          };
+        }
+      } else {
+        var decVolume =
+          multiCBM[i].Quantity *
+          ((parseFloat(multiCBM[i].Lengths) / 100) *
+            (parseFloat(multiCBM[i].Width) / 100) *
+            (parseFloat(multiCBM[i].Height) / 100));
+        multiCBM[i] = {
+          ...multiCBM[i],
+          ["Volume"]: parseFloat(decVolume.toFixed(2))
+        };
+      }
     }
-
     this.setState({ multiCBM });
 
     setTimeout(() => {

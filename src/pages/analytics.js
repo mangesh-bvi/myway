@@ -9,11 +9,10 @@ import ShipBlue from "./../assets/img/ship-blue.svg";
 import ShipWhite from "./../assets/img/ship-white.svg";
 import SideMenu from "../component/sidemenu";
 import DatePicker from "react-datepicker";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-datepicker/dist/react-datepicker.css";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+
 import { encryption } from "../helpers/encryption";
 import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
@@ -202,7 +201,15 @@ class Analytics extends Component {
     var g2 = new Date(ToDate);
 
     if (g1.getTime() > g2.getTime()) {
-      NotificationManager.error("To date should be greater then From date.");
+      store.addNotification({
+        // title: "Error",
+        message: "To date should be greater then From date.",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       document.getElementById("datpicker-to-shipment").focus();
       return false;
     }
@@ -229,13 +236,29 @@ class Analytics extends Component {
         this.state.toggleShipShip === true &&
         this.state.toggleFclLcl === false
       ) {
-        NotificationManager.error("Please select FCL or LCL");
+        store.addNotification({
+          // title: "Error",
+          message: "Please select FCL or LCL",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
         return false;
       } else if (
         this.state.toggleRoadShip === true &&
         this.state.toggleFtlLtl === false
       ) {
-        NotificationManager.error("Please select FTL or LTL");
+        store.addNotification({
+          // title: "Error",
+          message: "Please select FTL or LTL",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
         return false;
       }
     } else {
@@ -314,7 +337,15 @@ class Analytics extends Component {
     var g2 = new Date(ToDate);
 
     if (g1.getTime() > g2.getTime()) {
-      NotificationManager.error("To date should be greater then From date.");
+      store.addNotification({
+        // title: "Error",
+        message: "To date should be greater then From date.",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       document.getElementById("datpicker-to-shipment").focus();
       return false;
     }
@@ -335,7 +366,6 @@ class Analytics extends Component {
   }
 
   setShipmentGraph(axiosdata) {
-    
     this.setState({ loding: true });
     let self = this;
 
@@ -455,7 +485,6 @@ class Analytics extends Component {
 
         if (arrayTruck != null) {
           if (arrayTruck.length > 0) {
-            
             for (var i = 0; i < arrayTruck.length; i++) {
               if (Segregatedby == "Volume Chart") {
                 arrayTruckdata.push(arrayTruck[i].Volume);
@@ -478,11 +507,10 @@ class Analytics extends Component {
             });
           }
         }
-        
+
         self.setState({ graphShipmentdataset: graphdataset });
       })
       .catch(error => {
-        
         var temperror = "";
         var err = "";
         if (error.response != undefined) {
@@ -493,8 +521,19 @@ class Analytics extends Component {
           err = temperror;
         }
 
-        NotificationManager.error(err);
-        self.setState({ graphShipmentdataset: [], loding: false });
+        store.addNotification({
+          // title: "Error",
+          message: err,
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
+        self.setState({
+          graphShipmentdataset: [],
+          loding: false
+        });
       });
   }
 
@@ -559,7 +598,6 @@ class Analytics extends Component {
   };
 
   toggleBtnsShip = e => {
-    
     if (e.target.id === "ship-ship") {
       this.setState({
         toggleShipShip: true,
@@ -714,7 +752,15 @@ class Analytics extends Component {
     var g2 = new Date(ToDate);
 
     if (g1.getTime() > g2.getTime()) {
-      NotificationManager.error("To date should be greater then From date.");
+      store.addNotification({
+        // title: "Error",
+        message: "To date should be greater then From date.",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       document.getElementById("datpicker-to-invoice").focus();
       return false;
     }
@@ -784,7 +830,6 @@ class Analytics extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        
         self.setState({ setSupplierdrop: response.data.Table });
 
         if (response != null) {
@@ -802,8 +847,15 @@ class Analytics extends Component {
       .catch(error => {
         var temperror = error.response.data;
         var err = temperror.split(":");
-
-        NotificationManager.error(err);
+        store.addNotification({
+          // title: "Error",
+          message: err,
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
         self.setState({ setSupplierdrop: [] });
       });
   }
@@ -915,12 +967,19 @@ class Analytics extends Component {
         self.setState({ graphdataset: graphdataset });
       })
       .catch(error => {
-        
         var temperror = error;
 
         var err = temperror.split(":");
 
-        NotificationManager.error(err);
+        store.addNotification({
+          // title: "Error",
+          message: err,
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
         self.setState({ graphdataset: [], loding: false });
       });
   }
@@ -941,7 +1000,7 @@ class Analytics extends Component {
     }
     return arr;
   }
-////Handle Analytics Reset Data
+  ////Handle Analytics Reset Data
   HandleAnalyticsResetData() {
     var someDate = new Date();
     setTimeout(() => {
@@ -979,7 +1038,6 @@ class Analytics extends Component {
   }
 
   handleSegregated(e) {
-    
     var value = e.target.value;
 
     this.setState({
@@ -1011,13 +1069,13 @@ class Analytics extends Component {
     }
     return (
       <React.Fragment>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
             <SideMenu />
           </div>
           <div className="cls-rt">
-             <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
             <ul className="nav cust-tabs pt-2" role="tablist">
               <li>
                 <a

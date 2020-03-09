@@ -7,7 +7,6 @@ import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import { Button, Modal, ModalBody } from "reactstrap";
-
 import ReactTable from "react-table";
 import Select from "react-select";
 import {
@@ -19,11 +18,9 @@ import {
 import ReactAutocomplete from "react-autocomplete";
 import matchSorter from "match-sorter";
 import { encryption } from "../helpers/encryption";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 import Comman from "../helpers/Comman";
 
 const { compose } = require("recompose");
@@ -807,7 +804,15 @@ class RateTable extends Component {
         state: this.state
       });
     } else {
-      NotificationManager.error("Please select atleast one Rate");
+      store.addNotification({
+        // title: "Error",
+        message: "Please select atleast one Rate",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
 
@@ -995,13 +1000,15 @@ class RateTable extends Component {
       }
 
       /////Equipment flattack_openTop RateQueryDIM
-
+      debugger;
       var RateQueryData = [];
       if (paramData.containerLoadType === "FCL") {
         if (paramData.flattack_openTop.length > 0) {
           for (let j = 0; j < paramData.flattack_openTop.length; j++) {
             RateQueryData.push(paramData.flattack_openTop[j]);
           }
+        } else {
+          RateQueryData = paramData.multiCBM;
         }
       } else {
         RateQueryData = paramData.multiCBM;
@@ -1329,8 +1336,18 @@ class RateTable extends Component {
         }
       })
       .catch(error => {
-        console.log(error.response);
-        self.setState({loading:false})
+        var temperror = error.response.data;
+        var err = temperror.split(":");
+        store.addNotification({
+          // title: "Error",
+          message: err[1].replace("}", ""),
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
+        self.setState({ loading: false });
       });
   }
 
@@ -3085,11 +3102,19 @@ class RateTable extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        NotificationManager.success(response.data.Table[0].Message);
+        store.addNotification({
+          // title: "Success",
+          message: response.data.Table[0].Message,
+          type: "success", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
         self.toggleSpot();
         setTimeout(function() {
           self.props.history.push("./spot-rate-table");
-        }, 1000);
+        }, appSettings.NotficationTime);
       })
       .catch(error => {
         console.log(error);
@@ -3420,8 +3445,7 @@ class RateTable extends Component {
   }
 
   onErrorImg(e) {
-    return (e.target.src =
-      appSettings.imageURL+"ATAFreight_console.png");
+    return (e.target.src = appSettings.imageURL + "ATAFreight_console.png");
   }
   HandleBackStage(stageType, e) {
     if (stageType == "shipmentType") {
@@ -3629,6 +3653,7 @@ class RateTable extends Component {
     }
     return (
       <div>
+        <ReactNotification />
         <Headers parentCallback={this.callbackCurrencyFunction} />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -4030,7 +4055,8 @@ class RateTable extends Component {
                                           <img
                                             title={row._original.lineName}
                                             src={
-                                              appSettings.imageURL+"OEAN_LINERS/" +
+                                              appSettings.imageURL +
+                                              "OEAN_LINERS/" +
                                               lname
                                             }
                                             onError={this.onErrorImg.bind(this)}
@@ -4080,7 +4106,8 @@ class RateTable extends Component {
                                           <img
                                             title={row._original.lineName}
                                             src={
-                                              appSettings.imageURL+"ATAFreight_console.png"
+                                              appSettings.imageURL +
+                                              "ATAFreight_console.png"
                                             }
                                             alt={row._original.lineName}
                                             onError={this.onErrorImg.bind(this)}
@@ -4129,7 +4156,8 @@ class RateTable extends Component {
                                           <img
                                             title={row._original.lineName}
                                             src={
-                                              appSettings.imageURL+"AIR_LINERS/" +
+                                              appSettings.imageURL +
+                                              "AIR_LINERS/" +
                                               lname
                                             }
                                             alt={row._original.lineName}
@@ -4181,7 +4209,8 @@ class RateTable extends Component {
                                           <img
                                             title={row._original.lineName}
                                             src={
-                                              appSettings.imageURL+"ATAFreight_console.png"
+                                              appSettings.imageURL +
+                                              "ATAFreight_console.png"
                                             }
                                             onError={this.onErrorImg.bind(this)}
                                             alt={row._original.lineName}
@@ -5140,9 +5169,7 @@ class RateTable extends Component {
                 </div>
               </ModalBody>
             </Modal>
-            {/* )} */}
           </div>
-          <NotificationContainer leaveTimeout="3000" />
         </div>
       </div>
     );

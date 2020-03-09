@@ -5,13 +5,10 @@ import Headers from "../component/header";
 import AdminSideMenu from "../component/adminSideMenu";
 import axios from "axios";
 import { authHeader } from "../helpers/authHeader";
-
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 import { encryption } from "../helpers/encryption";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
 
 class AddEventManagement extends Component {
   constructor(props) {
@@ -53,7 +50,15 @@ class AddEventManagement extends Component {
         headers: authHeader()
       })
         .then(function(response) {
-          NotificationManager.success(response.data[0].Column1);
+          store.addNotification({
+            // title: "Success",
+            message: response.data[0].Column1,
+            type: "success", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
           window.location.href = "event-management";
         })
         .catch(error => {});
@@ -166,6 +171,7 @@ class AddEventManagement extends Component {
     }
     return (
       <div>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -293,7 +299,6 @@ class AddEventManagement extends Component {
             </div>
           </div>
         </div>
-         <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </div>
     );
   }

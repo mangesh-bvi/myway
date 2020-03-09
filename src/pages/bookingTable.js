@@ -14,9 +14,10 @@ import matchSorter from "match-sorter";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { encryption } from "../helpers/encryption";
-import { NotificationManager } from "react-notifications";
 import DatePicker from "react-datepicker";
-
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 class BookingTable extends Component {
   constructor(props) {
     var someDate = new Date();
@@ -41,7 +42,6 @@ class BookingTable extends Component {
     }));
   }
   componentDidUpdate() {
-    
     if (this.props.location.state) {
       var status = this.props.location.state.status;
       if (this.state.status !== status) {
@@ -51,12 +51,10 @@ class BookingTable extends Component {
         }, 100);
       }
     } else {
-      
     }
   }
 
   componentDidMount() {
-    
     if (this.props.location.state) {
       var status = this.props.location.state.status;
       this.setState({ status });
@@ -80,7 +78,6 @@ class BookingTable extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      
       var data = [];
       var pending = 0,
         approved = 0,
@@ -156,7 +153,6 @@ class BookingTable extends Component {
   }
   //// Handle View click icon
   HandleViewClickIcon(evt, row) {
-    
     var BookingNo = row.original["BookingID"];
     var BookingNostr = row.original["BookingNo"];
     var Status = row.original["Status"];
@@ -176,7 +172,6 @@ class BookingTable extends Component {
 
   ////Handle Change Start Date
   HandleChangeStartDate = e => {
-    
     var strt = this.state.startDate;
     var thisE = e;
     this.setState({
@@ -186,7 +181,15 @@ class BookingTable extends Component {
       thisE.setHours(0, 0, 0, 0) >
       new Date(this.state.endDate).setHours(0, 0, 0, 0)
     ) {
-      NotificationManager.error("From Date needs to be smaller than To Date");
+      store.addNotification({
+        // title: "Error",
+        message: "From Date needs to be smaller than To Date",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       this.setState({
         startDate: strt
       });
@@ -203,7 +206,15 @@ class BookingTable extends Component {
       new Date(this.state.startDate).setHours(0, 0, 0, 0) >
       thisE.setHours(0, 0, 0, 0)
     ) {
-      NotificationManager.error("To Date needs to be greater than From Date");
+      store.addNotification({
+        // title: "Error",
+        message: "To Date needs to be greater than From Date",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       this.setState({
         endDate: ennd
       });
@@ -212,7 +223,7 @@ class BookingTable extends Component {
 
   render() {
     const { bookingData } = this.state;
-    
+
     var dataQuote = [];
     var finalFilterData = [];
     const Moment = require("moment");
@@ -221,7 +232,7 @@ class BookingTable extends Component {
         new Moment(b.CreatedDate).format("YYYYMMDD") -
         new Moment(a.CreatedDate).format("YYYYMMDD")
     );
-    
+
     if (dataQuote.length > 0) {
       finalFilterData = dataQuote.filter(
         d =>
@@ -233,7 +244,7 @@ class BookingTable extends Component {
     } else {
       finalFilterData = [{ POL: "No Record Found" }];
     }
-    
+
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
@@ -242,6 +253,7 @@ class BookingTable extends Component {
     }
     return (
       <div>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -331,7 +343,6 @@ class BookingTable extends Component {
                         Header: "Action",
                         sortable: false,
                         Cell: row => {
-                          
                           if (row.row.POL !== "No Record Found") {
                             return (
                               <div className="action-cntr">

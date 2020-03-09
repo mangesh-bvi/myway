@@ -13,7 +13,9 @@ import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import ReactAutocomplete from "react-autocomplete";
-import { NotificationManager } from "react-notifications";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 var i = 0;
 const animatedComponents = makeAnimated();
 const { compose } = require("recompose");
@@ -537,10 +539,26 @@ class NewRateSearch extends Component {
             state: this.state
           });
         } else {
-          NotificationManager.error("Select Equipment Types");
+          store.addNotification({
+            // title: "Error",
+            message: "Select Equipment Types",
+            type: "danger", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
         }
       } else {
-        NotificationManager.error("Select Equipment Types");
+        store.addNotification({
+          // title: "Error",
+          message: "Select Equipment Types",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     }
   }
@@ -611,7 +629,6 @@ class NewRateSearch extends Component {
 
   /////Handle set select type CBM or DIM
   cmbTypeRadioChange(e) {
-    
     var value = e.target.value;
     if (value == "ALL") {
       this.setState({ cmbTypeRadio: value, cbmVal: "" });
@@ -1616,7 +1633,8 @@ class NewRateSearch extends Component {
         <div className="spe-equ">
           <input
             type="text"
-            min={1}l̥
+            min={1}
+            l̥
             placeholder="QTY"
             name="ContainerQuantity"
             style={{ width: "40px" }}
@@ -2627,7 +2645,6 @@ class NewRateSearch extends Component {
   }
 
   callbackFunction = callBackObj => {
-    
     if (
       this.state.containerLoadType === "LCL" ||
       this.state.containerLoadType === "AIR" ||
@@ -2668,6 +2685,7 @@ class NewRateSearch extends Component {
 
     return (
       <div>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>

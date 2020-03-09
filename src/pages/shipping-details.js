@@ -28,15 +28,11 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 import matchSorter from "match-sorter";
 import DatePicker from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
-
 import Autocomplete from "react-autocomplete";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import moment from "moment";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 class ShippingDetails extends Component {
   constructor(props) {
@@ -160,7 +156,6 @@ class ShippingDetails extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      
       var data = response.data.Table1;
       var inland = data.filter(x => x.ModeOfTransport === "Inland").length;
       var air = data.filter(x => x.ModeOfTransport === "Air").length;
@@ -202,7 +197,15 @@ class ShippingDetails extends Component {
             if (hblNo) {
               this.HandleChangeShipmentDetails(hblNo, eventManage);
             } else {
-              NotificationManager.error("HBL No not Found");
+              store.addNotification({
+                // title: "Error",
+                message: "HBL No not Found",
+                type: "danger", // 'default', 'success', 'info', 'warning','danger'
+                container: "top-right", // where to position the notifications
+                dismiss: {
+                  duration: appSettings.NotficationTime
+                }
+              });
               return false;
             }
           }
@@ -270,13 +273,12 @@ class ShippingDetails extends Component {
         url: `${appSettings.APIURL}/CustomerAutoSearchMessage`,
         data: {
           CompanyName: fields[field],
-          
+
           UserID: encryption(window.localStorage.getItem("userid"), "desc")
         },
         headers: authHeader()
       })
         .then(function(response) {
-          
           if (field === "Consignee") {
             self.setState({
               Consignee: response.data,
@@ -290,7 +292,6 @@ class ShippingDetails extends Component {
           }
         })
         .catch(error => {
-          
           var temperror = error.response.data;
           var err = temperror.split(":");
         });
@@ -398,7 +399,15 @@ class ShippingDetails extends Component {
         }
       }
     } else {
-      NotificationManager.error("Please select Mode of Transport");
+      store.addNotification({
+        // title: "Error",
+        message: "Please select Mode of Transport",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       return false;
     }
   }
@@ -602,7 +611,15 @@ class ShippingDetails extends Component {
       });
       this.HandleAdvanceSearchModalClose();
     } else {
-      NotificationManager.error("Please select Mode of transport");
+      store.addNotification({
+        // title: "Error",
+        message: "Please select Mode of transport",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   };
 
@@ -621,31 +638,7 @@ class ShippingDetails extends Component {
   }
 
   HandleClearSearch() {
-    // let self = this;
-    // this.setState({shipmentSummary:[]})
-    // var userid = encryption(window.localStorage.getItem("userid"), "desc");
-    // axios({
-    //   method: "post",
-    //   url: `${appSettings.APIURL}/shipmentsummaryAPI`,
-    //   data: {
-    //     UserId: userid,
-    //     PageNo: 1
-    //   },
-    //   headers: authHeader()
-    // }).then(function(response) {
-    //   
-    //   var data = response.data.Table1;
-    //   self.setState({ shipmentSummary: data });
-
-    //   var inland = data.filter(x => x.ModeOfTransport === "Inland").length;
-    //   var air = data.filter(x => x.ModeOfTransport === "Air").length;
-    //   var ocean = data.filter(x => x.ModeOfTransport === "Ocean").length;
-    //   window.localStorage.setItem("aircount", air);
-    //   window.localStorage.setItem("oceancount", ocean);
-    //   window.localStorage.setItem("inlandcount", inland);
-    // });
     window.location.href = "shipment-summary";
-    // this.props.history.push("shipment-summary")
   }
 
   render() {
@@ -659,6 +652,7 @@ class ShippingDetails extends Component {
     }
     return (
       <div>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -1146,7 +1140,7 @@ class ShippingDetails extends Component {
                                 </div>
                               </div>
                             </div>
-                          </div>            
+                          </div>
                           <div className="col-12 col-sm-6 col-md-6 col-lg-3">
                             <div className="login-fields">
                               <div>
@@ -1530,7 +1524,6 @@ class ShippingDetails extends Component {
             </div>
           )}
         </div>
-        <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </div>
     );
   }

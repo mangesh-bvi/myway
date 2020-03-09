@@ -8,7 +8,6 @@ import { encryption } from "../helpers/encryption";
 import Headers from "../component/header";
 import AdminSideMenu from "../component/adminSideMenu";
 import Pencil from "./../assets/img/pencil.png";
-
 import ReactTable from "react-table";
 
 class EventManagement extends Component {

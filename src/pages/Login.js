@@ -5,11 +5,11 @@ import Logo from "./../assets/img/logo.png";
 import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from "reactstrap";
 import axios from "axios";
 import { encryption } from "../helpers/encryption";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+
 import "react-checkbox-tree/lib/react-checkbox-tree.css";
 import CheckboxTree from "react-checkbox-tree";
 
@@ -266,11 +266,28 @@ class Login extends React.Component {
           var temperror = "";
           if (error.response == undefined) {
             temperror = error.message;
-            NotificationManager.error(temperror);
+
+            store.addNotification({
+              // title: "Error",
+              message: temperror,
+              type: "danger", // 'default', 'success', 'info', 'warning','danger'
+              container: "top-right", // where to position the notifications
+              dismiss: {
+                duration: appSettings.NotficationTime
+              }
+            });
           } else {
             temperror = error.response.data;
             var err = temperror.split(":");
-            NotificationManager.error(err[1].replace("}", ""));
+            store.addNotification({
+              // title: "Error",
+              message: err[1].replace("}", ""),
+              type: "danger", // 'default', 'success', 'info', 'warning','danger'
+              container: "top-right", // where to position the notifications
+              dismiss: {
+                duration: appSettings.NotficationTime
+              }
+            });
           }
 
           // this.state.usernamee = '';
@@ -284,10 +301,18 @@ class Login extends React.Component {
       var error = username === "" ? "Please enter the username\n" : "";
       error += password === "" ? "Please enter the password" : "";
 
-      NotificationManager.error(error);
+      store.addNotification({
+        // title: "Error",
+        message: error,
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       setTimeout(function() {
         window.location.href = "./";
-      }, 5000);
+      }, appSettings.NotficationTime);
     }
   }
 
@@ -303,6 +328,7 @@ class Login extends React.Component {
     const { loading } = this.state;
     return (
       <section className="login-between">
+        <ReactNotification />
         <div className="login-sect">
           <div className="logo">
             <img src={Logo} alt="logo" />
@@ -417,7 +443,6 @@ class Login extends React.Component {
             </ModalFooter>
           </Modal>
         </div>
-        <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </section>
     );
   }

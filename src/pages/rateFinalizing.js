@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
 import ReactTable from "react-table";
-import ATA from "./../assets/img/ATAFreight_console.png";
-import Moment from "react-moment";
 import { Button, Modal, ModalBody, UncontrolledCollapse } from "reactstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
@@ -11,14 +9,13 @@ import { authHeader } from "../helpers/authHeader";
 import { encryption } from "../helpers/encryption";
 import matchSorter from "match-sorter";
 import Autocomplete from "react-autocomplete";
-import jsPDF from "jspdf";
+
 import Comman from "./../helpers/Comman";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+
 import moment from "moment";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 class RateFinalizing extends Component {
   constructor(props) {
@@ -118,7 +115,7 @@ class RateFinalizing extends Component {
       PickUpAddress: "",
       DestinationAddress: "",
       multiCBM: [],
-      todayDate:moment(new Date(),"DD-MM-YYYY") ,
+      todayDate: moment(new Date(), "DD-MM-YYYY"),
       cSelectedRow: {},
       selectedDataRow: [],
       modalLoss: false,
@@ -163,10 +160,8 @@ class RateFinalizing extends Component {
   }
 
   componentDidMount() {
-    
     if (typeof this.props.location.state !== "undefined") {
       if (this.props.location.state.Quote == undefined) {
-        
         var rateDetails = this.props.location.state.selectedDataRow;
         var newrateDetailsData = this.props.location.state.selectedDataRow;
 
@@ -385,18 +380,16 @@ class RateFinalizing extends Component {
           if (multiCBM != null) {
             if (multiCBM.length > 0) {
               for (var i = 0; i < multiCBM.length; i++) {
-                
-                  PackageDetailsArr.push({
-                    PackageType: multiCBM[i].PackageType,
-                    Quantity: multiCBM[i].Quantity,
-                    Lengths: multiCBM[i].Lengths,
-                    Width: multiCBM[i].Width,
-                    Height: multiCBM[i].Height,
-                    GrossWt: multiCBM[i].GrossWt,
-                    VolumeWeight: multiCBM[i].VolumeWeight,
-                    Volume: multiCBM[i].Volume
-                   
-                })
+                PackageDetailsArr.push({
+                  PackageType: multiCBM[i].PackageType,
+                  Quantity: multiCBM[i].Quantity,
+                  Lengths: multiCBM[i].Lengths,
+                  Width: multiCBM[i].Width,
+                  Height: multiCBM[i].Height,
+                  GrossWt: multiCBM[i].GrossWt,
+                  VolumeWeight: multiCBM[i].VolumeWeight,
+                  Volume: multiCBM[i].Volume
+                });
               }
             }
           }
@@ -1240,7 +1233,15 @@ class RateFinalizing extends Component {
         showUpdate
       }));
     } else {
-      NotificationManager.error("Please select only one rate to add profit");
+      store.addNotification({
+        // title: "Error",
+        message: "Please select only one rate to add profit",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
 
@@ -1251,7 +1252,15 @@ class RateFinalizing extends Component {
         ProfitAmount: 0
       }));
     } else {
-      NotificationManager.error("Please select only one rate to remove profit");
+      store.addNotification({
+        // title: "Error",
+        message: "Please select only one rate to remove profit",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
   toggleNewConsignee() {
@@ -1294,17 +1303,32 @@ class RateFinalizing extends Component {
   }
 
   RequestChangeMsgModal() {
-    
     if (this.state.selectedDataRow.length > 0) {
       if (this.state.CompanyID) {
         this.setState(prevState => ({
           modalRequestMsg: !prevState.modalRequestMsg
         }));
       } else {
-        NotificationManager.error("Please select Customer");
+        store.addNotification({
+          // title: "Error",
+          message: "Please select Customer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     } else {
-      NotificationManager.error("Please select atleast one rate");
+      store.addNotification({
+        // title: "Error",
+        message: "Please select Customer",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
   RequestChangeMsgModalClose() {
@@ -1351,9 +1375,18 @@ class RateFinalizing extends Component {
   }
 
   SendRequestChange() {
+    debugger;
     if (this.state.selectedDataRow.length > 0) {
       if (this.state.CompanyID === 0) {
-        NotificationManager.error("Please Select Customer");
+        store.addNotification({
+          // title: "Error",
+          message: "Please select Customer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
         return false;
       }
       this.setState({ reloding: true });
@@ -1888,9 +1921,9 @@ class RateFinalizing extends Component {
         DestGeoCordinate: this.props.location.state.DestGeoCordinate,
         BaseCurrency: rateSubDetailsarr[0].BaseCurrency,
         NonStackable: this.props.location.state.NonStackable == false ? 0 : 1,
-        MyWayComments: txtRequestComments||"",
-        MyWayDiscount: parseFloat(txtRequestDiscount)||0,
-        MyWayFreeTime: parseFloat(txtRequestFreeTime)||0,
+        MyWayComments: txtRequestComments || "",
+        MyWayDiscount: parseFloat(txtRequestDiscount) || 0,
+        MyWayFreeTime: parseFloat(txtRequestFreeTime) || 0,
         IsRequestForChange: 1,
         SQCharges: FCLSQCharges,
         RateTypes: FCLSQBaseFreight
@@ -1915,7 +1948,15 @@ class RateFinalizing extends Component {
             if (response.data != null) {
               if (response.data.Table != null) {
                 if (response.data.Table.length > 0) {
-                  NotificationManager.success(response.data.Table[0].Message);
+                  store.addNotification({
+                    // title: "Success",
+                    message: response.data.Table[0].Message,
+                    type: "success", // 'default', 'success', 'info', 'warning','danger'
+                    container: "top-right", // where to position the notifications
+                    dismiss: {
+                      duration: appSettings.NotficationTime
+                    }
+                  });
                   var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
                   if (usertype !== "Sales User") {
                     if (SalesQuoteNo) {
@@ -1939,12 +1980,18 @@ class RateFinalizing extends Component {
         })
         .catch(error => {});
     } else {
-      NotificationManager.error("Please select atleast one Rate");
+      store.addNotification({
+        message: "Please select atleast one Rate",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
 
   SendRequest() {
-    
     if (this.state.selectedDataRow.length > 0) {
       if (this.state.CompanyID !== 0) {
         var txtRequestDiscount,
@@ -2623,7 +2670,7 @@ class RateFinalizing extends Component {
           // senrequestpara.Containerdetails = Containerdetails;
 
           var ProfitListarr = [];
-          
+
           for (let j = 0; j < this.state.rateOrgDetails.length; j++) {
             var objProfitList = {};
 
@@ -2729,7 +2776,14 @@ class RateFinalizing extends Component {
               if (response.data != null) {
                 if (response.data.Table != null) {
                   if (response.data.Table.length > 0) {
-                    NotificationManager.success(response.data.Table[0].Message);
+                    store.addNotification({
+                      message: response.data.Table[0].Message,
+                      type: "success", // 'default', 'success', 'info', 'warning','danger'
+                      container: "top-right", // where to position the notifications
+                      dismiss: {
+                        duration: appSettings.NotficationTime
+                      }
+                    });
                     var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
                     if (usertype !== "Sales User") {
                       self.setState({
@@ -2740,7 +2794,7 @@ class RateFinalizing extends Component {
                     } else {
                       setTimeout(function() {
                         window.location.href = "quote-table";
-                      }, 1000);
+                      }, appSettings.NotficationTime);
                     }
                   }
                 }
@@ -2752,15 +2806,28 @@ class RateFinalizing extends Component {
             console.log(error.response);
           });
       } else {
-        NotificationManager.error("Please select customer");
+        store.addNotification({
+          message: "Please select customer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     } else {
-      NotificationManager.error("Please select atleast one Rate");
+      store.addNotification({
+        message: "Please select atleast one Rate",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
 
   SendRequestCopy() {
-    
     if (this.state.selectedDataRow.length > 0) {
       //;
       if (this.state.CompanyID !== 0 || this.state.companyID !== 0) {
@@ -2970,7 +3037,15 @@ class RateFinalizing extends Component {
               if (response.data != null) {
                 if (response.data.Table != null) {
                   if (response.data.Table.length > 0) {
-                    NotificationManager.success(response.data.Table[0].Message);
+                    store.addNotification({
+                      // title: "Success",
+                      message: response.data.Table[0].Message,
+                      type: "success", // 'default', 'success', 'info', 'warning','danger'
+                      container: "top-right", // where to position the notifications
+                      dismiss: {
+                        duration: appSettings.NotficationTime
+                      }
+                    });
                     var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
                     if (usertype !== "Sales User") {
                       self.setState({
@@ -2999,10 +3074,26 @@ class RateFinalizing extends Component {
             console.log(error.response);
           });
       } else {
-        NotificationManager.error("Please select customer");
+        store.addNotification({
+          // title: "Error",
+          message: "Please select customer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     } else {
-      NotificationManager.error("Please select atleast one rate");
+      store.addNotification({
+        // title: "Error",
+        message: "Please select atleast one rate",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
 
@@ -3154,9 +3245,16 @@ class RateFinalizing extends Component {
                 }
               }
             } else {
-              NotificationManager.error(
-                "Price should not be less than " + rateOrgDetailsarr[0].Total
-              );
+              store.addNotification({
+                // title: "Error",
+                message:
+                  "Price should not be less than " + rateOrgDetailsarr[0].Total,
+                type: "danger", // 'default', 'success', 'info', 'warning','danger'
+                container: "top-right", // where to position the notifications
+                dismiss: {
+                  duration: appSettings.NotficationTime
+                }
+              });
             }
           }
         }
@@ -3186,9 +3284,16 @@ class RateFinalizing extends Component {
             }
           }
         } else {
-          NotificationManager.error(
-            "Price should not be less than " + rateOrgDetailsarr[0].Total
-          );
+          store.addNotification({
+            // title: "Error",
+            message:
+              "Price should not be less than " + rateOrgDetailsarr[0].Total,
+            type: "danger", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
         }
       }
     }
@@ -3301,7 +3406,6 @@ class RateFinalizing extends Component {
   }
 
   hanleProfitAmountSubmit() {
-    
     var rateDetailsarr = this.state.selectedDataRow;
 
     var subratedetails = [];
@@ -3501,7 +3605,15 @@ class RateFinalizing extends Component {
               break;
             }
           } else {
-            NotificationManager.error("Please enter valid profit amount.");
+            store.addNotification({
+              // title: "Error",
+              message: "Please enter valid profit amount.",
+              type: "danger", // 'default', 'success', 'info', 'warning','danger'
+              container: "top-right", // where to position the notifications
+              dismiss: {
+                duration: appSettings.NotficationTime
+              }
+            });
           }
         } else {
           var rateOrgDetailsarr = this.state.rateOrgDetails.filter(
@@ -3587,7 +3699,15 @@ class RateFinalizing extends Component {
       });
       this.forceUpdate();
     } else {
-      NotificationManager.error("Please enter valid profit amount.");
+      store.addNotification({
+        // title: "Error",
+        message: "Please enter valid profit amount.",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
 
@@ -3597,8 +3717,7 @@ class RateFinalizing extends Component {
     return json;
   }
   ////toggle local and surcharge check box
-  HandleLocalSearchCharges(element, index,e) {
-    
+  HandleLocalSearchCharges(element, index, e) {
     var rateDetailsarr = this.state.selectedDataRow;
     var getindex = 0;
     var BuyRate = 0;
@@ -3958,9 +4077,8 @@ class RateFinalizing extends Component {
                   {},
                   this.state.cSelectChackBox
                 );
-                newSelected[element.ChargeID+index] = !this.state.cSelectChackBox[
-                  element.ChargeID+index
-                ];
+                newSelected[element.ChargeID + index] = !this.state
+                  .cSelectChackBox[element.ChargeID + index];
 
                 this.setState({
                   localsurAmount,
@@ -4052,9 +4170,8 @@ class RateFinalizing extends Component {
               SurchargeLocalchargeID.push(objSurchargeLocal);
 
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeID+index] = !this.state.cSelectChackBox[
-                element.ChargeID+index
-              ];
+              newSelected[element.ChargeID + index] = !this.state
+                .cSelectChackBox[element.ChargeID + index];
               this.setState({
                 localsurAmount,
                 SurchargeLocalchargeID,
@@ -4146,9 +4263,8 @@ class RateFinalizing extends Component {
               SurchargeLocalchargeID.push(objSurchargeLocal);
 
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeID+index] = !this.state.cSelectChackBox[
-                element.ChargeID+index
-              ];
+              newSelected[element.ChargeID + index] = !this.state
+                .cSelectChackBox[element.ChargeID + index];
               this.setState({
                 localsurAmount,
                 SurchargeLocalchargeID,
@@ -4375,14 +4491,18 @@ class RateFinalizing extends Component {
 
               this.setState({ localsurAmount });
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeID+index] = !this.state.cSelectChackBox[
-                element.ChargeID+index
-              ];
+              newSelected[element.ChargeID + index] = !this.state
+                .cSelectChackBox[element.ChargeID + index];
               this.setState({
                 cSelectChackBox: newSelected
               });
-              
-            var getindexLocal=  this.state.SurchargeLocalchargeID.findIndex(x=>x.RateQueryid===this.state.rateDetails[getindex].RateLineId && x.SurchargeId===element.ChargeID)
+
+              var getindexLocal = this.state.SurchargeLocalchargeID.findIndex(
+                x =>
+                  x.RateQueryid ===
+                    this.state.rateDetails[getindex].RateLineId &&
+                  x.SurchargeId === element.ChargeID
+              );
               this.state.SurchargeLocalchargeID.splice(getindexLocal, 1);
               for (var j = 0; j <= this.state.rateSubDetails.length; j++) {
                 if (
@@ -4441,9 +4561,8 @@ class RateFinalizing extends Component {
                   {},
                   this.state.cSelectChackBox
                 );
-                newSelected[element.ChargeID+index] = !this.state.cSelectChackBox[
-                  element.ChargeID+index
-                ];
+                newSelected[element.ChargeID + index] = !this.state
+                  .cSelectChackBox[element.ChargeID + index];
                 this.setState({
                   cSelectChackBox: newSelected
                 });
@@ -4570,9 +4689,8 @@ class RateFinalizing extends Component {
               });
               this.setState({ localsurAmount });
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeID+index] = !this.state.cSelectChackBox[
-                element.ChargeID+index
-              ];
+              newSelected[element.ChargeID + index] = !this.state
+                .cSelectChackBox[element.ChargeID + index];
               this.setState({
                 cSelectChackBox: newSelected
               });
@@ -4636,6 +4754,7 @@ class RateFinalizing extends Component {
   }
 
   SubmitCargoDetails(e) {
+    debugger;
     var PackageDetailsArr = [];
     let CargoDetailsArr = [];
     if (
@@ -4686,11 +4805,11 @@ class RateFinalizing extends Component {
               " (" +
               flattack_openTop[i].SpecialContainerCode +
               ")",
-            Quantity: this.state.users[0].ContainerQuantity,
-            Lenght: flattack_openTop[i].length,
+            Quantity: flattack_openTop[i].Quantity,
+            Lengths: flattack_openTop[i].length,
             Width: flattack_openTop[i].width,
             Height: flattack_openTop[i].height,
-            Weight: flattack_openTop[i].Gross_Weight,
+            GrossWt: flattack_openTop[i].Gross_Weight,
             CBM: flattack_openTop[i].total,
             Editable: true
           });
@@ -4849,29 +4968,43 @@ class RateFinalizing extends Component {
               if (response.data.Table.length > 0) {
                 if (usertype !== "Sales User") {
                 } else {
-                  NotificationManager.success(response.data.Table[0].Message);
+                  store.addNotification({
+                    // title: "Success",
+                    message: response.data.Table[0].Message,
+                    type: "success", // 'default', 'success', 'info', 'warning','danger'
+                    container: "top-right", // where to position the notifications
+                    dismiss: {
+                      duration: appSettings.NotficationTime
+                    }
+                  });
+                  setTimeout(() => {
+                    self.SendMail("Create");
+                  }, 1000);
                 }
               }
             }
           }
         }
 
-        var Messagebody =
-          "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
-
-        self.SendMail("Create");
         // window.location.href = "quote-table";
       })
       .catch(error => {
         var temperror = error.response.data;
         var err = temperror.split(":");
 
-        NotificationManager.error(err[1].replace("}", ""));
+        store.addNotification({
+          // title: "Error",
+          message: err[1].replace("}", ""),
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       });
   }
 
   SendMail(action) {
-    
     let self = this;
     this.togglePreview();
 
@@ -4883,7 +5016,6 @@ class RateFinalizing extends Component {
     stringHtmlMain += stringHtmlEnd;
     stringHtmlMain = stringHtmlMain.replace("col-sm-6", "col-md-6");
     stringHtmlMain = stringHtmlMain.replace("col-sm-4", "col-md-4");
-    
 
     this.togglePreview();
 
@@ -4896,12 +5028,11 @@ class RateFinalizing extends Component {
     //   encryption(window.localStorage.getItem("userid"), "desc")
     // );
     // fd.append("SalesQuotePreviewDoc", this.state.sendFile);
-    var inputParameter={}
-    inputParameter.SalesQuoteType=this.state.containerLoadType;
-    inputParameter.SalesQuoteNo=self.state.SalesQuoteNo;
-    inputParameter.HtmlPdfInput=stringHtmlMain.replace(/"/g, "'");
+    var inputParameter = {};
+    inputParameter.SalesQuoteType = this.state.containerLoadType;
+    inputParameter.SalesQuoteNo = self.state.SalesQuoteNo;
+    inputParameter.HtmlPdfInput = stringHtmlMain.replace(/"/g, "'");
     inputParameter.SalesQuoteAction = action;
-
 
     axios({
       method: "post",
@@ -4910,10 +5041,19 @@ class RateFinalizing extends Component {
       headers: authHeader()
     })
       .then(function(response) {
+        debugger;
         if (response != null) {
           if (response.data != null) {
-            if (response.data.length > 0) {
-              NotificationManager.success(response.data[0].Result);
+            if (response.data) {
+              store.addNotification({
+                // title: "Success",
+                message: response.data,
+                type: "success", // 'default', 'success', 'info', 'warning'
+                container: "top-right", // where to position the notifications
+                dismiss: {
+                  duration: appSettings.NotficationTime
+                }
+              });
               self.props.history.push("quote-table");
             }
           }
@@ -5085,6 +5225,18 @@ class RateFinalizing extends Component {
             <input
               type="text"
               onChange={this.newMultiCBMHandleChange.bind(this, i)}
+              placeholder={"QTY"}
+              className="w-100"
+              name="Quantity"
+              value={el.Quantity || ""}
+            />
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="spe-equ">
+            <input
+              type="text"
+              onChange={this.newMultiCBMHandleChange.bind(this, i)}
               placeholder={"L (cm)"}
               className="w-100"
               name="length"
@@ -5157,7 +5309,6 @@ class RateFinalizing extends Component {
   }
 
   toggleRow(rateID, rowData) {
-    
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[rateID] = !this.state.cSelectedRow[rateID];
     this.setState({
@@ -5495,8 +5646,7 @@ class RateFinalizing extends Component {
   }
 
   onErrorImg(e) {
-    return (e.target.src =
-      appSettings.imageURL+"ATAFreight_console.png");
+    return (e.target.src = appSettings.imageURL + "ATAFreight_console.png");
   }
 
   HandleChangeConNew(name) {
@@ -5563,7 +5713,6 @@ class RateFinalizing extends Component {
   };
 
   HandleCurrencyChange(code) {
-    
     this.setState({
       currencyCode: code,
       iscurrencyChnage: true,
@@ -5632,15 +5781,28 @@ class RateFinalizing extends Component {
         self.setState({ rateDetails, rateSubDetails, newloding: false });
       })
       .catch(response => {
-        if(response.message)
-        {
-          NotificationManager.error(response.message);
+        if (response.message) {
+          store.addNotification({
+            // title: "Error",
+            message: response.message,
+            type: "danger", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
+        } else {
+          store.addNotification({
+            // title: "Error",
+            message: response.data,
+            type: "danger", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
         }
-        else
-        {
-          NotificationManager.error(response.data);
-        }
-        
+
         this.setState({ newloding: false });
       });
   }
@@ -5648,7 +5810,7 @@ class RateFinalizing extends Component {
   render() {
     var i = 0;
     var equipVal = "";
-    var tDate=moment(this.state.todayDate).format("L")
+    var tDate = moment(this.state.todayDate).format("L");
 
     if (this.state.selected.length > 0) {
     } else {
@@ -5681,8 +5843,10 @@ class RateFinalizing extends Component {
                 value={item.Amount}
                 type="checkbox"
                 name={"localCharge"}
-                checked={this.state.cSelectChackBox[item.ChargeID+index] === true}
-                onChange={this.HandleLocalSearchCharges.bind(this, item,index)}
+                checked={
+                  this.state.cSelectChackBox[item.ChargeID + index] === true
+                }
+                onChange={this.HandleLocalSearchCharges.bind(this, item, index)}
               />
               <label title={item.LineName} htmlFor={"local" + (index + 1)}>
                 {item.ChargeDesc}
@@ -5695,7 +5859,8 @@ class RateFinalizing extends Component {
                 alt={item.LineName}
                 onError={this.onErrorImg.bind(this)}
                 src={
-                  appSettings.imageURL+"OEAN_LINERS/" +
+                  appSettings.imageURL +
+                  "OEAN_LINERS/" +
                   item.LineName.replace(" ", "_") +
                   ".png"
                 }
@@ -5716,8 +5881,10 @@ class RateFinalizing extends Component {
                 value={item.Amount}
                 type="checkbox"
                 name={"localCharge"}
-                checked={this.state.cSelectChackBox[item.ChargeID+index] === true}
-                onChange={this.HandleLocalSearchCharges.bind(this, item,index)}
+                checked={
+                  this.state.cSelectChackBox[item.ChargeID + index] === true
+                }
+                onChange={this.HandleLocalSearchCharges.bind(this, item, index)}
               />
               <label title={item.LineName} htmlFor={"local" + (index + 1)}>
                 {item.ChargeDesc}
@@ -5730,7 +5897,8 @@ class RateFinalizing extends Component {
                 title={item.LineName}
                 onError={this.onErrorImg.bind(this)}
                 src={
-                  appSettings.imageURL+"AIR_LINERS/" +
+                  appSettings.imageURL +
+                  "AIR_LINERS/" +
                   item.LineName.replace(" ", "_") +
                   ".png"
                 }
@@ -5751,8 +5919,10 @@ class RateFinalizing extends Component {
                 value={item.Amount}
                 type="checkbox"
                 name={"localCharge"}
-                checked={this.state.cSelectChackBox[item.ChargeID+index] === true}
-                onChange={this.HandleLocalSearchCharges.bind(this, item,index)}
+                checked={
+                  this.state.cSelectChackBox[item.ChargeID + index] === true
+                }
+                onChange={this.HandleLocalSearchCharges.bind(this, item, index)}
               />
               <label title={item.LineName} htmlFor={"local" + (index + 1)}>
                 {item.ChargeDesc}
@@ -5764,9 +5934,7 @@ class RateFinalizing extends Component {
                 title={item.LineName}
                 alt={item.LineName}
                 onError={this.onErrorImg.bind(this)}
-                src={
-                  appSettings.imageURL+"ATAFreight_console.png"
-                }
+                src={appSettings.imageURL + "ATAFreight_console.png"}
               />
             </span>
             <span>
@@ -5798,8 +5966,10 @@ class RateFinalizing extends Component {
                 id={"Sur" + (index + 1)}
                 type="checkbox"
                 name={"surcharge"}
-                checked={this.state.cSelectChackBox[item.ChargeID+index] === true}
-                onChange={this.HandleLocalSearchCharges.bind(this, item,index)}
+                checked={
+                  this.state.cSelectChackBox[item.ChargeID + index] === true
+                }
+                onChange={this.HandleLocalSearchCharges.bind(this, item, index)}
               />
               <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
                 {item.ChargeDesc}
@@ -5812,7 +5982,8 @@ class RateFinalizing extends Component {
                 alt={item.LineName}
                 onError={this.onErrorImg.bind(this)}
                 src={
-                  appSettings.imageURL+"OEAN_LINERS/" +
+                  appSettings.imageURL +
+                  "OEAN_LINERS/" +
                   item.LineName.replace(" ", "_") +
                   ".png"
                 }
@@ -5832,8 +6003,10 @@ class RateFinalizing extends Component {
                 id={"Sur" + (index + 1)}
                 type="checkbox"
                 name={"surcharge"}
-                checked={this.state.cSelectChackBox[item.ChargeID+index] === true}
-                onChange={this.HandleLocalSearchCharges.bind(this, item,index)}
+                checked={
+                  this.state.cSelectChackBox[item.ChargeID + index] === true
+                }
+                onChange={this.HandleLocalSearchCharges.bind(this, item, index)}
               />
               <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
                 {item.ChargeDesc}
@@ -5845,7 +6018,8 @@ class RateFinalizing extends Component {
                 alt={item.LineName}
                 onError={this.onErrorImg.bind(this)}
                 src={
-                  appSettings.imageURL+"AIR_LINERS/" +
+                  appSettings.imageURL +
+                  "AIR_LINERS/" +
                   item.LineName.replace(" ", "_") +
                   ".png"
                 }
@@ -5865,8 +6039,10 @@ class RateFinalizing extends Component {
                 id={"Sur" + (index + 1)}
                 type="checkbox"
                 name={"surcharge"}
-                checked={this.state.cSelectChackBox[item.ChargeID+index] === true}
-                onChange={this.HandleLocalSearchCharges.bind(this, item,index)}
+                checked={
+                  this.state.cSelectChackBox[item.ChargeID + index] === true
+                }
+                onChange={this.HandleLocalSearchCharges.bind(this, item, index)}
               />
               <label title={item.LineName} htmlFor={"Sur" + (index + 1)}>
                 {item.ChargeDesc}
@@ -5878,9 +6054,7 @@ class RateFinalizing extends Component {
                 title={item.LineName}
                 alt={item.LineName}
                 onError={this.onErrorImg.bind(this)}
-                src={
-                  appSettings.imageURL+"ATAFreight_console.png"
-                }
+                src={appSettings.imageURL + "ATAFreight_console.png"}
               />
             </span>
             <span>
@@ -5930,6 +6104,7 @@ class RateFinalizing extends Component {
     }
     return (
       <React.Fragment>
+        <ReactNotification />
         <Headers parentCallback={this.callbackCurrencyFunction} />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -6109,11 +6284,13 @@ class RateFinalizing extends Component {
                                           this.state.containerLoadType === "FCL"
                                         ) {
                                           url =
-                                            appSettings.imageURL+"OEAN_LINERS/" +
+                                            appSettings.imageURL +
+                                            "OEAN_LINERS/" +
                                             lname;
                                         } else {
                                           url =
-                                            appSettings.imageURL+"ATAFreight_console.png";
+                                            appSettings.imageURL +
+                                            "ATAFreight_console.png";
                                         }
 
                                         return (
@@ -6190,7 +6367,8 @@ class RateFinalizing extends Component {
                                                 title={olname}
                                                 alt={olname}
                                                 src={
-                                                  appSettings.imageURL+"AIR_LINERS/" +
+                                                  appSettings.imageURL +
+                                                  "AIR_LINERS/" +
                                                   lname
                                                 }
                                                 onError={this.onErrorImg.bind(
@@ -6236,7 +6414,8 @@ class RateFinalizing extends Component {
                                               <img
                                                 title={olname}
                                                 src={
-                                                  appSettings.imageURL+"ATAFreight_console.png"
+                                                  appSettings.imageURL +
+                                                  "ATAFreight_console.png"
                                                 }
                                                 alt={olname}
                                               />
@@ -7112,7 +7291,7 @@ class RateFinalizing extends Component {
                               minRows={1}
                             />
                           ) : (
-                            <span>No Cargo Detials Avalabile</span>
+                            <span>No Cargo Details Avalabile</span>
                           )}
                         </div>
                       </div>
@@ -7404,7 +7583,7 @@ class RateFinalizing extends Component {
                         <div className="col-12 col-md-6">
                           <img
                             src={
-                              appSettings.imageURL+"ATAFreight_console.png"
+                              appSettings.imageURL + "ATAFreight_console.png"
                             }
                             alt="ATAFreight Console"
                           ></img>
@@ -7412,14 +7591,9 @@ class RateFinalizing extends Component {
                         <div className="col-12 col-md-6">
                           <div className="preview-date-num">
                             <p>
-                              Date :{" "}
-                              <span>
-                                
-                              {tDate}
-                                
-                              </span>
+                              Date : <span>{tDate}</span>
                             </p>
-                          <p>Sales Quote No. :{this.state.SalesQuoteNo}</p>
+                            <p>Sales Quote No. :{this.state.SalesQuoteNo}</p>
                           </div>
                         </div>
                       </div>
@@ -8242,7 +8416,6 @@ class RateFinalizing extends Component {
             </ModalBody>
           </Modal>
         </div>
-        <NotificationContainer leaveTimeout="3000" />
       </React.Fragment>
     );
   }

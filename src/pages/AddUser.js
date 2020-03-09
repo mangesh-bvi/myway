@@ -7,11 +7,9 @@ import { authHeader } from "../helpers/authHeader";
 import FileUpload from "./../assets/img/file.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import { encryption } from "../helpers/encryption";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 var string = "";
 class AddUser extends React.Component {
@@ -20,7 +18,7 @@ class AddUser extends React.Component {
     this.state = {
       loading: false,
       values: [],
-      selectCountry:[],
+      selectCountry: [],
       selectIsEnable: [
         { key: false, value: "False" },
         { key: true, value: "True" }
@@ -468,69 +466,68 @@ class AddUser extends React.Component {
         UserID: userid
       },
       headers: authHeader()
-    }).then(function(response) {
-      
-      let MOD = [];
-      let arr = [];
-      let arrDoc = [];
-      let arrAcc = [];
-      arr = self.state.modeoftrans.split(",");
-      arrDoc = self.state.Documents;
-      arrAcc = self.state.AccessIDs.slice(0, -1).split(",");
-      for (const [index, value] of response.data.Table3.entries()) {
-        if (arr.includes(value.ID)) {
-          MOD.push({ ID: value.ID, Value: value.Value, IsSelected: 1 });
-        } else {
-          MOD.push({ ID: value.ID, Value: value.Value, IsSelected: 0 });
+    })
+      .then(function(response) {
+        let MOD = [];
+        let arr = [];
+        let arrDoc = [];
+        let arrAcc = [];
+        arr = self.state.modeoftrans.split(",");
+        arrDoc = self.state.Documents;
+        arrAcc = self.state.AccessIDs.slice(0, -1).split(",");
+        for (const [index, value] of response.data.Table3.entries()) {
+          if (arr.includes(value.ID)) {
+            MOD.push({ ID: value.ID, Value: value.Value, IsSelected: 1 });
+          } else {
+            MOD.push({ ID: value.ID, Value: value.Value, IsSelected: 0 });
+          }
         }
-      }
-      for (const [index, value] of response.data.Table5.entries()) {
-        if (arrDoc.includes(value.DocumentID)) {
-          self.state.hideDocument.push({
-            DocumentID: value.DocumentID,
-            DocumentName: value.DocumentName,
-            IsSelected: 1
-          });
-        } else {
-          self.state.hideDocument.push({
-            DocumentID: value.DocumentID,
-            DocumentName: value.DocumentName,
-            IsSelected: 0
-          });
+        for (const [index, value] of response.data.Table5.entries()) {
+          if (arrDoc.includes(value.DocumentID)) {
+            self.state.hideDocument.push({
+              DocumentID: value.DocumentID,
+              DocumentName: value.DocumentName,
+              IsSelected: 1
+            });
+          } else {
+            self.state.hideDocument.push({
+              DocumentID: value.DocumentID,
+              DocumentName: value.DocumentName,
+              IsSelected: 0
+            });
+          }
         }
-      }
 
-      for (const [index, value] of response.data.Table7.entries()) {
-        if (arrAcc.includes(value.id.toString())) {
-          self.state.accessrights.push({
-            id: value.id,
-            Value: value.Value,
-            IsSelected: 1
-          });
-        } else {
-          self.state.accessrights.push({
-            id: value.id,
-            Value: value.Value,
-            IsSelected: 0
-          });
+        for (const [index, value] of response.data.Table7.entries()) {
+          if (arrAcc.includes(value.id.toString())) {
+            self.state.accessrights.push({
+              id: value.id,
+              Value: value.Value,
+              IsSelected: 1
+            });
+          } else {
+            self.state.accessrights.push({
+              id: value.id,
+              Value: value.Value,
+              IsSelected: 0
+            });
+          }
         }
-      }
 
-      self.setState({
-        selectCountry: response.data.Table,
-        selectUserType: response.data.Table1,
-        selectImpExp: response.data.Table2,
-        selectCompany: response.data.Table4,
-        chkModeOfTrans: MOD,
-        hideDocument: self.state.hideDocument,
-        miscelleneous: response.data.Table6,
-        accessrights: self.state.accessrights
+        self.setState({
+          selectCountry: response.data.Table,
+          selectUserType: response.data.Table1,
+          selectImpExp: response.data.Table2,
+          selectCompany: response.data.Table4,
+          chkModeOfTrans: MOD,
+          hideDocument: self.state.hideDocument,
+          miscelleneous: response.data.Table6,
+          accessrights: self.state.accessrights
+        });
+      })
+      .catch(response => {
+        console.log(response);
       });
-    }).catch(response=>{
-      console.log(response)
-    });
-
-    
   }
   addClick() {
     this.setState(prevState => ({ values: [...prevState.values, ""] }));
@@ -955,14 +952,29 @@ class AddUser extends React.Component {
         headers: authHeader()
       })
         .then(function(response) {
-          NotificationManager.success(response.data[0].Message);
+          store.addNotification({
+            // title: "Success",
+            message: response.data[0].Message,
+            type: "success", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
           setTimeout(function() {
             window.location.href = "/add-user";
-          }, 1000);
+          }, appSettings.NotficationTime);
         })
         .catch(error => {
-          NotificationManager.error(error.response.data.split("'")[1]);
-          console.log(error.response);
+          store.addNotification({
+            // title: "Error",
+            message: error.response.data.split("'")[1],
+            type: "danger", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
         });
     } else {
       this.setState({ settoaste: true, loading: false });
@@ -1067,15 +1079,30 @@ class AddUser extends React.Component {
         headers: authHeader()
       })
         .then(function(response) {
-          NotificationManager.success(response.data[0].Result);
+          store.addNotification({
+            // title: "Success",
+            message: response.data[0].Result,
+            type: "success", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
 
           setTimeout(function() {
             window.location.href = "/view-user";
-          }, 1000);
+          }, appSettings.NotficationTime);
         })
         .catch(error => {
-          NotificationManager.error(error.response.data.split("'")[1]);
-          console.log(error.response);
+          store.addNotification({
+            // title: "Error",
+            message: error.response.data.split("'")[1],
+            type: "danger", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
         });
     } else {
       this.setState({ settoaste: true, loading: true });
@@ -1190,13 +1217,13 @@ class AddUser extends React.Component {
     }
     return (
       <div>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
             <AdminSideMenu />
           </div>
           <div className="cls-rt">
-             <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
             <div>
               <div className="title-sect title-border title-secpad">
                 {(() => {
@@ -1307,9 +1334,10 @@ class AddUser extends React.Component {
                       name={"country"}
                       value={this.state.fields["country"]}
                     >
-                      <option value="select" selected>select</option>
+                      <option value="select" selected>
+                        select
+                      </option>
                       {this.state.selectCountry.map(team => (
-                        
                         <option key={team.SUCountry} value={team.SUCountry}>
                           {team.CountryName}
                         </option>

@@ -12,10 +12,9 @@ import Autocomplete from "react-autocomplete";
 import Download from "./../assets/img/csv.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import { encryption } from "../helpers/encryption";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 import Comman from "../helpers/Comman";
 
 class RateFinalizingStillBooking extends Component {
@@ -639,14 +638,29 @@ class RateFinalizingStillBooking extends Component {
         headers: authHeader(),
         data: paramData
       }).then(function(response) {
-        NotificationManager.success(response.data.Table[0].Message);
+        store.addNotification({
+          // title: "Success",
+          message: response.data.Table[0].Message,
+          type: "success", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
         self.setState({ loding: false });
         self.HandleFileUpload();
       });
     } else {
-      NotificationManager.error(
-        "please select atleast one Customer has a Consinee,Shipper,Notify,Buyer"
-      );
+      store.addNotification({
+        // title: "Error",
+        message:
+          "please select atleast one Customer has a Consinee,Shipper,Notify,Buyer",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
   ////Handle Booking Document Upload
@@ -668,8 +682,18 @@ class RateFinalizingStillBooking extends Component {
         data: formdata,
         headers: authHeader()
       }).then(function(response) {
-        NotificationManager.success(response.data.Table[0].Result);
-        self.props.history.push("booking-table");
+        store.addNotification({
+          // title: "Success",
+          message: response.data.Table[0].Result,
+          type: "success", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
+        setTimeout(() => {
+          self.props.history.push("booking-table");
+        }, appSettings.NotficationTime);
       });
     } else {
       self.props.history.push("booking-table");
@@ -706,7 +730,15 @@ class RateFinalizingStillBooking extends Component {
       f_data.push(objFile);
       this.setState({ FileData: f_data });
     } else {
-      NotificationManager.error("Please select only PDF File");
+      store.addNotification({
+        // title: "Error",
+        message: "Please select only PDF File",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       return false;
     }
   };
@@ -726,7 +758,15 @@ class RateFinalizingStillBooking extends Component {
           isConshinee: !this.state.isConshinee
         });
       } else {
-        NotificationManager.error("Only 1 is check has customer ");
+        store.addNotification({
+          // title: "Error",
+          message: "Only 1 is check has customer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     } else if (type === "Shipper") {
       if (
@@ -738,7 +778,15 @@ class RateFinalizingStillBooking extends Component {
           isShipper: !this.state.isShipper
         });
       } else {
-        NotificationManager.error("Only 1 is check has customer ");
+        store.addNotification({
+          // title: "Error",
+          message: "Only 1 is check has customer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     } else if (type === "Buyer") {
       if (
@@ -748,7 +796,15 @@ class RateFinalizingStillBooking extends Component {
       ) {
         this.setState({ isBuyer: !this.state.isBuyer });
       } else {
-        NotificationManager.error("Only 1 is check has customer ");
+        store.addNotification({
+          // title: "Error",
+          message: "Only 1 is check has customer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     } else if (type === "Notify") {
       if (
@@ -760,7 +816,15 @@ class RateFinalizingStillBooking extends Component {
           isNotify: !this.state.isNotify
         });
       } else {
-        NotificationManager.error("Only 1 is check has customer ");
+        store.addNotification({
+          // title: "Error",
+          message: "Only 1 is check has customer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     } else {
     }
@@ -938,7 +1002,15 @@ class RateFinalizingStillBooking extends Component {
 
       headers: authHeader()
     }).then(function(response) {
-      NotificationManager.success(response.data.Table[0].Message);
+      store.addNotification({
+        // title: "Success",
+        message: response.data.Table[0].Message,
+        type: "success", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       self.setState({ loding: false });
       setTimeout(() => {
         self.HandleFileUpload();
@@ -1335,7 +1407,15 @@ class RateFinalizingStillBooking extends Component {
   //Handle booking Document download
   HandleBookingDocDownload(e, filePath) {
     if (filePath === undefined) {
-      NotificationManager.error("Invalid File Path");
+      store.addNotification({
+        // title: "Error",
+        message: "Invalid File Path",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       return false;
     } else {
       var FileName = filePath.substring(filePath.lastIndexOf("/") + 1);
@@ -1517,7 +1597,7 @@ class RateFinalizingStillBooking extends Component {
       }
     });
   }
- 
+
   ////Handle Submit Cargo details
   SubmitCargoDetails(e) {
     var data = this.state.multiCBM;
@@ -1544,7 +1624,6 @@ class RateFinalizingStillBooking extends Component {
   }
 
   toggleEdit(e) {
-    
     if (!this.state.modalEdit) {
       var multiCBM = this.state.multiCargo;
       this.setState({ multiCBM });
@@ -1573,7 +1652,15 @@ class RateFinalizingStillBooking extends Component {
         data: documentData,
         headers: authHeader()
       }).then(function(response) {
-        NotificationManager.success(response.data.Table[0].Result);
+        store.addNotification({
+          // title: "Success",
+          message: response.data.Table[0].Result,
+          type: "success", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
         if (
           response.data.Table[0].Result === "Docuement deleted successfully"
         ) {
@@ -1613,8 +1700,7 @@ class RateFinalizingStillBooking extends Component {
   }
 
   onErrorImg(e) {
-    return (e.target.src =
-      appSettings.imageURL+"ATAFreight_console.png");
+    return (e.target.src = appSettings.imageURL + "ATAFreight_console.png");
   }
 
   callbackFunction = callBackObj => {
@@ -1642,6 +1728,7 @@ class RateFinalizingStillBooking extends Component {
     }
     return (
       <React.Fragment>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -1717,7 +1804,8 @@ class RateFinalizingStillBooking extends Component {
                                                 this
                                               )}
                                               src={
-                                                appSettings.imageURL+"OEAN_LINERS/" +
+                                                appSettings.imageURL +
+                                                "OEAN_LINERS/" +
                                                 lname
                                               }
                                             />
@@ -1738,7 +1826,8 @@ class RateFinalizingStillBooking extends Component {
                                                 this
                                               )}
                                               src={
-                                                appSettings.imageURL+"AIR_LINERS/" +
+                                                appSettings.imageURL +
+                                                "AIR_LINERS/" +
                                                 lname
                                               }
                                             />
@@ -1755,7 +1844,8 @@ class RateFinalizingStillBooking extends Component {
                                                 this
                                               )}
                                               src={
-                                                appSettings.imageURL+"ATAFreight_console.png"
+                                                appSettings.imageURL +
+                                                "ATAFreight_console.png"
                                               }
                                               alt={olname}
                                             />
@@ -2891,7 +2981,7 @@ class RateFinalizingStillBooking extends Component {
             )}{" "}
           </div>
         </div>
-        <NotificationContainer leaveTimeout="3000" />
+
         {/* -------------------------------------Edit Modal----------------------------- */}
         <Modal
           className="delete-popup pol-pod-popup large-popup"

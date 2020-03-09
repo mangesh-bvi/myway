@@ -8,18 +8,16 @@ import { Collapse } from "react-bootstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
 import { encryption } from "../helpers/encryption";
-import Moment from "react-moment";
 import ATA from "./../assets/img/ATAFreight_console.png";
 import Download from "./../assets/img/csv.png";
 import Delete from "./../assets/img/red-delete-icon.png";
 import PDF from "./../assets/img/pdf.png";
 import moment from "moment";
+
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 class RateFinalizingStill extends Component {
   constructor(props) {
@@ -160,7 +158,6 @@ class RateFinalizingStill extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        console.log(response.data.Table);
         var RateDetails = response.data.Table1;
         var SubRateDetails = response.data.Table2;
         var multiCBM = response.data.Table3;
@@ -314,6 +311,7 @@ class RateFinalizingStill extends Component {
       })
       .catch(error => {
         console.log(error.response);
+        self.setState({ loding: false });
       });
   }
 
@@ -353,7 +351,7 @@ class RateFinalizingStill extends Component {
     debugger;
     let self = this;
     // self.togglePreview();
-    
+
     var stringHtmlMain = "";
 
     stringHtmlMain =
@@ -364,7 +362,10 @@ class RateFinalizingStill extends Component {
     stringHtmlMain += stringHtmlEnd;
     stringHtmlMain = stringHtmlMain.replace("col-sm-6", "col-md-6");
     stringHtmlMain = stringHtmlMain.replace("col-sm-4", "col-md-4");
-    stringHtmlMain = stringHtmlMain.replace("alt='ATAFreight Console'>", "alt='ATAFreight Console'></img>");
+    stringHtmlMain = stringHtmlMain.replace(
+      "alt='ATAFreight Console'>",
+      "alt='ATAFreight Console'></img>"
+    );
 
     // self.togglePreview();
 
@@ -373,7 +374,6 @@ class RateFinalizingStill extends Component {
     inputParameter.SalesQuoteNo = this.state.QuoteNumber;
     inputParameter.HtmlPdfInput = stringHtmlMain.replace(/"/g, "'");
     inputParameter.SalesQuoteAction = action;
-    
 
     axios({
       method: "post",
@@ -382,11 +382,24 @@ class RateFinalizingStill extends Component {
       headers: authHeader()
     })
       .then(function(response) {
+        debugger;
         if (response != null) {
           if (response.data != null) {
             if (response.data.length > 0) {
-              NotificationManager.success(response.data[0].Result);
-              self.props.history.push("quote-table");
+              store.addNotification({
+                // title: "Success",
+                message: response.data,
+                type: "success", // 'default', 'success', 'info', 'warning','danger'
+                container: "top-right", // where to position the notifications
+                dismiss: {
+                  duration: appSettings.NotficationTime
+                }
+              });
+              self.setState({ btnloding: false });
+              self.setState({ rbtnloding: false });
+              setTimeout(() => {
+                self.props.history.push("quote-table");
+              }, appSettings.NotficationTime + 1000);
             }
           }
         }
@@ -394,10 +407,12 @@ class RateFinalizingStill extends Component {
       .catch(error => {
         var temperror = error.response.data;
         // var err = temperror.split(":");
+        self.setState({ btnloding: false });
+        self.setState({ rbtnloding: false });
         self.props.history.push("quote-table");
       });
   }
-
+  ////sales quote Accept
   AcceptQuotes() {
     this.setState({ btnloding: true });
 
@@ -427,8 +442,15 @@ class RateFinalizingStill extends Component {
           if (response.data != null) {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
-                NotificationManager.success(response.data.Table[0].Message);
-                self.setState({ btnloding: false });
+                store.addNotification({
+                  // title: "Success",
+                  message: response.data.Table[0].Message,
+                  type: "success", // 'default', 'success', 'info', 'warning','danger'
+                  container: "top-right", // where to position the notifications
+                  dismiss: {
+                    duration: appSettings.NotficationTime
+                  }
+                });
                 self.toggleAcceptModal();
                 self.SendMail("Approve");
                 // setTimeout(function() {
@@ -442,11 +464,7 @@ class RateFinalizingStill extends Component {
         var Messagebody =
           "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
       })
-      .catch(error => {
-        // var temperror = error.response.data;
-        // var err = temperror.split(":");
-        // NotificationManager.error(err[1].replace("}", ""));
-      });
+      .catch(error => {});
   }
 
   RejectQuotes() {
@@ -480,8 +498,15 @@ class RateFinalizingStill extends Component {
             if (response.data != null) {
               if (response.data.Table != null) {
                 if (response.data.Table.length > 0) {
-                  self.setState({ rbtnloding: false });
-                  NotificationManager.success(response.data.Table[0].Message);
+                  store.addNotification({
+                    // title: "Success",
+                    message: response.data.Table[0].Message,
+                    type: "success", // 'default', 'success', 'info', 'warning','danger'
+                    container: "top-right", // where to position the notifications
+                    dismiss: {
+                      duration: appSettings.NotficationTime
+                    }
+                  });
                   self.toggleRejectModal();
                   var Messagebody =
                     "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent has been rejected</td></tr></table></body></html>";
@@ -506,57 +531,6 @@ class RateFinalizingStill extends Component {
       });
     }
   }
-
-  // SendMail(SalesQuoteNumber, Messagebody) {
-  //   
-  //   let self = this;
-  //   this.togglePreview();
-
-  //   var stringHtmlMain =
-  //     "<!DOCTYPE html><html><head><style>body {font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;}.row {display: flex;flex-wrap: wrap;}.col-12 {flex: 0 0 100%;max-width: 100%;}.col-md-6 {flex: 0 0 50%;max-width: 50%;}.col-md-4 {flex: 0 0 33.333333%;max-width: 33.333333%;}.popupbox .modal-body {background-color: #f1f2f2;padding: 20px;position: relative;border-radius: 0;}.close {position: absolute;right: -8px;top: -12px;color: #333;font-weight: 400;background: #fff !important;opacity: 1 !important;border-radius: 50%;width: 25px;font-size: 21px;font-weight: 700;}.logohheader {background: #fff;margin-bottom: 20px;padding: 5px;width: 100%;}.logohheader img {width: 200px;}.preview-date-num {padding: 0 20px;}.preview-date-num p {font-size: 14px;font-weight: 600;color: #8f8f8f;margin: 5px 0;}.preview-date-num p span {color: #333;}.firstbox {background: #fff;padding: 20px;margin-bottom: 20px;}.firstbox label {display: block;color: #8f8f8f;font-weight: 600;margin-bottom: 5px;font-size: 14px;}.firstbox label span {color: #333;}.thirdbox {background: #fff;margin-bottom: 20px;}.thirdbox h3 {font-size: 18px;font-weight: bold;text-align: center;padding: 20px 20px 0;margin-bottom: 15px;color: #333;background: transparent;}.thirdbox .table-responsive {display: table;}.table-responsive {display: block;width: 100%;overflow-x: auto;-webkit-overflow-scrolling: touch;}.table {width: 100%;font-size: 14px;width: 100%;border-spacing: inherit;margin-bottom: 1rem;color: #212529;}.thirdbox table thead {background: #cbcbcb;font-size: 12px;}.thirdbox table tbody {font-size: 12px;}table thead th {vertical-align: bottom;border-bottom: 2px solid #dee2e6;text-align: left;}.table td,.table th {padding: .75rem;vertical-align: top;}table tbody tr:last-child {border-bottom: 0;}table td {color: #696969;background-color: #fff;padding: 12px;}.secondbox {background: #fff;padding: 20px;margin-bottom: 20px;}.secondbox h3 {font-size: 18px;margin: 0;font-weight: bold;padding: 0;margin-bottom: 15px;text-align: center;background: transparent;color: #333;}hr {margin-top: 1rem;margin-bottom: 1rem;border: 0;border-top: 1px solid rgba(0, 0, 0, .1);}table td {color: #696969;background-color: #fff;font-weight: 600;padding: 12px;font-size: 14px;}.table td,.table th {vertical-align: top;}.secondbox label {display: block;color: #8f8f8f;margin-bottom: 5px;font-weight: 600;font-size: 14px;}.secondbox label span {color: #333;}.mb-0{margin-bottom:0;}.txt-right {text-align:right;}</style></head><body> <div class='popupbox'>";
-  //   var stringHtmlBody = document.getElementById("printdiv").innerHTML;
-  //   stringHtmlMain += stringHtmlBody;
-  //   var stringHtmlEnd = "</div></body></html>";
-  //   stringHtmlMain += stringHtmlEnd;
-  //   stringHtmlMain = stringHtmlMain.replace("col-sm-6", "col-md-6");
-  //   stringHtmlMain = stringHtmlMain.replace("col-sm-4", "col-md-4");
-
-  //   this.togglePreview();
-
-  //   var inputParameter = {};
-  //   inputParameter.SalesQuoteType = this.state.containerLoadType;
-  //   inputParameter.SalesQuoteNo = this.state.SaleQuoteID;
-  //   inputParameter.HtmlPdfInput = stringHtmlMain;
-  //   axios({
-  //     method: "post",
-  //     url: `${appSettings.APIURL}/SendEmailWithPDF`,
-  //     data: {
-  //       CustomerID: 0,
-  //       SalesPersonID: 0,
-  //       SalesQuoteNumber: SalesQuoteNumber,
-  //       Body: Messagebody,
-  //       MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
-  //     },
-  //     headers: authHeader()
-  //   })
-  //     .then(function(response) {
-  //       if (response != null) {
-  //         if (response.data != null) {
-  //           if (response.data.length > 0) {
-  //             NotificationManager.success(response.data[0].Result);
-  //             self.props.history.push("quote-table");
-  //           }
-  //         }
-  //       }
-  //     })
-  //     .catch(error => {
-  //       var temperror = error.response.data;
-
-  //       // var err = temperror.split(":");
-
-  //       // NotificationManager.error(err[1].replace("}", ""));
-  //     });
-  // }
 
   //// start dynamic element for LCL-AIR-LTL
 
@@ -821,12 +795,20 @@ class RateFinalizingStill extends Component {
   }
 
   onDocumentSaleQuoteHandler = () => {
-    
     const docData = new FormData();
     var docName = this.state.selectedFileName;
 
     if (docName == "") {
-      NotificationManager.error("Select File");
+      store.addNotification({
+        // title: "Success",
+        message: "Select File",
+        type: "success", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
+
       return false;
     }
 
@@ -847,10 +829,26 @@ class RateFinalizingStill extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        NotificationManager.success(response.data.Table[0].Result);
+        store.addNotification({
+          // title: "Success",
+          message: response.data.Table[0].Result,
+          type: "success", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       })
       .catch(error => {
-        NotificationManager.error(error.response.data.split("'")[1]);
+        store.addNotification({
+          // title: "Success",
+          message: error.response.data.split("'")[1],
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       });
 
     var qData = this.props.location.state;
@@ -878,7 +876,15 @@ class RateFinalizingStill extends Component {
         }
       })
       .catch(error => {
-        NotificationManager.error(error.response.data.split("'")[1]);
+        store.addNotification({
+          // title: "Success",
+          message: error.response.data.split("'")[1],
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
         console.log(error.response);
       });
   };
@@ -1328,7 +1334,15 @@ class RateFinalizingStill extends Component {
       data: documentData,
       headers: authHeader()
     }).then(function(response) {
-      NotificationManager.success(response.data.Table[0].Result);
+      store.addNotification({
+        // title: "Success",
+        message: response.data.Table[0].Result,
+        type: "success", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
 
       setTimeout(() => {
         self.componentDidMount();
@@ -1355,12 +1369,11 @@ class RateFinalizingStill extends Component {
   }
 
   onErrorImg(e) {
-    return (e.target.src =appSettings.imageURL+"ATAFreight_console.png");
+    return (e.target.src = appSettings.imageURL + "ATAFreight_console.png");
   }
 
   render() {
-
-    var tDate=moment(this.state.todayDate).format("L")
+    var tDate = moment(this.state.todayDate).format("L");
     let className = "butn m-0";
     if (this.state.showContent == true) {
       className = "butn cancel-butn m-0";
@@ -1382,6 +1395,7 @@ class RateFinalizingStill extends Component {
     }
     return (
       <React.Fragment>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -2419,7 +2433,7 @@ class RateFinalizingStill extends Component {
                         Date :{" "}
                         <span>
                           {/* <Moment format="DD-MMM-YYYY"> */}
-                            {tDate}
+                          {tDate}
                           {/* </Moment> */}
                         </span>
                       </p>
@@ -2876,10 +2890,7 @@ class RateFinalizingStill extends Component {
                   </div>
                   <div className="col-12 col-md-6 preview-date-num">
                     <p>
-                      Date :{" "}
-                      <span>
-                      {tDate}
-                      </span>
+                      Date : <span>{tDate}</span>
                     </p>
                     <p>
                       Sales Quote No. :<span>{this.state.SaleQuoteID}</span>
@@ -3317,7 +3328,6 @@ class RateFinalizingStill extends Component {
             </div>
           </div>
         </div>
-        <NotificationContainer leaveTimeout="3000" />
       </React.Fragment>
     );
   }

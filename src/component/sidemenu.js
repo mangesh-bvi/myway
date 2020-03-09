@@ -29,11 +29,9 @@ import { Modal, ModalBody } from "reactstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 class SideMenu extends Component {
   constructor(props) {
@@ -178,7 +176,16 @@ class SideMenu extends Component {
           self.setState({
             profileImgURL: response.data.Table[0].UserLogo
           });
-          NotificationManager.success(response.data.Table[0].Result);
+
+          store.addNotification({
+            // title: "Success",
+            message: response.data.Table[0].Result,
+            type: "success", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
           window.localStorage.setItem(
             "UserLogo",
             encryption(response.data.Table[0].UserLogo, "enc")
@@ -188,14 +195,23 @@ class SideMenu extends Component {
           self.toggleProfile();
           setTimeout(() => {
             window.location.reload(false);
-          }, 1000);
+          }, appSettings.NotficationTime);
 
           self.forceUpdate();
         }
       })
       .catch(error => {
         self.setState({ loading: false });
-        NotificationManager.error(error.response.data);
+
+        store.addNotification({
+          // title: "Error",
+          message: error.response.data,
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       });
   }
 
@@ -208,7 +224,15 @@ class SideMenu extends Component {
       .toLowerCase();
 
     if (t != "jpeg" && t != "jpg" && t != "png" && t != "gif") {
-      NotificationManager.error("Please select valid profile image");
+      store.addNotification({
+        // title: "Error",
+        message: "Please select valid profile image",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     } else {
       var reader = new FileReader();
 
@@ -279,7 +303,7 @@ class SideMenu extends Component {
         className="d-flex flex-column justify-content-between h-100 sidemenubar position-relative"
         id="sidemenubar"
       >
-        <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
+        <ReactNotification />
         <div className="side-arrow" onClick={this.sidebarCollapse.bind(this)}>
           <img src={sideArrow} alt="side arrow" />
         </div>

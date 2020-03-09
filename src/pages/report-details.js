@@ -6,13 +6,11 @@ import "react-table/react-table.css";
 import "../styles/custom.css";
 import Headers from "../component/header";
 import SideMenu from "../component/sidemenu";
-
 import ReactTable from "react-table";
 import { encryption } from "../helpers/encryption";
 import makeAnimated from "react-select/animated";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
-
 export const ExportCSV = ({ csvData, fileName }) => {
   
   const fileType =

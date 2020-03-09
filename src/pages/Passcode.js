@@ -3,11 +3,9 @@ import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
 import { encryption } from "../helpers/encryption";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 class Passcode extends React.Component {
   constructor(props) {
@@ -25,21 +23,29 @@ class Passcode extends React.Component {
       [e.target.name]: e.target.value
     });
   }
-  handleSubmit(e) {   
-
-    var username = encryption(window.localStorage.getItem("email"),"desc");
-    var passcode=encryption(window.localStorage.getItem("passcode"),"desc");
+  handleSubmit(e) {
+    var username = encryption(window.localStorage.getItem("email"), "desc");
+    var passcode = encryption(window.localStorage.getItem("passcode"), "desc");
 
     this.setState({ submitted: true });
     if (username !== "" && passcode !== "") {
       ValidatePassCode(username, passcode);
-    } else {      
-      NotificationManager.error("error");
+    } else {
+      store.addNotification({
+        // title: "Error",
+        message: "Error",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
   render() {
     return (
       <section className="login-between">
+        <ReactNotification />
         <div className="login-sect">
           <div className="logo">
             <img src={Logo} alt="logo" />
@@ -71,14 +77,12 @@ class Passcode extends React.Component {
             </div>
           </div>
         </div>
-        <NotificationContainer/>
       </section>
     );
   }
 }
 
 function ValidatePassCode(emailaddress, passcode) {
-  
   const requestOptions = {
     method: "POST",
     headers: authHeader("no"),
@@ -94,7 +98,7 @@ function ValidatePassCode(emailaddress, passcode) {
     });
 }
 
-function handleResponse(response) { 
+function handleResponse(response) {
   console.log(response);
   return response.text().then(text => {
     const data = text && JSON.parse(text);

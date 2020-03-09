@@ -3,11 +3,9 @@ import { authHeader } from "../helpers/authHeader";
 import Logo from "./../assets/img/logo.png";
 import appSettings from "../helpers/appSetting";
 import { encryption } from "../helpers/encryption";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 class ForgotPassword extends React.Component {
   constructor(props) {
@@ -18,8 +16,8 @@ class ForgotPassword extends React.Component {
     this.HandleChange = this.HandleChange.bind(this);
     this.HandleSubmit = this.HandleSubmit.bind(this);
   }
-////Handle Back To Login Page 
-  HandleCancel(){
+  ////Handle Back To Login Page
+  HandleCancel() {
     this.props.history.push("/");
   }
 
@@ -29,20 +27,29 @@ class ForgotPassword extends React.Component {
       [e.target.name]: e.target.value
     });
   }
-  
-  ////Handle Submit button Click  
+
+  ////Handle Submit button Click
   HandleSubmit(e) {
     this.setState({ submitted: true });
     const { email } = this.state;
     if (email !== "") {
       ChangePasswordCheck(email);
     } else {
-      NotificationManager.error('Please enter Email Id');      
+      store.addNotification({
+        // title: "Error",
+        message: "Please enter Email Id",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
   render() {
     return (
       <section className="login-between">
+        <ReactNotification />
         <div className="login-sect">
           <div className="logo">
             <img src={Logo} alt="logo" />
@@ -70,16 +77,15 @@ class ForgotPassword extends React.Component {
                   Submit
                 </button>
                 <button
-                      className="butn cancel-butn"
-                      onClick={this.HandleCancel.bind(this)}
-                    >
-                      Cancel
-                    </button>
+                  className="butn cancel-butn"
+                  onClick={this.HandleCancel.bind(this)}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
         </div>
-         <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
       </section>
     );
   }
@@ -96,23 +102,31 @@ function ChangePasswordCheck(email) {
   };
   return fetch(`${appSettings.APIURL}forgotpassword`, requestOptions)
     .then(handleResponse)
-    .catch(error => {
-    });
-    
+    .catch(error => {});
 }
 
-function handleResponse(response) {  
-  return response.text().then(text => {    
-    if(text.includes('No Record Found') === true)
-    {
-      NotificationManager.error('Please enter valid Email Id');      
+function handleResponse(response) {
+  return response.text().then(text => {
+    if (text.includes("No Record Found") === true) {
+      store.addNotification({
+        // title: "Error",
+        message: "Please enter valid Email Id",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       return false;
     }
     const data = text && JSON.parse(text);
     if (!response.ok) {
     } else {
-      window.localStorage.setItem("email",encryption(data[0].EmailID,"enc"));
-      window.localStorage.setItem("passcode",encryption(data[0].PassCode,"enc"));
+      window.localStorage.setItem("email", encryption(data[0].EmailID, "enc"));
+      window.localStorage.setItem(
+        "passcode",
+        encryption(data[0].PassCode, "enc")
+      );
       console.log(data[0].PassCode);
       window.location.href = "./passcode";
     }

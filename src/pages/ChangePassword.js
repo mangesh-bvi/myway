@@ -3,11 +3,9 @@ import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Logo from "./../assets/img/logo.png";
 import { encryption } from "../helpers/encryption";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 class ChangePassword extends React.Component {
   constructor(props) {
@@ -20,8 +18,8 @@ class ChangePassword extends React.Component {
     this.HandleChange = this.HandleChange.bind(this);
     this.HandleSubmit = this.HandleSubmit.bind(this);
   }
-  componentDidMount() { 
-    if (encryption(window.localStorage.getItem("username"),"desc") == null) {
+  componentDidMount() {
+    if (encryption(window.localStorage.getItem("username"), "desc") == null) {
       window.location.href = "./";
     }
   }
@@ -31,24 +29,41 @@ class ChangePassword extends React.Component {
       [e.target.name]: e.target.value
     });
   }
-////  Handle Submit button click  
-  HandleSubmit(e) {      
-    var oldpwd =encryption(window.localStorage.getItem("password"),"desc");
+  ////  Handle Submit button click
+  HandleSubmit(e) {
+    var oldpwd = encryption(window.localStorage.getItem("password"), "desc");
     this.setState({ submitted: true });
     const { oldpassword, password, newpassword } = this.state;
     if (oldpassword !== oldpwd) {
-      NotificationManager.error("Please enter correct old password");
+      store.addNotification({
+        // title: "Error",
+        message: "Please enter correct old password",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       return false;
     }
     if (password === newpassword) {
-      ChangePasswordCheck(oldpwd, newpassword);    
+      ChangePasswordCheck(oldpwd, newpassword);
     } else {
-      NotificationManager.error("Confirmed password is not matched");
+      store.addNotification({
+        // title: "Error",
+        message: "Confirmed password is not matched",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
   render() {
     return (
       <section className="login-between">
+        <ReactNotification />
         <div className="login-sect">
           <div className="logo">
             <img src={Logo} alt="logo" />
@@ -99,40 +114,56 @@ class ChangePassword extends React.Component {
             </div>
           </div>
         </div>
-        <NotificationContainer/>
+        
       </section>
     );
   }
 }
-////Handle Chagen Password Check 
-function ChangePasswordCheck(password, newpassword) {  
+////Handle Chagen Password Check
+function ChangePasswordCheck(password, newpassword) {
   const requestOptions = {
     method: "POST",
     headers: authHeader(),
     body: JSON.stringify({
-      UserName:encryption(window.localStorage.getItem("username"),"desc"),
+      UserName: encryption(window.localStorage.getItem("username"), "desc"),
       OldPassword: password,
       NewPassword: newpassword,
-      PrivateIPAddress:"",
+      PrivateIPAddress: "",
       PublicIPAddress: ""
     })
   };
   return fetch(`${appSettings.APIURL}/ChangeUserPassword`, requestOptions)
-    .then(handleResponse      
-      )
-    .catch(error => {
-       
-    });
+    .then(handleResponse)
+    .catch(error => {});
 }
 //// Handle Response
 function handleResponse(response) {
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
-      NotificationManager.error("Internal Server error. Please contact administrator.");
+      store.addNotification({
+        // title: "Error",
+        message: "Internal Server error. Please contact administrator.",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     } else {
-      NotificationManager.success("Password change successfully");
-      window.location.href = "./";
+      
+      store.addNotification({
+        // title: "Error",
+        message: "Password change successfully",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
+      setTimeout(() => {
+        window.location.href = "./";
+      }, appSettings.NotficationTime);
     }
     return data;
   });

@@ -6,11 +6,9 @@ import { Button, Modal, ModalBody } from "reactstrap";
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 class SpotRateDetails extends Component {
   constructor(props) {
@@ -266,6 +264,7 @@ class SpotRateDetails extends Component {
                     self.setState({
                       spotrateresponseTbl3: response.data.Table3
                     });
+                  } else {
                   }
                 }
                 if (response.data.Table4 != null) {
@@ -282,7 +281,16 @@ class SpotRateDetails extends Component {
           .catch(error => {
             var temperror = error.response.data;
             var err = temperror.split(":");
-            NotificationManager.error(err[1].replace("}", ""));
+
+            store.addNotification({
+              // title: "Error",
+              message: err[1].replace("}", ""),
+              type: "danger", // 'default', 'success', 'info', 'warning','danger'
+              container: "top-right", // where to position the notifications
+              dismiss: {
+                duration: appSettings.NotficationTime
+              }
+            });
           });
       }
     }
@@ -543,13 +551,11 @@ class SpotRateDetails extends Component {
   }
   /////Handle View Rate Button Click
   HandleViewRateData() {
-    
     this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 
   onErrorImg(e) {
-    return (e.target.src =
-      appSettings.imageURL+"ATAFreight_console.png");
+    return (e.target.src = appSettings.imageURL + "ATAFreight_console.png");
   }
   render() {
     const { spotrateresponseTbl1, spotrateresponseTbl3 } = this.state;
@@ -578,7 +584,7 @@ class SpotRateDetails extends Component {
 
     return (
       <React.Fragment>
-        <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -890,63 +896,66 @@ class SpotRateDetails extends Component {
                             <p>CBM:{this.state.cbmVal}</p>
                           )}
                         </div>
-                        <div className="" style={{ width: "100%" }}>
-                          <div className="ag-fresh"></div>
-                          <div className="ag-fresh">
-                            <ReactTable
-                              data={spotrateresponseTbl3}
-                              noDataText="No Data Found"
-                              filterable
-                              columns={[
-                                {
-                                  columns: [
-                                    {
-                                      Header: "Package Type",
-                                      accessor: "PackageType"
-                                    },
-                                    {
-                                      Header: "Quantity",
-                                      accessor: "Quantity"
-                                    },
+                        {this.state.spotrateresponseTbl3.length > 0 ? (
+                          <div className="" style={{ width: "100%" }}>
+                            <div className="ag-fresh"></div>
+                            <div className="ag-fresh">
+                              <ReactTable
+                                data={spotrateresponseTbl3}
+                                noDataText="No Data Found"
+                                filterable
+                                columns={[
+                                  {
+                                    columns: [
+                                      {
+                                        Header: "Package Type",
+                                        accessor: "PackageType"
+                                      },
+                                      {
+                                        Header: "Quantity",
+                                        accessor: "Quantity"
+                                      },
 
-                                    {
-                                      Header: "Length",
-                                      accessor: "Lengths"
-                                    },
-                                    {
-                                      Header: "Height",
-                                      accessor: "Height"
-                                    },
-                                    {
-                                      Header: "Width",
-                                      accessor: "Width"
-                                    },
+                                      {
+                                        Header: "Length",
+                                        accessor: "Lengths"
+                                      },
+                                      {
+                                        Header: "Height",
+                                        accessor: "Height"
+                                      },
+                                      {
+                                        Header: "Width",
+                                        accessor: "Width"
+                                      },
 
-                                    {
-                                      Header: "Gross Weight",
-                                      accessor: "GrossWt"
-                                    },
+                                      {
+                                        Header: "Gross Weight",
+                                        accessor: "GrossWt"
+                                      },
 
-                                    {
-                                      Header:
-                                        this.state.Mode != "LCL"
-                                          ? "Volume Weight"
-                                          : "Volume",
-                                      accessor:
-                                        this.state.Mode != "LCL"
-                                          ? "VolumeWT"
-                                          : "Volume"
-                                    }
-                                  ]
-                                }
-                              ]}
-                              className="-striped -highlight"
-                              defaultPageSize={10}
-                              minRows={1}
-                            />
+                                      {
+                                        Header:
+                                          this.state.Mode != "LCL"
+                                            ? "Volume Weight"
+                                            : "Volume",
+                                        accessor:
+                                          this.state.Mode != "LCL"
+                                            ? "VolumeWT"
+                                            : "Volume"
+                                      }
+                                    ]
+                                  }
+                                ]}
+                                className="-striped -highlight"
+                                defaultPageSize={10}
+                                minRows={1}
+                              />
+                            </div>
                           </div>
-                        </div>
-
+                        ) : (
+                          "No Cargo Details Available"
+                        )}
                         <br />
                         {this.state.Status === "Rate added by Local Pricing" ? (
                           <>
@@ -993,11 +1002,13 @@ class SpotRateDetails extends Component {
                                           var url = "";
                                           if (this.state.Mode == "FCL") {
                                             url =
-                                              appSettings.imageURL+"OEAN_LINERS/" +
+                                              appSettings.imageURL +
+                                              "OEAN_LINERS/" +
                                               lname;
                                           } else {
                                             url =
-                                              appSettings.imageURL+"ATAFreight_console.png";
+                                              appSettings.imageURL +
+                                              "ATAFreight_console.png";
                                           }
                                           return (
                                             <React.Fragment>
@@ -1027,7 +1038,8 @@ class SpotRateDetails extends Component {
                                                     this
                                                   )}
                                                   src={
-                                                    appSettings.imageURL+"AIR_LINERS/" +
+                                                    appSettings.imageURL +
+                                                    "AIR_LINERS/" +
                                                     lname
                                                   }
                                                 />
@@ -1044,7 +1056,8 @@ class SpotRateDetails extends Component {
                                                     this
                                                   )}
                                                   src={
-                                                    appSettings.imageURL+"ATAFreight_console.png"
+                                                    appSettings.imageURL +
+                                                    "ATAFreight_console.png"
                                                   }
                                                   alt={olname}
                                                 />

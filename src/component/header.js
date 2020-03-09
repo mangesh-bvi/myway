@@ -1,6 +1,11 @@
 import React, { Component } from "react";
-import { UncontrolledPopover, PopoverHeader, PopoverBody } from "reactstrap";
-import { Button } from "antd";
+import {
+  UncontrolledPopover,
+  PopoverHeader,
+  PopoverBody,
+  Button
+} from "reactstrap";
+
 import Select from "react-select";
 import Logo from "./../assets/img/logo.png";
 import "../assets/css/custom.css";
@@ -16,17 +21,14 @@ import { encryption } from "../helpers/encryption";
 import FileUpload from "./../assets/img/file.png";
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
-
 import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import { Modal, ModalBody } from "reactstrap";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
 import Autocomplete from "react-autocomplete";
 
 class Header extends Component {
@@ -122,7 +124,7 @@ class Header extends Component {
       this.setState({ profileImgURL });
     }
     this.BindCurrencyData();
-    
+
     var iscurrencydrp = false;
     var pathName = this.props.location.pathname;
     if (pathName !== "/rate-table" && pathName !== "/rate-finalizing") {
@@ -177,7 +179,6 @@ class Header extends Component {
   }
 
   HandleCheckNotificationView() {
-    
     axios({
       method: "post",
       url: `${appSettings.APIURL}/TopNotificationData`,
@@ -231,10 +232,7 @@ class Header extends Component {
           }
         }
       })
-      .catch(response => {
-        // NotificationManager.error(response);
-        console.log(response);
-      });
+      .catch(response => {});
   };
   ////Bind Activity Data
   BindActivityDetails() {
@@ -282,22 +280,45 @@ class Header extends Component {
     var txtshipmentcomment = document.getElementById("txtshipmentcomment");
 
     if (drpshipment.value.trim() == "0") {
-      NotificationManager.error("Please Select Type");
+      store.addNotification({
+        // title: "Error",
+        message: "Please Select Type",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       drpshipment.focus();
       return false;
     }
 
     if (txtShipmentNo.value.trim() == "") {
-      NotificationManager.error(
-        this.state.selectedType === "Subject"
-          ? "Please Enter Subject"
-          : "Please Enter " + this.state.selectedType + " No"
-      );
+      store.addNotification({
+        // title: "Error",
+        message:
+          this.state.selectedType === "Subject"
+            ? "Please Enter Subject"
+            : "Please Enter " + this.state.selectedType + " No",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       txtShipmentNo.focus();
       return false;
     }
     if (txtshipmentcomment.value.trim() == "") {
-      NotificationManager.error("Please enter shipment comment.");
+      store.addNotification({
+        // title: "Error",
+        message: "Please enter shipment comment.",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       txtshipmentcomment.focus();
       return false;
     }
@@ -336,7 +357,15 @@ class Header extends Component {
           if (response.data.length > 0) {
             if (response.data[0] != null) {
               var message = response.data[0].Result;
-              NotificationManager.success(response.data[0].Result);
+              store.addNotification({
+                // title: "Success",
+                message: response.data[0].Result,
+                type: "success", // 'default', 'success', 'info', 'warning','danger'
+                container: "top-right", // where to position the notifications
+                dismiss: {
+                  duration: appSettings.NotficationTime
+                }
+              });
             }
           }
         }
@@ -422,7 +451,15 @@ class Header extends Component {
         }
       });
     } else {
-      NotificationManager.error("No Redirect");
+      store.addNotification({
+        // title: "Error",
+        message: "No Redirect",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
   ////Handle Change Customer Data
@@ -496,7 +533,7 @@ class Header extends Component {
   }
 
   onErrorImg(e) {
-    return (e.target.src =appSettings.imageURL+"ATAFreight_console.png");
+    return (e.target.src = appSettings.imageURL + "ATAFreight_console.png");
   }
 
   HandleCurrencyChange(e) {
@@ -606,6 +643,7 @@ class Header extends Component {
 
     return (
       <div className="pdtop">
+        <ReactNotification />
         <div className="header-fixed">
           <div className="cls-header-1">
             <div className="row">
@@ -969,7 +1007,6 @@ class Header extends Component {
               <div className="active-log-pop">{adataval}</div>
             </PopoverBody>
           </UncontrolledPopover>
-          <NotificationContainer leaveTimeout={appSettings.NotficationTime} />
         </div>
       </div>
     );

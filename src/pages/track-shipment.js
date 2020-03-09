@@ -15,11 +15,10 @@ import axios from "axios";
 import { encryption } from "../helpers/encryption";
 import { authHeader } from "../helpers/authHeader";
 import "react-table/react-table.css";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 class TrackShipment extends Component {
   constructor(props) {
@@ -73,7 +72,6 @@ class TrackShipment extends Component {
   }
 
   componentDidMount() {
-    
     localStorage.removeItem(
       "AllLineData",
       "FlagsData",
@@ -118,7 +116,6 @@ class TrackShipment extends Component {
 
     var allLineData = [];
     for (var i = 0; i < mydata.length; i++) {
-      
       var BlocationData = {};
       var flagsData = {};
 
@@ -245,7 +242,6 @@ class TrackShipment extends Component {
           }
         }
       } else {
-        
         Not_Data = i;
         VesselData = allLineData[allLineData.length - 1];
       }
@@ -261,7 +257,6 @@ class TrackShipment extends Component {
     } else {
       imgType = "ROAD";
     }
-    
 
     localStorage.removeItem("BaloonData");
     localStorage.removeItem("FlagsData");
@@ -274,12 +269,11 @@ class TrackShipment extends Component {
     localStorage.setItem("BaloonData", JSON.stringify(balloons));
     localStorage.setItem("FlagsData", JSON.stringify(flags));
     localStorage.setItem("AllLineData", JSON.stringify(allLineData));
-    self.setState({ iframeKey: self.state.iframeKey + 1 ,loading:false});
+    self.setState({ iframeKey: self.state.iframeKey + 1, loading: false });
   }
 
   ////Handle Shipement Details Map Data
   HandleShipmentDetailsMap(Encodedhblno) {
-    
     let self = this;
 
     axios({
@@ -288,17 +282,14 @@ class TrackShipment extends Component {
       params: {
         Token: Encodedhblno.replace("%20", " ")
       }
-      
     }).then(function(response) {
-      
       var resdata = response.data;
-      self.setState({  showData: true });
+      self.setState({ showData: true });
       self.HandleMapDetailsData(resdata);
     });
   }
   ////Handle Shipment Details
   HandleShipmentDetails(Encodedhblno) {
-    
     this.setState({ loading: true });
     let self = this;
     if (Encodedhblno) {
@@ -310,7 +301,6 @@ class TrackShipment extends Component {
         }
       })
         .then(function(response) {
-          
           var shipmentdata = response.data;
           var POLPODData = response.data.Table5;
           var eve = response.data.Table[0].Event;
@@ -342,15 +332,30 @@ class TrackShipment extends Component {
           self.HandleShipmentDetailsMap(Encodedhblno);
         })
         .catch(error => {
-          
           var temperror = error.response.data;
           var err = temperror.split(":");
 
-          NotificationManager.error(err[1].replace("}", ""));
+          store.addNotification({
+            // title: "Error",
+            message: err[1].replace("}", ""),
+            type: "danger", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
           this.setState({ showData: false });
         });
     } else {
-      NotificationManager.error("Please enter #HBL");
+      store.addNotification({
+        // title: "Error",
+        message: "Please enter #HBL",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       this.setState({ loading: false, showData: false });
     }
   }
@@ -372,7 +377,6 @@ class TrackShipment extends Component {
     }));
   }
   togglePackage(cargoId) {
-    
     let self = this;
     let packageTable = [];
 
@@ -410,7 +414,6 @@ class TrackShipment extends Component {
   }
 
   handleAddToWatchList = () => {
-    
     let self = this;
     var hbll = "";
     if (self.state.addWat !== null && self.state.addWat !== "") {
@@ -427,14 +430,22 @@ class TrackShipment extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      
-      NotificationManager.success(response.data[0].Result);
-      self.setState({ ShipmentExistsInWatchList: 1 });
+      store.addNotification({
+        // title: "Success",
+        message: response.data[0].Result,
+        type: "success", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
+      self.setState({
+        ShipmentExistsInWatchList: 1
+      });
     });
   };
 
   handleActivityList() {
-    
     let self = this;
     var HblNo = this.state.HblNo;
     if (typeof this.props.location.state != "undefined") {
@@ -443,7 +454,6 @@ class TrackShipment extends Component {
     // if (typeof this.props.location.state != "undefined") {
 
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
-    
 
     axios({
       method: "post",
@@ -455,13 +465,10 @@ class TrackShipment extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        
-        
         self.setState({ MessagesActivityDetails: response.data });
         document.getElementById("addMess").value = "";
       })
       .catch(error => {
-        
         var temperror = error.response.data;
         var err = temperror.split(":");
       });
@@ -469,14 +476,12 @@ class TrackShipment extends Component {
   }
 
   HandleChangeHBL(e) {
-    
     var HBLNumber = e.target.value;
     this.setState({ HBLNumber });
   }
   ////Handle Submit button
   HandleSubmit() {
     if (this.state.addWat.replace("%20", " ").trim() === this.state.HBLNumber) {
-      
       var HBLNO = this.state.HBLNumber;
 
       this.HandleShipmentDetails(HBLNO);
@@ -485,7 +490,15 @@ class TrackShipment extends Component {
 
       this.HandleShipmentDetails(HBLNO);
     } else {
-      NotificationManager.error("Please enter Valid HBL#");
+      store.addNotification({
+        // title: "Error",
+        message: "Please enter Valid HBL#",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   }
 
@@ -632,8 +645,6 @@ class TrackShipment extends Component {
         var per = 100 / (this.state.POLPODData.length + 1);
 
         perBooking = per + per / 2 + "";
-
-        
       }
 
       if (Transshipped >= 1 && Arriveddata >= 1) {
@@ -658,6 +669,7 @@ class TrackShipment extends Component {
 
     return (
       <div>
+        <ReactNotification />
         <div className="cls-ofl">
           <div className="cls-rt-ts">
             <div className="container-fluid">
@@ -1572,7 +1584,6 @@ class TrackShipment extends Component {
                   </div>
                 )}
               </div>
-              <NotificationContainer leaveTimeout="3000" />
             </div>
           </div>
         </div>

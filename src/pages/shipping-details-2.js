@@ -22,11 +22,9 @@ import Truck from "./../assets/img/truck.png";
 import PDF from "./../assets/img/pdf.png";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 class ShippingDetailsTwo extends Component {
   constructor(props) {
@@ -91,7 +89,7 @@ class ShippingDetailsTwo extends Component {
       "BaloonData",
       "GreenLineData"
     );
-    this.setState({iframeKey:this.state.iframeKey+1});
+    this.setState({ iframeKey: this.state.iframeKey + 1 });
     let self = this;
     var url = window.location.href
       .slice(window.location.href.indexOf("?") + 1)
@@ -128,7 +126,15 @@ class ShippingDetailsTwo extends Component {
       CustomerID = 0;
     }
     if (msgg === "" || msgg === null) {
-      NotificationManager.error("Please enter the message.");
+      store.addNotification({
+        // title: "Error",
+        message: "Please enter the message.",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     } else {
       axios({
         method: "post",
@@ -150,7 +156,15 @@ class ShippingDetailsTwo extends Component {
                 var message = response.data[0].Result;
 
                 if (response.data[0].Result === "Message Send Successfully") {
-                  NotificationManager.success(response.data[0].Result);
+                  store.addNotification({
+                    // title: "Success",
+                    message: response.data[0].Result,
+                    type: "success", // 'default', 'success', 'info', 'warning','danger'
+                    container: "top-right", // where to position the notifications
+                    dismiss: {
+                      duration: appSettings.NotficationTime
+                    }
+                  });
                 }
                 self.BindActivityMessageData();
               }
@@ -433,7 +447,7 @@ class ShippingDetailsTwo extends Component {
 
   HandleShipmentDetails(hblno) {
     this.setState({ loding: true });
-    
+
     let self = this;
     localStorage.removeItem(
       "AllLineData",
@@ -455,7 +469,6 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        
         var shipmentdata = response.data;
         var ModeType = response.data.Table[0].ModeOfTransport;
         var POLPODData = response.data.Table5;
@@ -497,7 +510,15 @@ class ShippingDetailsTwo extends Component {
         selectedFileName: event.target.files[0].name
       });
     } else {
-      NotificationManager.error("Please upload only PDF File");
+      store.addNotification({
+        // title: "Error",
+        message: "Please upload only PDF File",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
     }
   };
   onDocumentConsignee = event => {
@@ -506,17 +527,32 @@ class ShippingDetailsTwo extends Component {
     });
   };
   onDocumentClickHandler = () => {
-    
     let self = this;
     const docData = new FormData();
     var docName = document.getElementById("docName").value;
     var docDesc = document.getElementById("docDesc").value;
     if (docName == "") {
-      NotificationManager.error("Please enter document name");
+      store.addNotification({
+        // title: "Error",
+        message: "Please enter document name",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       return false;
     }
     if (docDesc == "") {
-      NotificationManager.error("Please enter document description");
+      store.addNotification({
+        // title: "Error",
+        message: "Please enter document description",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       return false;
     }
 
@@ -535,7 +571,15 @@ class ShippingDetailsTwo extends Component {
       data: docData,
       headers: authHeader()
     }).then(function(response) {
-      NotificationManager.success(response.data[0].Result);
+      store.addNotification({
+        // title: "Success",
+        message: response.data[0].Result,
+        type: "success", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       self.setState({ selectedFileName: "" });
       self.toggleDocu();
       setTimeout(() => {
@@ -572,7 +616,15 @@ class ShippingDetailsTwo extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        NotificationManager.success(response.data[0].Result);
+        store.addNotification({
+          // title: "Success",
+          message: response.data[0].Result,
+          type: "success", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
         self.HandleShipmentDocument();
       })
       .catch(error => {});
@@ -636,8 +688,18 @@ class ShippingDetailsTwo extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      NotificationManager.success(response.data[0].Result);
-      self.setState({ ShipmentExistsInWatchList: 1 });
+      store.addNotification({
+        // title: "Success",
+        message: response.data[0].Result,
+        type: "success", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
+      self.setState({
+        ShipmentExistsInWatchList: 1
+      });
     });
   };
 
@@ -690,8 +752,18 @@ class ShippingDetailsTwo extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      NotificationManager.success(response.data[0].Result);
-      self.setState({ ShipmentExistsInWatchList: 0 });
+      store.addNotification({
+        // title: "Success",
+        message: response.data[0].Result,
+        type: "success", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
+      self.setState({
+        ShipmentExistsInWatchList: 0
+      });
     });
   };
 
@@ -906,7 +978,6 @@ class ShippingDetailsTwo extends Component {
     let MsgActivityTab = "";
     if (this.state.MessagesActivityDetails != null) {
       if (this.state.MessagesActivityDetails.length > 0) {
-        
         MsgActivityTab = (
           <div class="d-flex flex-column-reverse">
             {this.state.MessagesActivityDetails.map(team => (
@@ -937,13 +1008,14 @@ class ShippingDetailsTwo extends Component {
     }
     return (
       <div>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
             <SideMenu />
           </div>
-          
-          <div className={this.state.loding ?"loader-icon cls-rt":"cls-rt"}>
+
+          <div className={this.state.loding ? "loader-icon cls-rt" : "cls-rt"}>
             <div className="container-fluid">
               <div className="row">
                 <div className="col-12 col-sm-12 col-md-12 col-lg-7 p-0 ship-dtls-ui">
@@ -2438,9 +2510,6 @@ class ShippingDetailsTwo extends Component {
                   </ModalBody>
                 </Modal>
               </div>
-              <NotificationContainer
-                leaveTimeout={appSettings.NotficationTime}
-              />
             </div>
           </div>
         </div>

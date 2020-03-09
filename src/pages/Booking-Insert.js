@@ -8,10 +8,10 @@ import axios from "axios";
 import appSettings from "../helpers/appSetting";
 import { authHeader } from "../helpers/authHeader";
 import Autocomplete from "react-autocomplete";
-import {
-  NotificationContainer,
-  NotificationManager
-} from "react-notifications";
+import ReactNotification from "react-notifications-component";
+import { store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+
 import { encryption } from "../helpers/encryption";
 import { Button, Modal, ModalBody } from "reactstrap";
 import Download from "./../assets/img/csv.png";
@@ -461,7 +461,6 @@ class BookingInsert extends Component {
       data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
       headers: authHeader()
     }).then(function(response) {
-      
       var QuotationData = response.data.Table1;
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
@@ -585,7 +584,6 @@ class BookingInsert extends Component {
       },
       headers: authHeader()
     }).then(function(response) {
-      
       var QuotationData = response.data.Table1;
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
@@ -877,8 +875,20 @@ class BookingInsert extends Component {
         }).then(function(response) {
           if (response.data.Table) {
             var BookingNo = response.data.Table[0].BookingID;
-            NotificationManager.success(response.data.Table[0].Message);
-            self.setState({ BookingNo, loding: false });
+
+            store.addNotification({
+              // title: "Success",
+              message: response.data.Table[0].Message,
+              type: "success", // 'default', 'success', 'info', 'warning','danger'
+              container: "top-right", // where to position the notifications
+              dismiss: {
+                duration: appSettings.NotficationTime
+              }
+            });
+            self.setState({
+              BookingNo,
+              loding: false
+            });
             setTimeout(() => {
               if (self.state.FileDataArry.length > 0) {
                 self.HandleFileUpload();
@@ -889,12 +899,27 @@ class BookingInsert extends Component {
           }
         });
       } else {
-        NotificationManager.error(
-          "please select atleast one Customer has a Consinee,Shipper,Notify,Buyer"
-        );
+        store.addNotification({
+          // title: "Error",
+          message:
+            "please select atleast one Customer has a Consinee,Shipper,Notify,Buyer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     } else {
-      NotificationManager.error("Please select either one quotation.");
+      store.addNotification({
+        // title: "Error",
+        message: "Please select either one quotation.",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       return false;
     }
   }
@@ -918,15 +943,21 @@ class BookingInsert extends Component {
       data: formdata,
       headers: authHeader()
     }).then(function(response) {
-      NotificationManager.success(response.data.Table[0].Result);
+      store.addNotification({
+        // title: "Success",
+        message: response.data.Table[0].Result,
+        type: "success", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       // this.props.history.push("./booking-table");
       self.props.history.push("booking-table");
     });
   }
   ////toggle edit cargo details
   toggleEdit(e) {
-    
-
     this.setState(prevState => ({
       modalEdit: !prevState.modalEdit
     }));
@@ -1171,7 +1202,6 @@ class BookingInsert extends Component {
   }
 
   AddressChange(type, e) {
-    
     var companyID = e.target.value;
     if (e.target.selectedOptions[0].label === "Other") {
       if (type == "Consignee") {
@@ -1281,7 +1311,15 @@ class BookingInsert extends Component {
       f_data.push(objFile);
       this.setState({ FileData: f_data });
     } else {
-      NotificationManager.error("Please select only PDF File");
+      store.addNotification({
+        // title: "Error",
+        message: "Please select only PDF File",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
       return false;
     }
   };
@@ -1695,7 +1733,6 @@ class BookingInsert extends Component {
   }
   ////Handle Submit Cargo Details
   SubmitCargoDetails(e) {
-    
     // this.callbackFunction()
     var data = this.state.multiCBM;
     var multiCBM = [];
@@ -1703,7 +1740,6 @@ class BookingInsert extends Component {
     for (let i = 0; i < data.length; i++) {
       var objcargo = new Object();
       if (data[i].PackageType !== "") {
-        
         objcargo.PackageType = data[i].PackageType || "";
         objcargo.Quantity = data[i].Quantity || 0;
         objcargo.Lengths = data[i].Lengths || 0;
@@ -1711,7 +1747,7 @@ class BookingInsert extends Component {
         objcargo.Height = data[i].Height || 0;
         objcargo.GrossWt = data[i].GrossWt || 0;
         objcargo.VolumeWeight = data[i].VolumeWeight || 0;
-        objcargo.Volume = data[i].Volume || 0;        
+        objcargo.Volume = data[i].Volume || 0;
         multiCBM.push(objcargo);
       }
     }
@@ -1733,7 +1769,15 @@ class BookingInsert extends Component {
           isConshinee: !this.state.isConshinee
         });
       } else {
-        NotificationManager.error("Only 1 is check has customer ");
+        store.addNotification({
+          // title: "Error",
+          message: "Only 1 is check has customer ",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     } else if (type === "Shipper") {
       if (
@@ -1745,7 +1789,15 @@ class BookingInsert extends Component {
           isShipper: !this.state.isShipper
         });
       } else {
-        NotificationManager.error("Only 1 is check has customer ");
+        store.addNotification({
+          // title: "Error",
+          message: "Only 1 is check has customer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     } else if (type === "Buyer") {
       if (
@@ -1755,7 +1807,15 @@ class BookingInsert extends Component {
       ) {
         this.setState({ isBuyer: !this.state.isBuyer });
       } else {
-        NotificationManager.error("Only 1 is check has customer ");
+        store.addNotification({
+          // title: "Error",
+          message: "Only 1 is check has customer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     } else if (type === "Notify") {
       if (
@@ -1767,7 +1827,15 @@ class BookingInsert extends Component {
           isNotify: !this.state.isNotify
         });
       } else {
-        NotificationManager.error("Only 1 is check has customer ");
+        store.addNotification({
+          // title: "Error",
+          message: "Only 1 is check has customer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       }
     } else {
     }
@@ -1885,7 +1953,15 @@ class BookingInsert extends Component {
         data: documentData,
         headers: authHeader()
       }).then(function(response) {
-        NotificationManager.success(response.data.Table[0].Result);
+        store.addNotification({
+          // title: "Success",
+          message: response.data.Table[0].Result,
+          type: "success", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
       });
     } else {
       var FileData = this.state.FileData;
@@ -1909,12 +1985,10 @@ class BookingInsert extends Component {
     window.history.back();
   }
   onErrorImg(e) {
-    return (e.target.src =appSettings.imageURL+
-      "ATAFreight_console.png");
+    return (e.target.src = appSettings.imageURL + "ATAFreight_console.png");
   }
 
   callbackFunction = callBackObj => {
-    
     var multiCBM = callBackObj;
     this.setState({ multiCBM });
   };
@@ -1934,6 +2008,7 @@ class BookingInsert extends Component {
     }
     return (
       <React.Fragment>
+        <ReactNotification />
         <Headers />
         <div className="cls-ofl">
           <div className={colClassName}>
@@ -2020,7 +2095,9 @@ class BookingInsert extends Component {
                                               onError={this.onErrorImg.bind(
                                                 this
                                               )}
-                                              src={appSettings.imageURL+"OEAN_LINERS/" +
+                                              src={
+                                                appSettings.imageURL +
+                                                "OEAN_LINERS/" +
                                                 lname
                                               }
                                             />
@@ -2057,7 +2134,9 @@ class BookingInsert extends Component {
                                               onError={this.onErrorImg.bind(
                                                 this
                                               )}
-                                              src={appSettings.imageURL+"AIR_LINERS/" +
+                                              src={
+                                                appSettings.imageURL +
+                                                "AIR_LINERS/" +
                                                 lname
                                               }
                                             />
@@ -2093,7 +2172,9 @@ class BookingInsert extends Component {
                                               onError={this.onErrorImg.bind(
                                                 this
                                               )}
-                                              src={appSettings.imageURL+"ATAFreight_console.png"
+                                              src={
+                                                appSettings.imageURL +
+                                                "ATAFreight_console.png"
                                               }
                                               alt={olname}
                                             />
@@ -3035,12 +3116,18 @@ class BookingInsert extends Component {
                                       ? "Volume Weight"
                                       : "ChgWeight",
                                   accessor: "VolumeWeight",
-                                  show:this.state.containerLoadType!="LCL"?true:false
+                                  show:
+                                    this.state.containerLoadType != "LCL"
+                                      ? true
+                                      : false
                                 },
                                 {
-                                Header:"Volume",
-                                accessor: "Volume",
-                                show:this.state.containerLoadType=="LCL"?true:false
+                                  Header: "Volume",
+                                  accessor: "Volume",
+                                  show:
+                                    this.state.containerLoadType == "LCL"
+                                      ? true
+                                      : false
                                 }
                               ]
                             }
@@ -3187,7 +3274,6 @@ class BookingInsert extends Component {
             )}
           </div>
         </div>
-        <NotificationContainer leaveTimeout="3000" />
 
         {/* -------------------------------------Edit Cargo Details Modal----------------------------- */}
         <Modal
