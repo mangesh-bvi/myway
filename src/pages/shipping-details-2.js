@@ -422,7 +422,10 @@ class ShippingDetailsTwo extends Component {
       method: "post",
       url: `${appSettings.APIURL}/ViewUploadShipmentDocument`,
       data: {
-        HBLNo: HblNo
+        HBLNo: HblNo,
+        UserId: parseFloat(
+          encryption(window.localStorage.getItem("userid"), "desc")
+        ),
       },
       headers: authHeader()
     })
