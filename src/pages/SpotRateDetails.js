@@ -551,6 +551,7 @@ class SpotRateDetails extends Component {
   }
   /////Handle View Rate Button Click
   HandleViewRateData() {
+    window.localStorage.setItem("isCopy",true);
     this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 

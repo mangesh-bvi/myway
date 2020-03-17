@@ -84,7 +84,11 @@ class RateFinalizingStill extends Component {
       btnloding: false,
       rtnloding: false,
       cbmVal: 0,
-      RejectedReason: ""
+      RejectedReason: "",
+      SalesPersonName: "",
+      SalesPersonEmail: "",
+      SalesPersonPhone: "",
+      SalesPersonFax: ""
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -167,6 +171,10 @@ class RateFinalizingStill extends Component {
         var CargoDetailsArr = [];
         var SaleQuoteID = "";
         var RejectedReason = "";
+        var SalesPersonName = "";
+        var SalesPersonEmail = "";
+        var SalesPersonPhone = "";
+        var SalesPersonFax = "";
         if (response != null) {
           if (response.data != null) {
             if (response.data.Table != null) {
@@ -175,7 +183,17 @@ class RateFinalizingStill extends Component {
                 IncoTerms = response.data.Table[0].IncoTerm;
                 SaleQuoteID = response.data.Table[0].SaleQuoteID;
                 RejectedReason = response.data.Table[0].RejectedReason;
+                SalesPersonName = response.data.Table[0].SalesPersonName || "";
+                SalesPersonEmail =
+                  response.data.Table[0].SalesPersonEmail || "";
+                SalesPersonPhone =
+                  response.data.Table[0].SalesPersonPhone || "";
+                SalesPersonFax = response.data.Table[0].SalesPersonFax || "";
                 self.setState({
+                  SalesPersonName,
+                  SalesPersonEmail,
+                  SalesPersonPhone,
+                  SalesPersonFax,
                   RejectedReason,
                   loding: false,
                   SaleQuoteID,
@@ -261,16 +279,11 @@ class RateFinalizingStill extends Component {
                 for (var i = 0; i < table.length; i++) {
                   CargoDetailsArr.push({
                     PackageType: table[i].PackageType || "",
-                    SpecialContainerCode: table[i].PackageType + "_" + i,
-                    ContainerType: table[i].PackageType || "",
-                    Packaging: "-",
                     Quantity: table[i].Quantity || 0,
-                    Lenght: table[i].Length || 0,
+                    Lengths: table[i].Lengths || 0,
                     Width: table[i].Width || 0,
-                    Height: table[i].height || 0,
-                    Weight: table[i].GrossWeight || 0,
-                    Gross_Weight: "-" || "",
-                    Temperature: "-" || "",
+                    Height: table[i].Height || 0,
+                    GrossWt: table[i].GrossWt || 0,
                     CBM:
                       response.data.Table[0].ModeOfTransport.toUpperCase() ===
                       "AIR"
@@ -307,10 +320,8 @@ class RateFinalizingStill extends Component {
         }
         self.forceUpdate();
         self.HandleSalesQuoteConditions();
-        //console.log(response);
       })
       .catch(error => {
-        console.log(error.response);
         self.setState({ loding: false });
       });
   }
@@ -885,7 +896,6 @@ class RateFinalizingStill extends Component {
             duration: appSettings.NotficationTime
           }
         });
-        console.log(error.response);
       });
   };
 
@@ -1387,6 +1397,7 @@ class RateFinalizingStill extends Component {
     var DocumentCharges = [];
     var i = 0;
     const { CargoDetailsArr, DocumentDetails } = this.state;
+
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
       colClassName = "cls-flside colap";
@@ -2079,15 +2090,15 @@ class RateFinalizingStill extends Component {
                                 columns={[
                                   {
                                     Header: "Pack.Type",
-                                    accessor: "ContainerType"
+                                    accessor: "PackageType"
                                   },
                                   {
                                     Header: "Quantity",
                                     accessor: "Quantity"
                                   },
                                   {
-                                    Header: "Lenght",
-                                    accessor: "Lenght"
+                                    Header: "Length",
+                                    accessor: "Lengths"
                                   },
                                   {
                                     Header: "Width",
@@ -2099,7 +2110,7 @@ class RateFinalizingStill extends Component {
                                   },
                                   {
                                     Header: "Gross Weight",
-                                    accessor: "Weight"
+                                    accessor: "GrossWt"
                                   },
                                   {
                                     Header:
@@ -2430,12 +2441,7 @@ class RateFinalizingStill extends Component {
                     </div>
                     <div className="col-12 col-md-6 preview-date-num">
                       <p>
-                        Date :{" "}
-                        <span>
-                          {/* <Moment format="DD-MMM-YYYY"> */}
-                          {tDate}
-                          {/* </Moment> */}
-                        </span>
+                        Date : <span>{tDate}</span>
                       </p>
                       <p>
                         Sales Quote No. :<span>{this.state.SaleQuoteID}</span>
@@ -2448,28 +2454,23 @@ class RateFinalizingStill extends Component {
                 <div className="col-12 col-sm-6">
                   <div className="firstbox">
                     <label>
-                      Sales Person :{" "}
-                      <span>
-                        {encryption(
-                          window.localStorage.getItem("username"),
-                          "desc"
-                        )}
-                      </span>
+                      Sales Person : <span>{this.state.SalesPersonName}</span>
                     </label>
                     <label>
                       E-Mail :{" "}
                       <span>
-                        {encryption(
+                        {/* {encryption(
                           window.localStorage.getItem("emailid"),
                           "desc"
-                        )}
+                        )} */}
+                        {this.state.SalesPersonEmail}
                       </span>
                     </label>
                     <label>
-                      Phone : <span></span>
+                      Phone : <span>{this.state.SalesPersonPhone}</span>
                     </label>
                     <label>
-                      Fax : <span></span>
+                      Fax : <span>{this.state.SalesPersonFax}</span>
                     </label>
                   </div>
                 </div>
@@ -2533,10 +2534,10 @@ class RateFinalizingStill extends Component {
                                     <tr>
                                       <td>{item1.ContainerType}</td>
                                       <td>{item1.Quantity}</td>
-                                      <td>{item1.Lenght}</td>
+                                      <td>{item1.Lengths}</td>
                                       <td>{item1.Width}</td>
                                       <td>{item1.Height}</td>
-                                      <td>{item1.Weight}</td>
+                                      <td>{item1.GrossWt}</td>
                                       {this.state.ContainerLoad.toUpperCase() ===
                                         "FCL" ||
                                       this.state.ContainerLoad.toUpperCase() ===
@@ -2659,10 +2660,10 @@ class RateFinalizingStill extends Component {
                                         <tr>
                                           <td>{item1.PackageType}</td>
                                           <td>{item1.Quantity}</td>
-                                          <td>{item1.Lenght}</td>
+                                          <td>{item1.Lengths}</td>
                                           <td>{item1.Width}</td>
                                           <td>{item1.Height}</td>
-                                          <td>{item1.Weight}</td>
+                                          <td>{item1.GrossWt}</td>
                                           <td>
                                             {this.state.ContainerLoad.toUpperCase() ===
                                             "AIR"
@@ -2781,16 +2782,18 @@ class RateFinalizingStill extends Component {
                                 <th>
                                   {this.state.filterrateSubDetails.length > 0 &&
                                   this.state.filterrateSubDetails !== undefined
-                                    ? this.state.filterrateSubDetails.reduce(
-                                        (sum, filterrateSubDetails) =>
-                                          sum +
-                                          parseFloat(
-                                            filterrateSubDetails.Total.split(
-                                              " "
-                                            )[0]
-                                          ),
-                                        0
-                                      ) +
+                                    ? this.state.filterrateSubDetails
+                                        .reduce(
+                                          (sum, filterrateSubDetails) =>
+                                            sum +
+                                            parseFloat(
+                                              filterrateSubDetails.Total.split(
+                                                " "
+                                              )[0]
+                                            ),
+                                          0
+                                        )
+                                        .toFixed(2) +
                                       " " +
                                       this.state.filterrateSubDetails[0]
                                         .BaseCurrency
@@ -2881,14 +2884,33 @@ class RateFinalizingStill extends Component {
           <div id="printDiv1">
             <div className="row" style={{ margin: 0 }}>
               <div className="logohheader">
-                <div className="row align-items-center" style={{ margin: 0 }}>
-                  <div className="col-12 col-md-6">
+                <div
+                  className="row align-items-center"
+                  style={{ margin: 0, background: "#fff" }}
+                >
+                  <div
+                    style={{
+                      float: "left",
+                      width: "300px",
+                      minWidth: "300px",
+                      maxWidth: "300px",
+                      display: "inline-block"
+                    }}
+                  >
                     <img
                       src={appSettings.imageURL + "ATAFreight_console.png"}
                       alt="ATAFreight Console"
-                    />
+                    ></img>
                   </div>
-                  <div className="col-12 col-md-6 preview-date-num">
+                  <div
+                    style={{
+                      float: "left",
+                      width: "300px",
+                      minWidth: "300px",
+                      maxWidth: "300px",
+                      display: "inline-block"
+                    }}
+                  >
                     <p>
                       Date : <span>{tDate}</span>
                     </p>
@@ -2899,46 +2921,56 @@ class RateFinalizingStill extends Component {
                 </div>
               </div>
             </div>
-            <div className="row">
-              <div className="col-12 col-md-6">
+            <div className="row" style={{ background: "#fff" }}>
+              <div
+                style={{
+                  float: "left",
+                  width: "300px",
+                  minWidth: "300px",
+                  maxWidth: "300px",
+                  display: "inline-block"
+                }}
+              >
                 <div className="firstbox">
                   <label>
-                    Sales Person :{" "}
-                    <span>
-                      {encryption(
-                        window.localStorage.getItem("username"),
-                        "desc"
-                      )}
-                    </span>
+                    Sales Person : <span>{this.state.SalesPersonName}</span>
                   </label>
+                  <br></br>
                   <label>
-                    E-Mail :{" "}
-                    <span>
-                      {encryption(
-                        window.localStorage.getItem("emailid"),
-                        "desc"
-                      )}
-                    </span>
+                    E-Mail :<span>{this.state.SalesPersonEmail}</span>
                   </label>
+                  <br></br>
                   <label>
-                    Phone : <span></span>
+                    Phone : <span>{this.state.SalesPersonPhone}</span>
                   </label>
+                  <br></br>
                   <label>
-                    Fax : <span></span>
+                    Fax : <span>{this.state.SalesPersonFax}</span>
                   </label>
                 </div>
               </div>
-              <div className="col-12 col-md-6">
+              <div
+                style={{
+                  float: "left",
+                  width: "300px",
+                  minWidth: "300px",
+                  maxWidth: "300px",
+                  display: "inline-block"
+                }}
+              >
                 <div className="firstbox">
                   <label>
                     ATNN : <span>{this.state.custNotification}</span>
                   </label>
+                  <br></br>
                   <label>
                     E-Mail : <span>{this.state.Contact_Email}</span>
                   </label>
+                  <br></br>
                   <label>
                     Phone : <span>{this.state.Contact_Phone}</span>
                   </label>
+                  <br></br>
                   <label>
                     Fax : <span></span>
                   </label>
@@ -2954,7 +2986,7 @@ class RateFinalizingStill extends Component {
                   this.state.ContainerLoad.toUpperCase() === "LTL" ||
                   this.state.ContainerLoad.toUpperCase() === "FCL" ? (
                     <>
-                      <h3>Dimensions</h3>
+                      <h3 style={{ marginTop: "15px" }}>Dimensions</h3>
                       <div className="table-responsive">
                         <table className="table table-responsive">
                           <thead>
@@ -2988,10 +3020,10 @@ class RateFinalizingStill extends Component {
                                   <tr>
                                     <td>{item1.ContainerType}</td>
                                     <td>{item1.Quantity}</td>
-                                    <td>{item1.Lenght}</td>
+                                    <td>{item1.Lengths}</td>
                                     <td>{item1.Width}</td>
                                     <td>{item1.Height}</td>
-                                    <td>{item1.Weight}</td>
+                                    <td>{item1.GrossWt}</td>
                                     {this.state.ContainerLoad.toUpperCase() ===
                                       "FCL" ||
                                     this.state.ContainerLoad.toUpperCase() ===
@@ -3029,9 +3061,11 @@ class RateFinalizingStill extends Component {
                           <label>
                             Type of Move :<span>{this.state.TypeofMove}</span>
                           </label>
+                          <br></br>
                           <label>
                             POL : <span>{item.POL}</span>
                           </label>
+                          <br></br>
                           <label>
                             POD : <span>{item.POD}</span>
                           </label>
@@ -3045,9 +3079,11 @@ class RateFinalizingStill extends Component {
                                 : "Transit"}
                             </span>
                           </label>
+                          <br></br>
                           <label>
                             Inco Terms : <span>{this.state.IncoTerms}</span>
                           </label>
+                          <br></br>
                         </div>
                         <div className="col-12 col-md-4">
                           <label>
@@ -3112,12 +3148,12 @@ class RateFinalizingStill extends Component {
                                 {this.state.CargoDetailsArr.length > 0
                                   ? this.state.CargoDetailsArr.map(item1 => (
                                       <tr>
-                                        <td>{item1.PackageType}</td>
+                                        <td>{item1.ContainerType}</td>
                                         <td>{item1.Quantity}</td>
-                                        <td>{item1.Lenght}</td>
+                                        <td>{item1.Lengths}</td>
                                         <td>{item1.Width}</td>
                                         <td>{item1.Height}</td>
-                                        <td>{item1.Weight}</td>
+                                        <td>{item1.GrossWt}</td>
                                         <td>
                                           {this.state.ContainerLoad.toUpperCase() ===
                                           "AIR"
@@ -3195,7 +3231,7 @@ class RateFinalizingStill extends Component {
                               <th>Price</th>
                               <th>Units</th>
                               <th>Tax</th>
-                              <th>Total(USD)</th>
+                              <th>Total</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -3230,19 +3266,26 @@ class RateFinalizingStill extends Component {
                               <th></th>
                               <th></th>
 
-                              <th>
+                              <th
+                                style={{
+                                  textAlign: "right",
+                                  paddingRight: "105px"
+                                }}
+                              >
                                 {this.state.filterrateSubDetails.length > 0 &&
                                 this.state.filterrateSubDetails !== undefined
-                                  ? this.state.filterrateSubDetails.reduce(
-                                      (sum, filterrateSubDetails) =>
-                                        sum +
-                                        parseFloat(
-                                          filterrateSubDetails.Total.split(
-                                            " "
-                                          )[0]
-                                        ),
-                                      0
-                                    ) +
+                                  ? this.state.filterrateSubDetails
+                                      .reduce(
+                                        (sum, filterrateSubDetails) =>
+                                          sum +
+                                          parseFloat(
+                                            filterrateSubDetails.Total.split(
+                                              " "
+                                            )[0]
+                                          ),
+                                        0
+                                      )
+                                      .toFixed(2) +
                                     " " +
                                     this.state.filterrateSubDetails[0]
                                       .BaseCurrency
@@ -3269,7 +3312,7 @@ class RateFinalizingStill extends Component {
                                 <th>Price</th>
                                 <th>Units</th>
                                 <th>Tax</th>
-                                <th>Total(USD)</th>
+                                <th>Total</th>
                               </tr>
                             </thead>
                             <tbody>

@@ -100,7 +100,7 @@ function ChangePasswordCheck(email) {
       EmailID: email
     })
   };
-  return fetch(`${appSettings.APIURL}forgotpassword`, requestOptions)
+  return fetch(`${appSettings.APIURL}/forgotpassword`, requestOptions)
     .then(handleResponse)
     .catch(error => {});
 }

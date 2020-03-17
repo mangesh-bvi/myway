@@ -452,7 +452,7 @@ class BookingView extends Component {
             var Consignee_Name = Booking[0].Consignee_Name;
 
             var CargoType = Booking[0].CargoType;
-            var Incoterm = Booking[0].Incoterm;
+            
             var strBooking_No = Booking[0].strBooking_No;
             var ModeofTransport = Booking[0].ModeofTransport;
 
@@ -518,7 +518,7 @@ class BookingView extends Component {
               Consignee_Displayas,
               Consignee_Name,
               CargoType,
-              Incoterm,
+              
               strBooking_No,
               fields: {
                 Consignee: Booking[0].Consignee_Name,
@@ -536,6 +536,7 @@ class BookingView extends Component {
 
         if (Table6.length > 0) {
           var companyID = 0;
+          var Incoterm =""
           var Customs_Clearance = Table6[0].Customs_Clearance;
           if (Table6[0].contact_name) {
             Company_Address = Table6[0].Company_Address;
@@ -549,8 +550,9 @@ class BookingView extends Component {
           }
           ShipmentType = Table6[0].ShipmentType;
           HAZMAT = Table6[0].HAZMAT;
-
+          Incoterm= Table6[0].IncoTerm;
           self.setState({
+            Incoterm,
             Customs_Clearance,
             companyID,
             Company_Address,
@@ -660,7 +662,7 @@ class BookingView extends Component {
             var Consignee_Displayas = Booking[0].Consignee_Displayas;
             var Consignee_Name = Booking[0].Consignee_Name;
             var CargoType = Booking[0].CargoType;
-            var Incoterm = Booking[0].Incoterm;
+            
             var strBooking_No = Booking[0].strBooking_No;
             var ModeofTransport = Booking[0].ModeofTransport;
 
@@ -693,7 +695,7 @@ class BookingView extends Component {
               Consignee_Displayas,
               Consignee_Name,
               CargoType,
-              Incoterm,
+              
               strBooking_No,
               fields: {
                 Consignee: Booking[0].Consignee_Name,
@@ -716,7 +718,9 @@ class BookingView extends Component {
           ShipmentType = Table6[0].ShipmentType;
           HAZMAT = Table6[0].HAZMAT;
           NonStackable = Table6[0].NonStackable;
+          var Incoterm=Table6[0].IncoTerm;
           self.setState({
+            Incoterm,
             NonStackable,
             Company_Address,
             contact_name,
@@ -817,6 +821,7 @@ class BookingView extends Component {
   }
 
   render() {
+    
     var commodityName = "";
     if (this.state.selectedCommodity !== 0) {
       commodityName = this.state.commodityData.filter(
@@ -1060,17 +1065,19 @@ class BookingView extends Component {
                                       if (row.original.CBM) {
                                         value = row.original.CBM;
                                       }
-                                    } else if (this.state.CargoType == "AIR") {
-                                      header = "Chargeable Weight";
-                                      if (row.original["Chargable Weight"]) {
+                                    }else if (
+                                      this.state.ContainerLoad == "AIR"
+                                    ) {
+                                      header = "CW";
+                                      if (row.original["ChgWeight"]) {
                                         value =
-                                          row.original["Chargable Weight"];
+                                          row.original["ChgWeight"];
                                       }
                                     } else {
-                                      header = "Chargeable Weight";
-                                      if (row.original["Chargable Weight"]) {
+                                      header = "CW";
+                                      if (row.original["ChgWeight"]) {
                                         value =
-                                          row.original["Chargable Weight"];
+                                          row.original["ChgWeight"];
                                       }
                                     }
 

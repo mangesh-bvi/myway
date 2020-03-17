@@ -351,6 +351,7 @@ class BookingTable extends Component {
                                   className="actionicon"
                                   src={Eye}
                                   alt="view-icon"
+                                  title={"View"}
                                   onClick={e =>
                                     this.HandleViewClickIcon(e, row)
                                   }
@@ -359,6 +360,7 @@ class BookingTable extends Component {
                                 <img
                                   className="actionicon"
                                   src={Copy}
+                                  title={Copy}
                                   alt="view-icon"
                                   onClick={e => this.HandleCopyClick(e, row)}
                                 />

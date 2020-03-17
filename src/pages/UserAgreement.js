@@ -76,7 +76,7 @@ function VerifyAgreement()
   return fetch(`${appSettings.APIURL}/AcceptAgreement`, requestOptions)
     .then(handleResponse)
     .catch(error => {
-      console.log(error);
+      
     });
 }
 

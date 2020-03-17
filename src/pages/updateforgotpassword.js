@@ -103,7 +103,7 @@ function ValidatePassCode(UserId, Password) {
   return fetch(`${appSettings.APIURL}/UpdatePassword`, requestOptions)
     .then(HandleResponse)
     .catch(error => {
-      console.log(error);
+      
     });
 }
 //// Handle response for update password

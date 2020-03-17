@@ -516,6 +516,7 @@ class NewRateSearch extends Component {
           this.state.selected.length > 0 &&
           this.state.containerLoadType === "FCL"
         ) {
+          window.localStorage.setItem("isCopy", true);
           this.props.history.push({
             pathname: "rate-table",
             state: this.state
@@ -526,6 +527,7 @@ class NewRateSearch extends Component {
           this.state.flattack_openTop.length > 0 ||
           this.state.spacEqmtType.length > 0
         ) {
+          window.localStorage.setItem("isCopy", true);
           this.props.history.push({
             pathname: "rate-table",
             state: this.state
@@ -534,6 +536,7 @@ class NewRateSearch extends Component {
           this.state.selected.length == 0 &&
           this.state.containerLoadType !== "FCL"
         ) {
+          window.localStorage.setItem("isCopy", true);
           this.props.history.push({
             pathname: "rate-table",
             state: this.state
@@ -1408,6 +1411,7 @@ class NewRateSearch extends Component {
   }
 
   UISpecialChange(i, e) {
+    debugger;
     const { name, value } = e.target;
 
     let referType = [...this.state.referType];
@@ -1557,7 +1561,7 @@ class NewRateSearch extends Component {
 
   newMultiCBMHandleChange(i, e) {
     const { name, value } = e.target;
-
+    debugger;
     let flattack_openTop = [...this.state.flattack_openTop];
     if (name === "PackageType") {
       flattack_openTop[i] = {
@@ -1570,15 +1574,34 @@ class NewRateSearch extends Component {
       name === "Height" ||
       name === "GrossWt"
     ) {
-      var validNumber = new RegExp(/^\d*\.?\d*$/);
-      if (value === "" || validNumber.test(value)) {
-        if ((parseFloat(value) * 100) % 1 > 0) {
+      if (isNaN(value)) {
+        return false;
+      }
+      var splitText = value.split(".");
+      var index = value.indexOf(".");
+      if (index != -1) {
+        if (splitText) {
+          if (splitText[1].length <= 2) {
+            if (index != -1 && splitText.length === 2) {
+              flattack_openTop[i] = {
+                ...flattack_openTop[i],
+                [name]:value
+              };
+            }
+          } else {
+            return false;
+          }
         } else {
           flattack_openTop[i] = {
             ...flattack_openTop[i],
-            [name]: parseFloat(value)
+            [name]: value
           };
         }
+      } else {
+        flattack_openTop[i] = {
+          ...flattack_openTop[i],
+          [name]: value
+        };
       }
     } else {
       flattack_openTop[i] = {
@@ -1928,6 +1951,7 @@ class NewRateSearch extends Component {
     } else {
     }
 
+    this.setState({ fields: {} });
     // next
     document.getElementById("typeMove").classList.add("typeMove");
     if (document.getElementById("cbmInner") == null) {

@@ -127,11 +127,18 @@ class Header extends Component {
 
     var iscurrencydrp = false;
     var pathName = this.props.location.pathname;
+
+    var isCopy = window.localStorage.getItem("isCopy");
     if (pathName !== "/rate-table" && pathName !== "/rate-finalizing") {
       iscurrencydrp = true;
       this.setState({ iscurrencydrp });
     } else {
-      iscurrencydrp = false;
+      if (isCopy == "false") {
+        iscurrencydrp = true;
+      } else {
+        iscurrencydrp = false;
+      }
+
       this.setState({ iscurrencydrp });
     }
   }
@@ -189,10 +196,10 @@ class Header extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        console.log(response.data);
+        
       })
       .catch(response => {
-        console.log(response.data);
+        
       });
   }
 

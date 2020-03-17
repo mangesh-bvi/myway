@@ -143,6 +143,7 @@ class QuoteTable extends Component {
   }
 
   Copyfinalizing(e) {
+    window.localStorage.setItem("isCopy", false);
     var Quote = e.target.getAttribute("data-Quote");
     var type = e.target.getAttribute("data-type");
     this.props.history.push({
@@ -340,6 +341,7 @@ class QuoteTable extends Component {
                                       <img
                                         className="actionicon"
                                         src={Eye}
+                                        title={"View"}
                                         alt="view-icon"
                                       />
                                     </a>
@@ -348,6 +350,7 @@ class QuoteTable extends Component {
                                       <img
                                         className="actionicon"
                                         src={Copy}
+                                        title={"Copy"}
                                         alt="view-icon"
                                         data-Quote={
                                           row.original.QUOTE_ID_Revisions
@@ -368,6 +371,7 @@ class QuoteTable extends Component {
                                       <img
                                         className="actionicon"
                                         src={Eye}
+                                        title={"View"}
                                         alt="view-icon"
                                       />
                                     </a>
@@ -376,6 +380,7 @@ class QuoteTable extends Component {
                                       <img
                                         className="actionicon"
                                         src={Copy}
+                                        title={"Copy"}
                                         alt="view-icon"
                                         data-Quote={
                                           row.original.QUOTE_ID_Revisions

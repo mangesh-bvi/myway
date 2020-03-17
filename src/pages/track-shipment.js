@@ -407,7 +407,7 @@ class TrackShipment extends Component {
 
   onEntered() {
     // this.setState({ status: "Opened" });
-    console.log(1);
+    
   }
   handleChangePage() {
     window.history.back();

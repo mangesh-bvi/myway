@@ -470,6 +470,7 @@ class RateFinalizingStillBooking extends Component {
       this.state.isNotify === true
     ) {
       this.setState({ loding: true });
+      let self = this;
       var bookingId = this.state.BookingNo;
       var userId = encryption(window.localStorage.getItem("userid"), "desc");
       var bookingDetails = this.state.Booking;
@@ -586,18 +587,18 @@ class RateFinalizingStillBooking extends Component {
           }
         }
       }
-      if (this.state.multiCBM.length > 0) {
-        for (let i = 0; i < this.state.multiCBM.length; i++) {
+      if (self.state.multiCargo.length > 0) {
+        for (let i = 0; i < self.state.multiCargo.length; i++) {
           var cargoData = new Object();
-          cargoData.BookingPackID = self.state.multiCBM[i].BookingPackID || 0;
-          cargoData.PackageType = self.state.multiCBM[i].PackageType || "";
-          cargoData.Quantity = self.state.multiCBM[i].Quantity || 0;
-          cargoData.Lengths = self.state.multiCBM[i].Lengths || 0;
-          cargoData.Width = self.state.multiCBM[i].Width || 0;
-          cargoData.Height = self.state.multiCBM[i].Height || 0;
-          cargoData.GrossWt = self.state.multiCBM[i].GrossWeight || 0;
-          cargoData.VolumeWeight = self.state.multiCBM[i].VolumeWeight || 0;
-          cargoData.Volume = self.state.multiCBM[i].Volume || 0;
+          cargoData.BookingPackID = self.state.multiCargo[i].BookingPackID || 0;
+          cargoData.PackageType = self.state.multiCargo[i].PackageType || "";
+          cargoData.Quantity = self.state.multiCargo[i].Quantity || 0;
+          cargoData.Lengths = self.state.multiCargo[i].Lengths || 0;
+          cargoData.Width = self.state.multiCargo[i].Width || 0;
+          cargoData.Height = self.state.multiCargo[i].Height || 0;
+          cargoData.GrossWt = self.state.multiCargo[i].GrossWt || 0;
+          cargoData.VolumeWeight = self.state.multiCargo[i].VolumeWeight || 0;
+          cargoData.Volume = self.state.multiCargo[i].Volume || 0;
 
           BookingDim.push(cargoData);
         }
@@ -630,26 +631,42 @@ class RateFinalizingStillBooking extends Component {
         BookingDocs: BookingDocs,
         BookingDim: BookingDim
       };
-      let self = this;
+
       axios({
         method: "post",
         url: `${appSettings.APIURL}/BookingUpdation`,
 
         headers: authHeader(),
         data: paramData
-      }).then(function(response) {
-        store.addNotification({
-          // title: "Success",
-          message: response.data.Table[0].Message,
-          type: "success", // 'default', 'success', 'info', 'warning','danger'
-          container: "top-right", // where to position the notifications
-          dismiss: {
-            duration: appSettings.NotficationTime
+      })
+        .then(function(response) {
+          store.addNotification({
+            // title: "Success",
+            message: response.data.Table[0].Message,
+            type: "success", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
+          self.setState({ loding: false });
+          self.HandleFileUpload();
+        })
+        .catch(response => {
+          if (response.data) {
+            store.addNotification({
+              // title: "Success",
+              message: response.data,
+              type: "danger", // 'default', 'success', 'info', 'warning','danger'
+              container: "top-right", // where to position the notifications
+              dismiss: {
+                duration: appSettings.NotficationTime
+              }
+            });
           }
+
+          self.setState({ loding: false });
         });
-        self.setState({ loding: false });
-        self.HandleFileUpload();
-      });
     } else {
       store.addNotification({
         // title: "Error",
@@ -833,189 +850,221 @@ class RateFinalizingStillBooking extends Component {
   ////this methos for bookig details HandleBookigClone
   HandleBookigClone() {
     let self = this;
+    if (
+      this.state.isConshinee === true ||
+      this.state.isShipper === true ||
+      this.state.isBuyer === true ||
+      this.state.isNotify === true
+    ) {
+      this.setState({ loding: true });
+      var bookingId = self.state.BookingNo;
+      var userId = encryption(window.localStorage.getItem("userid"), "desc");
+      var bookingDetails = self.state.Booking;
 
-    this.setState({ loding: true });
-    var bookingId = self.state.BookingNo;
-    var userId = encryption(window.localStorage.getItem("userid"), "desc");
-    var bookingDetails = self.state.Booking;
+      var DefaultEntityTypeID = self.state.DefaultEntityTypeID; ////ask to way it give parameter
+      var MyWayUserID = userId;
 
-    var DefaultEntityTypeID = self.state.DefaultEntityTypeID; ////ask to way it give parameter
-    var MyWayUserID = userId;
-
-    var ShipperID = 0;
-    var Shipper_Displayas = "";
-    var Shipper_AddressID = 0;
-    var ShipperName = "";
-    if (self.state.isShipper === true) {
-      ShipperID = Number(self.state.ShipperID || 0);
-      Shipper_Displayas = self.state.Shipper_Displayas || "";
-      Shipper_AddressID = Number(self.state.Shipper_AddressID || 0);
-      ShipperName = self.state.ShipperName || "";
-    } else {
-      if (self.state.shipperData.Company_ID) {
-        ShipperName = self.state.shipperData.Company_Name || "";
-        ShipperID = Number(self.state.shipperData.Company_ID || 0);
+      var ShipperID = 0;
+      var Shipper_Displayas = "";
+      var Shipper_AddressID = 0;
+      var ShipperName = "";
+      if (self.state.isShipper === true) {
+        ShipperID = Number(self.state.ShipperID || 0);
+        Shipper_Displayas = self.state.Shipper_Displayas || "";
+        Shipper_AddressID = Number(self.state.Shipper_AddressID || 0);
+        ShipperName = self.state.ShipperName || "";
       } else {
-        ShipperName = self.state.ShipperName;
-        ShipperID = self.state.ShipperID;
+        if (self.state.shipperData.Company_ID) {
+          ShipperName = self.state.shipperData.Company_Name || "";
+          ShipperID = Number(self.state.shipperData.Company_ID || 0);
+        } else {
+          ShipperName = self.state.ShipperName;
+          ShipperID = self.state.ShipperID;
+        }
+
+        Shipper_Displayas = self.state.Shipper_Displayas || "";
+        Shipper_AddressID = Number(self.state.Shipper_AddressID || 0);
       }
 
-      Shipper_Displayas = self.state.Shipper_Displayas || "";
-      Shipper_AddressID = Number(self.state.Shipper_AddressID || 0);
-    }
+      var ConsigneeID = 0;
+      var ConsigneeName = "";
+      var Consignee_AddressID = 0;
+      var Consignee_Displayas = "";
 
-    var ConsigneeID = 0;
-    var ConsigneeName = "";
-    var Consignee_AddressID = 0;
-    var Consignee_Displayas = "";
-
-    if (self.state.isConshinee === true) {
-      ConsigneeID = Number(self.state.ConsigneeID || 0);
-      ConsigneeName = self.state.ConsigneeName || "";
-      Consignee_AddressID = Number(self.state.Consignee_AddressID || 0);
-      Consignee_Displayas = self.state.Consignee_Displayas;
-    } else {
-      if (self.state.consineeData.Company_ID) {
-        ConsigneeID = Number(self.state.consineeData.Company_ID || 0);
-        ConsigneeName = self.state.consineeData.Company_Name || "";
+      if (self.state.isConshinee === true) {
+        ConsigneeID = Number(self.state.ConsigneeID || 0);
+        ConsigneeName = self.state.ConsigneeName || "";
+        Consignee_AddressID = Number(self.state.Consignee_AddressID || 0);
+        Consignee_Displayas = self.state.Consignee_Displayas;
       } else {
-        ConsigneeID = self.state.ConsigneeID;
-        ConsigneeName = self.state.ConsigneeName;
+        if (self.state.consineeData.Company_ID) {
+          ConsigneeID = Number(self.state.consineeData.Company_ID || 0);
+          ConsigneeName = self.state.consineeData.Company_Name || "";
+        } else {
+          ConsigneeID = self.state.ConsigneeID;
+          ConsigneeName = self.state.ConsigneeName;
+        }
+
+        Consignee_AddressID = Number(self.state.Consignee_AddressID || 0);
+        Consignee_Displayas = self.state.Consignee_Displayas;
       }
 
-      Consignee_AddressID = Number(self.state.Consignee_AddressID || 0);
-      Consignee_Displayas = self.state.Consignee_Displayas;
-    }
+      var BuyerID = 0;
+      var BuyerName = "";
+      var Buyer_AddressID = 0;
+      var Buyer_Displayas = "";
 
-    var BuyerID = 0;
-    var BuyerName = "";
-    var Buyer_AddressID = 0;
-    var Buyer_Displayas = "";
-
-    if (self.state.isBuyer === true) {
-      BuyerID = Number(self.state.BuyerID || 0);
-      BuyerName = self.state.BuyerName || "";
-      Buyer_AddressID = Number(self.state.Buyer_AddressID || 0);
-      Buyer_Displayas = self.state.Buyer_Displayas;
-    } else {
-      if (self.state.buyerData.Company_ID) {
-        BuyerID = Number(self.state.buyerData.Company_ID || 0);
-        BuyerName = self.state.buyerData.Company_Name || "";
+      if (self.state.isBuyer === true) {
+        BuyerID = Number(self.state.BuyerID || 0);
+        BuyerName = self.state.BuyerName || "";
+        Buyer_AddressID = Number(self.state.Buyer_AddressID || 0);
+        Buyer_Displayas = self.state.Buyer_Displayas;
       } else {
-        BuyerID = self.state.BuyerID;
-        BuyerName = self.state.BuyerName;
+        if (self.state.buyerData.Company_ID) {
+          BuyerID = Number(self.state.buyerData.Company_ID || 0);
+          BuyerName = self.state.buyerData.Company_Name || "";
+        } else {
+          BuyerID = self.state.BuyerID;
+          BuyerName = self.state.BuyerName;
+        }
+        Buyer_AddressID = Number(self.state.Buyer_AddressID || 0);
+        Buyer_Displayas = self.state.Buyer_Displayas;
       }
-      Buyer_AddressID = Number(self.state.Buyer_AddressID || 0);
-      Buyer_Displayas = self.state.Buyer_Displayas;
-    }
 
-    var NotifyID = 0;
-    var NotifyName = "";
+      var NotifyID = 0;
+      var NotifyName = "";
 
-    var Notify_AddressID = 0;
-    var Notify_Displayas = "";
+      var Notify_AddressID = 0;
+      var Notify_Displayas = "";
 
-    if (self.state.isNotify === true) {
-      NotifyID = Number(self.state.NotifyID || 0);
-      NotifyName = self.state.NotifyName || "";
-      Notify_AddressID = Number(self.state.Notify_AddressID || 0);
-      Notify_Displayas = self.state.Notify_Displayas;
-    } else {
-      if (self.state.notifyData.Company_ID) {
-        NotifyID = Number(self.state.notifyData.Company_ID || 0);
-        NotifyName = self.state.notifyData.Company_Name || "";
+      if (self.state.isNotify === true) {
+        NotifyID = Number(self.state.NotifyID || 0);
+        NotifyName = self.state.NotifyName || "";
+        Notify_AddressID = Number(self.state.Notify_AddressID || 0);
+        Notify_Displayas = self.state.Notify_Displayas;
       } else {
-        NotifyID = self.state.BuyerID;
-        NotifyName = self.state.BuyerName;
+        if (self.state.notifyData.Company_ID) {
+          NotifyID = Number(self.state.notifyData.Company_ID || 0);
+          NotifyName = self.state.notifyData.Company_Name || "";
+        } else {
+          NotifyID = self.state.BuyerID;
+          NotifyName = self.state.BuyerName;
+        }
+        Notify_AddressID = Number(self.state.Notify_AddressID || 0);
+        Notify_Displayas = self.state.Notify_Displayas;
       }
-      Notify_AddressID = Number(self.state.Notify_AddressID || 0);
-      Notify_Displayas = self.state.Notify_Displayas;
-    }
 
-    var Mode = bookingDetails[0].CargoType;
-    var Commodity = Number(bookingDetails[0].Commodity || 0);
-    var saleQuoteID = Number(bookingDetails[0].saleQuoteID || 0);
-    var saleQuoteNo = bookingDetails[0].saleQuoteNo || "";
-    var saleQuoteLineID = Number(bookingDetails[0].saleQuoteLineID || 0);
+      var Mode = bookingDetails[0].CargoType;
+      var Commodity = Number(bookingDetails[0].Commodity || 0);
+      var saleQuoteID = Number(bookingDetails[0].saleQuoteID || 0);
+      var saleQuoteNo = bookingDetails[0].saleQuoteNo || "";
+      var saleQuoteLineID = Number(bookingDetails[0].saleQuoteLineID || 0);
 
-    var BookingDocs = [];
-    var BookingDim = [];
-    if (self.state.FileData.length > 0) {
-      for (let i = 0; i < self.state.FileData.length; i++) {
-        var fileObj = new Object();
-        fileObj.BookingID = bookingId;
-        fileObj.DocumentID = self.state.FileData[i].DocumentID;
-        fileObj.FTPFilePath = self.state.FileData[i].FilePath;
-        BookingDocs.push(fileObj);
+      var BookingDocs = [];
+      var BookingDim = [];
+      if (self.state.FileData.length > 0) {
+        for (let i = 0; i < self.state.FileData.length; i++) {
+          var fileObj = new Object();
+          fileObj.BookingID = bookingId;
+          fileObj.DocumentID = self.state.FileData[i].DocumentID;
+          fileObj.FTPFilePath = self.state.FileData[i].FilePath;
+          BookingDocs.push(fileObj);
+        }
       }
-    }
-    if (self.state.multiCBM.length > 0) {
-      for (let i = 0; i < self.state.multiCBM.length; i++) {
-        var cargoData = new Object();
 
-        cargoData.BookingPackID = self.state.multiCBM[i].BookingPackID || 0;
-        cargoData.PackageType = self.state.multiCBM[i].PackageType || "";
-        cargoData.Quantity = self.state.multiCBM[i].Quantity || 0;
-        cargoData.Lengths = self.state.multiCBM[i].Lengths || 0;
-        cargoData.Width = self.state.multiCBM[i].Width || 0;
-        cargoData.Height = self.state.multiCBM[i].Height || 0;
-        cargoData.GrossWt = self.state.multiCBM[i].GrossWeight || 0;
-        cargoData.VolumeWeight = self.state.multiCBM[i].VolumeWeight || 0;
-        cargoData.Volume = self.state.multiCBM[i].Volume || 0;
+      if (self.state.multiCargo.length > 0) {
+        for (let i = 0; i < self.state.multiCargo.length; i++) {
+          var cargoData = new Object();
+          cargoData.BookingPackID = self.state.multiCargo[i].BookingPackID || 0;
+          cargoData.PackageType = self.state.multiCargo[i].PackageType || "";
+          cargoData.Quantity = self.state.multiCargo[i].Quantity || 0;
+          cargoData.Lengths = self.state.multiCargo[i].Lengths || 0;
+          cargoData.Width = self.state.multiCargo[i].Width || 0;
+          cargoData.Height = self.state.multiCargo[i].Height || 0;
+          cargoData.GrossWt = self.state.multiCargo[i].GrossWt || 0;
+          cargoData.VolumeWeight = self.state.multiCargo[i].VolumeWeight || 0;
+          cargoData.Volume = self.state.multiCargo[i].Volume || 0;
 
-        BookingDim.push(cargoData);
+          BookingDim.push(cargoData);
+        }
       }
-    }
 
-    var paramData = {
-      MyWayUserID: MyWayUserID,
-      ShipperID: ShipperID,
-      Shipper_Displayas: Shipper_Displayas,
-      Shipper_AddressID: Shipper_AddressID,
-      ShipperName: ShipperName,
-      ConsigneeID: ConsigneeID,
-      ConsigneeName: ConsigneeName,
-      Consignee_AddressID: Consignee_AddressID,
-      Consignee_Displayas: Consignee_Displayas,
-      BuyerID: BuyerID,
-      Buyer_AddressID: Buyer_AddressID,
-      Buyer_Displayas: Buyer_Displayas,
-      BuyerName: BuyerName,
-      Mode: Mode,
-      Commodity: Commodity,
-      saleQuoteID: saleQuoteID,
-      saleQuoteNo: saleQuoteNo,
-      saleQuoteLineID: saleQuoteLineID,
-      DefaultEntityTypeID: DefaultEntityTypeID,
-      NotifyID: NotifyID,
-      Notify_AddressID: Notify_AddressID,
-      Notify_Displayas: Notify_Displayas,
-      NotifyName: NotifyName,
-      BookingDocs: BookingDocs,
-      BookingDim: BookingDim
-    };
+      var paramData = {
+        MyWayUserID: MyWayUserID,
+        ShipperID: ShipperID,
+        Shipper_Displayas: Shipper_Displayas,
+        Shipper_AddressID: Shipper_AddressID,
+        ShipperName: ShipperName,
+        ConsigneeID: ConsigneeID,
+        ConsigneeName: ConsigneeName,
+        Consignee_AddressID: Consignee_AddressID,
+        Consignee_Displayas: Consignee_Displayas,
+        BuyerID: BuyerID,
+        Buyer_AddressID: Buyer_AddressID,
+        Buyer_Displayas: Buyer_Displayas,
+        BuyerName: BuyerName,
+        Mode: Mode,
+        Commodity: Commodity,
+        saleQuoteID: saleQuoteID,
+        saleQuoteNo: saleQuoteNo,
+        saleQuoteLineID: saleQuoteLineID,
+        DefaultEntityTypeID: DefaultEntityTypeID,
+        NotifyID: NotifyID,
+        Notify_AddressID: Notify_AddressID,
+        Notify_Displayas: Notify_Displayas,
+        NotifyName: NotifyName,
+        BookingDocs: BookingDocs,
+        BookingDim: BookingDim
+      };
 
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/BookingInsertion`,
-      data: paramData,
+      axios({
+        method: "post",
+        url: `${appSettings.APIURL}/BookingInsertion`,
+        data: paramData,
 
-      headers: authHeader()
-    }).then(function(response) {
+        headers: authHeader()
+      })
+        .then(function(response) {
+          store.addNotification({
+            // title: "Success",
+            message: response.data.Table[0].Message,
+            type: "success", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
+          self.setState({ loding: false });
+          setTimeout(() => {
+            self.HandleFileUpload();
+          }, 1000);
+        })
+        .catch(response => {
+          if (response.data) {
+            store.addNotification({
+              // title: "Success",
+              message: response.data,
+              type: "danger", // 'default', 'success', 'info', 'warning','danger'
+              container: "top-right", // where to position the notifications
+              dismiss: {
+                duration: appSettings.NotficationTime
+              }
+            });
+          }
+          self.setState({ loding: false });
+        });
+    } else {
       store.addNotification({
-        // title: "Success",
-        message: response.data.Table[0].Message,
-        type: "success", // 'default', 'success', 'info', 'warning','danger'
+        // title: "Error",
+        message:
+          "please select atleast one Customer has a Consinee,Shipper,Notify,Buyer",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
           duration: appSettings.NotficationTime
         }
       });
-      self.setState({ loding: false });
-      setTimeout(() => {
-        self.HandleFileUpload();
-      }, 1000);
-    });
+    }
   }
 
   ////this methos for bookig details BookigGridDetailsList
@@ -1709,6 +1758,7 @@ class RateFinalizingStillBooking extends Component {
   };
   render() {
     const { Booking } = this.state;
+
     var bNumber = "";
     if (Booking.length > 0) {
       bNumber = Booking[0].strBooking_No;
@@ -1738,13 +1788,13 @@ class RateFinalizingStillBooking extends Component {
             <div className="rate-fin-tit title-sect mb-4">
               <h2>
                 {this.state.copy === true
-                  ? "Booking Copy"
+                  ? "Booking Copy " +this.state.strBooking_No
                   : this.state.BookingNo !== "" && this.state.isView === true
-                  ? "Update Booking"
+                  ? "Update Booking "+this.state.strBooking_No
                   : this.state.BookingNo !== "" && this.state.isView === true
                   ? "Booking Details " + this.state.newloding === true
                     ? ""
-                    : bNumber
+                    : this.state.strBooking_No
                   : ""}
               </h2>
               <button
@@ -1974,16 +2024,14 @@ class RateFinalizingStillBooking extends Component {
                                     } else if (
                                       this.state.ContainerLoad == "AIR"
                                     ) {
-                                      header = "Chargeable Weight";
-                                      if (row.original["Chargable Weight"]) {
-                                        value =
-                                          row.original["Chargable Weight"];
+                                      header = "CW";
+                                      if (row.original["ChgWeight"]) {
+                                        value = row.original["ChgWeight"];
                                       }
                                     } else {
-                                      header = "Chargeable Weight";
-                                      if (row.original["Chargable Weight"]) {
-                                        value =
-                                          row.original["Chargable Weight"];
+                                      header = "CW";
+                                      if (row.original["ChgWeight"]) {
+                                        value = row.original["ChgWeight"];
                                       }
                                     }
 
@@ -2807,7 +2855,6 @@ class RateFinalizingStillBooking extends Component {
                         </button>
                       </div>
                       <div className="row ratefinalpgn">
-                        {this.state.eqmtType.length > 0 ? "" : null}
                         {this.state.multiCargo.length > 0 ? (
                           <ReactTable
                             columns={[

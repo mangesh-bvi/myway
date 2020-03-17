@@ -425,7 +425,7 @@ class ShippingDetailsTwo extends Component {
         HBLNo: HblNo,
         UserId: parseFloat(
           encryption(window.localStorage.getItem("userid"), "desc")
-        ),
+        )
       },
       headers: authHeader()
     })
@@ -503,7 +503,7 @@ class ShippingDetailsTwo extends Component {
         self.BindShipmentDetailsMap(sid, cid);
       })
       .catch(response => {
-        console.log(response);
+        
       });
   }
   onDocumentChangeHandler = event => {
@@ -708,11 +708,17 @@ class ShippingDetailsTwo extends Component {
 
   //// Bind Activity Message Data
   BindActivityMessageData() {
+    debugger;
     let self = this;
-    var HblNo = this.state.HblNo;
+    var HblNo = "";
     if (typeof this.props.location.state != "undefined") {
       HblNo = this.props.location.state.detail;
+    } else if (this.state.HblNo) {
+      HblNo = this.state.hbllNo;
+    } else {
+      HblNo = this.state.addWat;
     }
+
     axios({
       method: "post",
       url: `${appSettings.APIURL}/MessagesActivityDetails`,

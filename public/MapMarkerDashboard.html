@@ -238,6 +238,13 @@
           new google.maps.Size(32, 32)
         );
 
+        delayblueShip = new google.maps.MarkerImage(
+          "img/blue-ship-delay.png",
+          null /* size is determined at runtime */,
+          null /* origin is 0,0 */,
+          null /* anchor is bottom center of the scaled image */,
+          new google.maps.Size(32, 32)
+        );
         bluePlane = new google.maps.MarkerImage(
           "img/blue-plane.png",
           null /* size is determined at runtime */,
@@ -255,7 +262,7 @@
         );
 
         delayBlue = new google.maps.MarkerImage(
-          "blue-delay.png",
+          "img/blue-delay.png",
           null /* size is determined at runtime */,
           null /* origin is 0,0 */,
           null /* anchor is bottom center of the scaled image */,
@@ -284,7 +291,8 @@
           if (shipmentType == "Air") image = bluePlane;
           if (shipmentType == "Booking") image = bookingBlue;
           if (shipmentType == "Booking-Ocean") image = bookingBlue;
-          if (shipmentType == "Delay-Ocean") image = delayBlue;
+          if (shipmentType == "Delay-Ocean") image = delayblueShip;
+          if (shipmentType == "Inland") image = delayBlue;
 
           var latlngset = new google.maps.LatLng(lat, lng);
 
@@ -330,7 +338,6 @@
                     Authorization: token
                   },
                   success: function(data) {
-                 
                     var datas = data.Table1;
                     var filterData = [];
                     for (var j = 0; j < datas.length; j++) {
@@ -414,7 +421,6 @@
                         innerConsolidateData =
                           innerConsolidateData + CinnerContentDatas; //+ "<br/> </div>";
                       }
-                     
                     }
 
                     //
@@ -485,7 +491,6 @@
                           marketContent + marketInnerContent + "</div>";
                       }
 
-                   
                       content = marketContent;
                     }
 
@@ -502,7 +507,6 @@
       }
 
       $(document).ajaxStart(function() {
-        
         $("#loader-icon").show();
       });
 
@@ -515,11 +519,11 @@
         //
 
         var enteredHBLNum = $("#dataNumber").val();
-     
+
         $("#dataNumber").val("");
 
         var titleData = "";
-      
+
         var lat = "";
         var long = "";
         var add = "";
@@ -532,7 +536,8 @@
         if (shipmentType == "Air") image = bluePlane;
         if (shipmentType == "Booking") image = bookingBlue;
         if (shipmentType == "Booking-Ocean") image = bookingBlue;
-        if (shipmentType == "Delay-Ocean") image = delayBlue;
+        if (shipmentType == "Delay-Ocean") image = delayblueShip;
+        if (shipmentType == "Inland") image = delayBlue;
 
         ////////Get Lat long from the Enter text ////////////////////
         /////////////////////////////////////////////////////////////
@@ -549,13 +554,11 @@
           },
           success: function(data) {
             //
-             
 
-          
             var lat = data.Table[0].LastLocation_Lat;
             var lng = data.Table[0].LastLocation_Lon;
             titleData = data.Table[0].Vessel;
- 
+
             ////////////////////////////////////////////////////////////
             latlngset = new google.maps.LatLng(lat, lng);
             var marker = new google.maps.Marker({
@@ -665,11 +668,10 @@
                     innerConsolidateData =
                       innerConsolidateData + CinnerContentDatas; //+ "<br/> </div>";
                   }
-                  
                 }
 
                 //
-                
+
                 //var datas = data.Table1;
                 if (datas.length > 0) {
                   var marketContent = "<div id='rootElement'>";
@@ -748,7 +750,6 @@
                       marketContent + marketInnerContent + "</div>";
                   }
 
-                  
                   content = marketContent;
                 }
               }
@@ -770,16 +771,12 @@
                 };
               })(marker, content, infowindow)
             );
-
-          
           }
         });
- 
       }
 
       ////Get Dashboard Marker Data on load
       function getDashboardMarkerData(map) {
-        
         if (1 == 1) {
           $.ajax({
             type: "POST",
@@ -793,7 +790,6 @@
               Authorization: token
             },
             success: function(response) {
-      
               if (response.length > 0) {
                 var arrarSelectPin = [
                   "Ocean",
@@ -815,7 +811,6 @@
                 }
                 //
                 setMarkers(map, shippingLocations);
-                 
               }
             },
             complete: function() {
@@ -830,8 +825,6 @@
       isDelayShipment = 1;
       isNewBooking = 1;
       function toggleMapdata(toogleData) {
-        
-
         if (toogleData === "Ocean") {
           if (isOceanOn === 1) {
             isOceanOn = 0;
@@ -919,7 +912,6 @@
             $("div > img[src='img/blue-plane-delay.png']").show();
             $("#mapAir").css("opacity", "1");
 
-
             if (isOceanOn == 0) {
               $("div > img[src='img/blue-ship.png']").show();
               $("#mapOcean").css("opacity", "1");
@@ -990,8 +982,6 @@
           }
 
           if (toogleData === "DelayShipment" && isDelayShipment === 0) {
-           
-
             $("div > img[src='img/blue-delay.png']").show();
             $("div > img[src='img/blue-delay-delay.png']").show();
             $("#mapDelay").css("opacity", "1");

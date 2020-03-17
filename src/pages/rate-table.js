@@ -197,7 +197,8 @@ class RateTable extends Component {
       customerData: [],
       error: "",
       fields: {},
-      isNotData: ""
+      isNotData: "",
+      sloding: false
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -218,6 +219,7 @@ class RateTable extends Component {
   }
 
   componentDidMount() {
+    debugger;
     setTimeout(() => {
       this.HandleCommodityData();
       this.HandlePackgeTypeData();
@@ -435,8 +437,10 @@ class RateTable extends Component {
           this.state.containerLoadType = paramData.containerLoadType;
           this.state.users = paramData.users;
           var Customer = paramData.Customer;
+          var cbmVal = paramData.cbmVal;
 
           this.setState({
+            cbmVal,
             Customer,
             cmbTypeRadio: paramData.cmbTypeRadio,
             polArray: this.state.polArray,
@@ -754,46 +758,54 @@ class RateTable extends Component {
         RatequeryID: this.state.RatequeryID
       },
       headers: authHeader()
-    }).then(function(response) {
-      var ratetable = response.data.Table;
-      var ratetable1 = response.data.Table1;
-      var commodityData = response.data.Table2;
+    })
+      .then(function(response) {
+        var ratetable = response.data.Table;
+        var ratetable1 = response.data.Table1;
+        var commodityData = response.data.Table2;
 
-      if (ratetable.length > 0) {
-        if (ratetable != null) {
-          var MinTTArray = [];
-          var MaxTTArray = [];
-          var AmtArray = [];
-          for (let i = 0; i < ratetable.length; i++) {
-            MinTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[0]));
-            MaxTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[1]));
-            AmtArray.push(ratetable[i].TotalAmount);
-            //MaxAmtArray.push(ratetable[i].TotalAmount);
+        if (ratetable.length > 0) {
+          if (ratetable != null) {
+            var MinTTArray = [];
+            var MaxTTArray = [];
+            var AmtArray = [];
+            for (let i = 0; i < ratetable.length; i++) {
+              MinTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[0]));
+              MaxTTArray.push(parseInt(ratetable[i].TransitTime.split("-")[1]));
+              AmtArray.push(ratetable[i].TotalAmount);
+              //MaxAmtArray.push(ratetable[i].TotalAmount);
+            }
+            self.setState({
+              RateDetails: ratetable,
+              tempRateDetails: ratetable,
+              loading: false,
+              commodityData,
+              MinTT: Math.min(...MinTTArray),
+              MaxTT: Math.max(...MaxTTArray),
+              MinAmt: Math.min(...AmtArray),
+              MaxAmt: Math.max(...AmtArray),
+              value: Math.max(...MaxTTArray),
+              valueAmt: Math.max(...AmtArray)
+            });
           }
+          if (ratetable1 != null) {
+            self.setState({
+              RateSubDetails: ratetable1
+            });
+          }
+        } else {
           self.setState({
-            RateDetails: ratetable,
-            tempRateDetails: ratetable,
-            loading: false,
-            commodityData,
-            MinTT: Math.min(...MinTTArray),
-            MaxTT: Math.max(...MaxTTArray),
-            MinAmt: Math.min(...AmtArray),
-            MaxAmt: Math.max(...AmtArray),
-            value: Math.max(...MaxTTArray),
-            valueAmt: Math.max(...AmtArray)
+            // RateDetails:[],
+            // RateSubDetails:[],
+            loading: false
           });
         }
-        if (ratetable1 != null) {
-          self.setState({
-            RateSubDetails: ratetable1
-          });
-        }
-      } else {
-        self.setState({
-          loading: false
-        });
-      }
-    });
+      })
+      .catch(response => {
+        debugger;
+        // self.setState({ loading: false, RateDetails: [], RateSubDetails: [] });
+        self.setState({ loading: false});
+      });
     // // }
   }
 
@@ -953,6 +965,7 @@ class RateTable extends Component {
   }
 
   HandleRateDetailsFCL(paramData) {
+    debugger;
     var dataParameter = {};
     var pickUpAddress = {
       Street: "",
@@ -1073,7 +1086,7 @@ class RateTable extends Component {
 
       var cmbvalue = paramData.cbmVal;
       if (cmbvalue != "") {
-        cmbvalue = parseInt(cmbvalue);
+        cmbvalue = parseFloat(cmbvalue);
       } else {
         cmbvalue = 0;
       }
@@ -1149,6 +1162,7 @@ class RateTable extends Component {
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
 
+      debugger;
       if (
         cmbvalue != null &&
         cmbvalue != 0 &&
@@ -1306,7 +1320,7 @@ class RateTable extends Component {
             self.setState({
               RateDetails: ratetable,
               tempRateDetails: ratetable,
-              loading: false,
+
               commodityData: ratetable2,
               MinTT: Math.min(...MinTTArray),
               MaxTT: Math.max(...MaxTTArray),
@@ -1334,19 +1348,25 @@ class RateTable extends Component {
             valueAmt: 0
           });
         }
+
+        self.setState({ loading: false });
       })
       .catch(error => {
-        var temperror = error.response.data;
-        var err = temperror.split(":");
-        store.addNotification({
-          // title: "Error",
-          message: err[1].replace("}", ""),
-          type: "danger", // 'default', 'success', 'info', 'warning','danger'
-          container: "top-right", // where to position the notifications
-          dismiss: {
-            duration: appSettings.NotficationTime
-          }
-        });
+        debugger;
+        if (error.response) {
+          var temperror = error.response.data;
+          var err = temperror.split(":");
+          store.addNotification({
+            // title: "Error",
+            message: err[1].replace("}", ""),
+            type: "danger", // 'default', 'success', 'info', 'warning','danger'
+            container: "top-right", // where to position the notifications
+            dismiss: {
+              duration: appSettings.NotficationTime
+            }
+          });
+        }
+
         self.setState({ loading: false });
       });
   }
@@ -1477,7 +1497,6 @@ class RateTable extends Component {
                       className="w-100"
                       type="text"
                       {...props}
-                      //onChange={this.HandlePOLPODAutosearch.bind(this, "pod")}
                     />
                   );
                 }}
@@ -1486,7 +1505,6 @@ class RateTable extends Component {
                   "pol" + (index + 1),
                   index + 1
                 )}
-                //menuStyle={this.state.menuStyle}
                 onSelect={this.HandleAddressDropdownPolSelect.bind(
                   this,
                   item => item.NameWoDiacritics,
@@ -1922,6 +1940,7 @@ class RateTable extends Component {
                   name={"TemperatureType"}
                   id={"exist-cust" + i}
                   value={el.TemperatureType}
+                  checked={el.TemperatureType === "C" ? true : false}
                   onChange={this.UISpecialChange.bind(this, i)}
                 />
                 <label
@@ -1937,6 +1956,7 @@ class RateTable extends Component {
                   name={"TemperatureType"}
                   id={"new-cust" + i}
                   value={el.TemperatureType}
+                  checked={el.TemperatureType === "F" ? true : false}
                   onChange={this.UISpecialChange.bind(this, i)}
                 />
                 <label
@@ -1960,13 +1980,28 @@ class RateTable extends Component {
   }
 
   UISpecialChange(i, e) {
+    debugger;
     const { name, value } = e.target;
 
     let referType = [...this.state.referType];
-    referType[i] = {
-      ...referType[i],
-      [name]: name === "TemperatureType" ? value : parseFloat(value)
-    };
+
+    if (name === "Temperature") {
+      var validNumber = new RegExp(/^\d*\.?\d*$/);
+      if (value === "" || validNumber.test(value)) {
+        if ((parseFloat(value) * 100) % 1 > 0) {
+        } else {
+          referType[i] = {
+            ...referType[i],
+            [name]: value
+          };
+        }
+      }
+    } else {
+      referType[i] = {
+        ...referType[i],
+        [name]: name === "TemperatureType" ? value : parseFloat(value)
+      };
+    }
     this.setState({ referType });
   }
   removeClickSpecial(i) {
@@ -2108,6 +2143,7 @@ class RateTable extends Component {
     this.setState({ flattack_openTop });
   }
   addClickMultiCBM(optionsVal) {
+    debugger;
     this.setState(prevState => ({
       flattack_openTop: [
         ...prevState.flattack_openTop,
@@ -2235,6 +2271,7 @@ class RateTable extends Component {
   }
   //// end For Equipment to create element
   specEquipChange = value => {
+    debugger;
     var difference = false;
     for (var i = 0; i < this.state.referType.length; i++) {
       if (
@@ -2269,7 +2306,9 @@ class RateTable extends Component {
         this.setState({
           specialEqtSelect: true
         });
-        this.addClickMultiCBM(value);
+        // this.addClickMultiCBM(value);
+
+        this.addSpacEqmtType(value);
       }
     }
     if (value.IsTemperatureRequired === 1) {
@@ -2402,7 +2441,7 @@ class RateTable extends Component {
     }));
   }
   toggleSpotCloseModal() {
-    this.setState({ modalSpot: false });
+    this.setState({ modalSpot: false, sloding: false });
   }
 
   HandlePOLPODAutosearch(field, i, e) {
@@ -2468,10 +2507,11 @@ class RateTable extends Component {
       for (let i = 0; i < this.state.polArray.length; i++) {
         arrPOL += this.state.polArray[i].Address + ",";
       }
-      for (let i = 0; i < this.state.podArray.length; i++) {
-        arrPOD += this.state.podArray[i].Address + ",";
-      }
-      if (!arrPOL.includes(value) && !arrPOD.includes(value)) {
+      // for (let i = 0; i < this.state.podArray.length; i++) {
+      //   arrPOD += this.state.podArray[i].Address + ",";
+      // }
+      // if (!arrPOL.includes(value) && !arrPOD.includes(value)) {
+      if (!arrPOL.includes(value)) {
         if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
           var geoCoordinate = id.GeoCoordinate.split(",");
           var PositionPOL = new Object();
@@ -2511,6 +2551,7 @@ class RateTable extends Component {
           this.setState({
             polfullAddData: id,
             multiFields,
+            errorPOL: "",
             mapPositionPOL: this.state.mapPositionPOL,
             polArray: this.state.polArray
           });
@@ -2527,10 +2568,11 @@ class RateTable extends Component {
       for (let i = 0; i < this.state.podArray.length; i++) {
         arrPOD += this.state.podArray[i].Address + ",";
       }
-      for (let j = 0; j < this.state.polArray.length; j++) {
-        arrPOL += this.state.polArray[j].Address + ",";
-      }
-      if (!arrPOD.includes(value) && !arrPOL.includes(value)) {
+      // for (let j = 0; j < this.state.polArray.length; j++) {
+      //   arrPOL += this.state.polArray[j].Address + ",";
+      // }
+      // if (!arrPOD.includes(value) && !arrPOL.includes(value)) {
+      if (!arrPOD.includes(value)) {
         if (id.GeoCoordinate !== "" && id.GeoCoordinate !== null) {
           var PositionPOD = [];
           var geoCoordinate = id.GeoCoordinate.split(",");
@@ -2571,6 +2613,7 @@ class RateTable extends Component {
           this.setState({
             podfullAddData: id,
             multiFields,
+            errorPOD: "",
             markerPositionPOD: this.state.markerPositionPOD,
             podArray: this.state.podArray
           });
@@ -2807,13 +2850,34 @@ class RateTable extends Component {
   }
 
   HandleCMBtextChange(e) {
-    var Textvalue = e.target.value;
+    var jiji = e.target.value;
 
-    this.setState({ cbmVal: Textvalue });
+    if (isNaN(jiji)) {
+      return false;
+    }
+    var splitText = jiji.split(".");
+    var index = jiji.indexOf(".");
+    if (index != -1) {
+      if (splitText) {
+        if (splitText[1].length <= 2) {
+          if (index != -1 && splitText.length === 2) {
+            this.setState({ cbmVal: jiji });
+          }
+        } else {
+          return false;
+        }
+      } else {
+        this.setState({ cbmVal: jiji });
+      }
+    } else {
+      this.setState({ cbmVal: jiji });
+    }
   }
 
   spotRateSubmit(param) {
+    debugger;
     let self = this;
+
     var truckTypeData = [];
     var MultiCBM = [];
     var containerdetails = [];
@@ -2829,48 +2893,57 @@ class RateTable extends Component {
       encryption(window.localStorage.getItem("usertype"), "desc") !== "Customer"
     ) {
       if (this.state.companyId === 0) {
-        CompanyID = encryption(
-          window.localStorage.getItem("companyid"),
-          "desc"
-        );
+        store.addNotification({
+          // title: "Error",
+          message: "Please Select Customer",
+          type: "danger", // 'default', 'success', 'info', 'warning','danger'
+          container: "top-right", // where to position the notifications
+          dismiss: {
+            duration: appSettings.NotficationTime
+          }
+        });
+        return false;
       } else {
         CompanyID = this.state.companyId;
       }
     } else {
       CompanyID = encryption(window.localStorage.getItem("companyid"), "desc");
     }
-
+    this.setState({ sloding: true });
     for (var i = 0; i < param.TruckTypeData.length; i++) {
       truckTypeData.push({
-        TruckTypeID: parseInt(param.TruckTypeData[i].TruckName),
+        TruckTypeID:
+          param.TruckTypeData[i].TruckID === "others"
+            ? 0
+            : parseInt(param.TruckTypeData[i].TruckID),
         TruckQty: param.TruckTypeData[i].Quantity,
-        TruckDesc: param.TruckTypeData[i].TruckDesc
+        TruckTypeDesc: param.TruckTypeData[i].TruckDesc
       });
     }
     if (param.flattack_openTop.length != 0) {
       for (var i = 0; i < param.flattack_openTop.length; i++) {
         MultiCBM.push({
-          PackageType: param.flattack_openTop[i].PackageType,
-          Quantity: param.flattack_openTop[i].Quantity,
-          Lengths: param.flattack_openTop[i].length,
-          Width: param.flattack_openTop[i].width,
-          Height: param.flattack_openTop[i].height,
-          GrossWt: param.flattack_openTop[i].Gross_Weight,
-          VolumeWeight: param.flattack_openTop[i].total,
+          PackageType: param.flattack_openTop[i].PackageType || "",
+          Quantity: param.flattack_openTop[i].Quantity || 0,
+          Lengths: param.flattack_openTop[i].length || 0,
+          Width: param.flattack_openTop[i].width || 0,
+          Height: param.flattack_openTop[i].height || 0,
+          GrossWt: param.flattack_openTop[i].Gross_Weight || 0,
+          VolumeWeight: param.flattack_openTop[i].total || 0,
           Volume: 0
         });
       }
     } else {
       for (var i = 0; i < param.multiCBM.length; i++) {
         MultiCBM.push({
-          PackageType: param.multiCBM[i].PackageType,
-          Quantity: param.multiCBM[i].Quantity,
-          Lengths: param.multiCBM[i].Lengths,
-          Width: param.multiCBM[i].Width,
-          Height: param.multiCBM[i].Height,
-          GrossWt: param.multiCBM[i].GrossWt,
-          VolumeWeight: param.multiCBM[i].VolumeWeight,
-          Volume: param.multiCBM[i].Volume
+          PackageType: param.multiCBM[i].PackageType || "",
+          Quantity: param.multiCBM[i].Quantity || 0,
+          Lengths: param.multiCBM[i].Lengths || 0,
+          Width: param.multiCBM[i].Width || 0,
+          Height: param.multiCBM[i].Height || 0,
+          GrossWt: param.multiCBM[i].GrossWt || 0,
+          VolumeWeight: param.multiCBM[i].VolumeWeight || 0,
+          Volume: param.multiCBM[i].Volume || 0
         });
       }
     }
@@ -2883,7 +2956,7 @@ class RateTable extends Component {
           Type: param.users[i].ContainerName,
           ContainerQuantity: param.users[i].ContainerQuantity,
           Temperature: param.users[i].Temperature,
-          isSpecialEquipment: false
+          TempratureType: param.users[i].TemperatureType
         });
       }
     }
@@ -2894,9 +2967,21 @@ class RateTable extends Component {
           ProfileCodeID: param.spacEqmtType[i].ProfileCodeID,
           ContainerCode: param.spacEqmtType[i].StandardContainerCode,
           Type: param.spacEqmtType[i].ContainerName,
-          ContainerQuantity: param.spacEqmtType[i].Quantity,
+          ContainerQuantity: param.spacEqmtType[i].ContainerQuantity,
           Temperature: param.spacEqmtType[i].Temperature,
-          isSpecialEquipment: true
+          TempratureType: param.spacEqmtType[i].TemperatureType
+        });
+      }
+    }
+    if (this.state.referType.length > 0) {
+      for (var i = 0; i < param.referType.length; i++) {
+        containerdetails.push({
+          ProfileCodeID: param.referType[i].ProfileCodeID,
+          ContainerCode: param.referType[i].StandardContainerCode,
+          Type: param.referType[i].ContainerName,
+          ContainerQuantity: param.referType[i].ContainerQuantity,
+          Temperature: param.referType[i].Temperature,
+          TempratureType: param.referType[i].TemperatureType
         });
       }
     }
@@ -2981,7 +3066,7 @@ class RateTable extends Component {
       destinationAddress = param.DeliveryCity;
       originPort_ID = param.polfullAddData.UNECECode;
     }
-
+    debugger;
     if (param.containerLoadType == "AIR" || param.containerLoadType == "FCL") {
       var multiCBMData = [];
       if (this.state.cmbTypeRadio === "CBM") {
@@ -2996,7 +3081,7 @@ class RateTable extends Component {
           Volume: parseFloat(this.state.cbmVal)
         });
       } else {
-        multiCBMData = MultiCBM;
+        multiCBMData = this.state.multiCBM;
       }
       dataParameter = {
         Mode: param.containerLoadType,
@@ -3009,7 +3094,7 @@ class RateTable extends Component {
         DestinationAddress: destinationAddress,
         Total_Weight_Unit: "Kgs",
         HazMat: param.HazMat,
-        ChargeableWt: param.ChargeableWeight,
+        ChargeableWt: parseFloat(param.cbmVal) || 0,
         Containerdetails: containerdetails,
 
         PickUpAddressDetails: pickUpAddressDetails[0],
@@ -3039,7 +3124,7 @@ class RateTable extends Component {
           Volume: parseFloat(this.state.cbmVal)
         });
       } else {
-        multiCBMData = MultiCBM;
+        multiCBMData = this.state.multiCBM;
       }
       dataParameter = {
         Mode: param.containerLoadType,
@@ -3053,7 +3138,7 @@ class RateTable extends Component {
         Total_Weight_Unit: "Kgs",
 
         HazMat: param.HazMat,
-        ChargeableWt: param.ChargeableWeight,
+        ChargeableWt: parseFloat(param.cbmVal) || 0,
         PickUpAddressDetails: pickUpAddressDetails[0],
         DestinationAddressDetails: destUpAddressDetails[0],
         RateQueryDim: multiCBMData,
@@ -3079,7 +3164,7 @@ class RateTable extends Component {
         Total_Weight_Unit: "Kgs",
 
         HazMat: param.HazMat,
-        ChargeableWt: param.ChargeableWeight,
+        ChargeableWt: parseFloat(param.cbmVal) || 0,
         PickUpAddressDetails: pickUpAddressDetails[0],
         DestinationAddressDetails: destUpAddressDetails[0],
         RateQueryDim: MultiCBM,
@@ -3102,6 +3187,7 @@ class RateTable extends Component {
       headers: authHeader()
     })
       .then(function(response) {
+        self.toggleSpot();
         store.addNotification({
           // title: "Success",
           message: response.data.Table[0].Message,
@@ -3111,13 +3197,14 @@ class RateTable extends Component {
             duration: appSettings.NotficationTime
           }
         });
-        self.toggleSpot();
-        setTimeout(function() {
+        self.setState({ sloding: false });
+        setTimeout(() => {
           self.props.history.push("./spot-rate-table");
-        }, appSettings.NotficationTime);
+        }, 3000);
       })
       .catch(error => {
-        console.log(error);
+        self.setState({ sloding: false });
+        
       });
   }
 
@@ -3155,7 +3242,7 @@ class RateTable extends Component {
             polpodData: polpodData,
             polpodDataAdd: polpodDataAdd
           });
-          //console.log('Success:', JSON.stringify(response))
+          
         })
         .catch(error => console.error("Error:", error));
     } else {
@@ -3505,6 +3592,8 @@ class RateTable extends Component {
       this.setState({ TruckTypeData });
     }
     if (this.state.containerLoadType === "FCL") {
+      var multiCBM = callBackObj;
+      this.setState({ multiCBM });
     }
   };
 
@@ -4679,7 +4768,16 @@ class RateTable extends Component {
                           <div id="cbmInner">
                             {this.state.specialEqtSelect === true ? (
                               this.state.flattack_openTop.length > 0 ? (
-                                <>{this.MultiCreateCBM()}</>
+                                <>
+                                  <Comman
+                                    parentCallback={this.callbackFunction}
+                                    multiCBM={this.state.multiCBM}
+                                    packageTypeData={this.state.packageTypeData}
+                                    containerLoadType={
+                                      this.state.containerLoadType
+                                    }
+                                  />
+                                </>
                               ) : null
                             ) : null}
 
@@ -4712,8 +4810,13 @@ class RateTable extends Component {
                           containerLoadType={this.state.containerLoadType}
                         />
                       ) : (
-                        <div className="col-md-4 m-auto">
-                          <div className="spe-equ">
+                        <div className="col-md-6 m-auto spe-equ">
+                          <label>
+                            {this.state.modeoftransport != "AIR"
+                              ? "CMB"
+                              : "Chargeable Weight"}
+                          </label>
+                          <div>
                             <input
                               type="text"
                               minLength={1}
@@ -5007,7 +5110,18 @@ class RateTable extends Component {
                               <div id="cbmInner">
                                 {this.state.specialEqtSelect === true ? (
                                   this.state.flattack_openTop.length > 0 ? (
-                                    <>{this.MultiCreateCBM()}</>
+                                    <>
+                                      <Comman
+                                        parentCallback={this.callbackFunction}
+                                        multiCBM={this.state.multiCBM}
+                                        packageTypeData={
+                                          this.state.packageTypeData
+                                        }
+                                        containerLoadType={
+                                          this.state.containerLoadType
+                                        }
+                                      />
+                                    </>
                                   ) : null
                                 ) : null}
 
@@ -5050,7 +5164,11 @@ class RateTable extends Component {
                       ) : (
                         <div>
                           <div className="spe-equ">
-                            <label>CBM</label>
+                            <label>
+                              {this.state.modeoftransport != "AIR"
+                                ? "CMB"
+                                : "Chargeable Weight"}
+                            </label>
                             <input
                               type="text"
                               minLength={1}
@@ -5152,12 +5270,23 @@ class RateTable extends Component {
                   </div>
                   <div className="text-center">
                     <Button
+                      disabled={this.state.sloding}
                       className="butn"
                       onClick={() => {
                         this.spotRateSubmit(this.state);
                       }}
                     >
-                      Send
+                      {this.state.sloding === true ? (
+                        <>
+                          <i
+                            style={{ marginRight: 15 }}
+                            className="fa fa-refresh fa-spin"
+                          ></i>
+                          Please Wait ...
+                        </>
+                      ) : (
+                        "Send"
+                      )}
                     </Button>
                     <Button
                       className="butn"

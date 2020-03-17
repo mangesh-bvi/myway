@@ -23,6 +23,7 @@ class Comman extends Component {
     };
   }
   componentDidMount() {
+    debugger;
     if (
       this.props.containerLoadType == "LCL" ||
       this.props.containerLoadType == "AIR" ||
@@ -35,9 +36,13 @@ class Comman extends Component {
     }
 
     if (this.props.containerLoadType == "FTL") {
-      this.setState({
-        TruckTypeData: this.props.TruckTypeData
-      });
+      if (this.props.TruckTypeData) {
+        this.setState({
+          TruckTypeData: this.props.TruckTypeData
+        });
+      } else {
+        this.setState({ multiCBM: this.props.multiCBM });
+      }
     }
     if (this.props.containerLoadType == "FCL") {
       this.setState({ multiCBM: this.props.multiCBM });
@@ -52,6 +57,7 @@ class Comman extends Component {
   }
   ////send back value in parent componenet data
   SendData = () => {
+    debugger;
     if (
       this.props.containerLoadType === "LCL" ||
       this.props.containerLoadType === "AIR" ||
@@ -60,8 +66,10 @@ class Comman extends Component {
     ) {
       this.props.parentCallback(this.state.multiCBM);
     }
-    if (this.props.containerLoadType === "FTL") {
+    if (this.props.containerLoadType === "FTL" && this.props.TruckTypeData) {
       this.props.parentCallback(this.state.TruckTypeData);
+    } else {
+      this.props.parentCallback(this.state.multiCBM);
     }
   };
   //// start dynamic element for LCL-AIR-LTL
@@ -169,35 +177,37 @@ class Comman extends Component {
             />
           </div>
         </div>
-
-        <div className="col-md">
-          <div className="spe-equ">
-            <input
-              type="text"
-              disabled
-              name={
-                this.props.containerLoadType === "LCL"
-                  ? "Volume"
-                  : "VolumeWeight"
-              }
-              // onChange={this.newMultiCBMHandleChange.bind(this, i)}
-              placeholder={
-                this.state.containerLoadType === "LCL"
-                  ? "KG"
-                  : this.state.containerLoadType === "AIR"
-                  ? "CW"
-                  : "CW"
-              }
-              value={
-                this.props.containerLoadType === "LCL"
-                  ? el.Volume
-                  : el.VolumeWeight || ""
-              }
-              className="w-100 weight-icon"
-            />
+        {this.props.containerLoadType !== "FCL" ? (
+          <div className="col-md">
+            <div className="spe-equ">
+              <input
+                type="text"
+                disabled
+                name={
+                  this.props.containerLoadType === "LCL"
+                    ? "Volume"
+                    : "VolumeWeight"
+                }
+                // onChange={this.newMultiCBMHandleChange.bind(this, i)}
+                placeholder={
+                  this.state.containerLoadType === "LCL"
+                    ? "KG"
+                    : this.state.containerLoadType === "AIR"
+                    ? "CW"
+                    : "CW"
+                }
+                value={
+                  this.props.containerLoadType === "LCL"
+                    ? el.Volume
+                    : el.VolumeWeight || ""
+                }
+                className="w-100 weight-icon"
+              />
+            </div>
           </div>
-        </div>
-
+        ) : (
+          ""
+        )}
         {i === 0 ? (
           <div className="">
             <div className="spe-equ">
@@ -225,6 +235,7 @@ class Comman extends Component {
   }
 
   addMultiCBM() {
+    debugger;
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,
@@ -245,11 +256,16 @@ class Comman extends Component {
         this.toggleNonStackable();
         this.SendData();
       }, 100);
+    } else {
+      setTimeout(() => {
+        this.SendData();
+      }, 100);
     }
   }
 
   ////Handle Change Muti CMB
   HandleChangeMultiCBM(i, e) {
+    debugger;
     const { name, value } = e.target;
 
     let multiCBM = [...this.state.multiCBM];
@@ -363,10 +379,10 @@ class Comman extends Component {
     }
   }
 
-  removeMultiCBM(i) {
+  async removeMultiCBM(i) {
     let multiCBM = [...this.state.multiCBM];
     multiCBM.splice(i, 1);
-    this.setState({ multiCBM });
+    await this.setState({ multiCBM });
     this.SendData();
   }
   ////toggle Non stackable check box
@@ -403,16 +419,18 @@ class Comman extends Component {
             <select
               className="select-text mr-3"
               name="TruckName"
-              value={el.TruckName || 0}
+              value={el.TruckID || 0}
               onChange={this.UITruckTypeChange.bind(this, i)}
             >
-              <option>Select</option>
+              <option selected value={"select"}>
+                Select
+              </option>
               {this.props.TruckType.map((item, i) => (
                 <option key={i} value={item.TruckID}>
                   {item.TruckName}
                 </option>
               ))}
-              <option value="others">Others</option>
+              <option value={"others"}>Others</option>
             </select>
             <input
               className="mr-3"
@@ -426,7 +444,8 @@ class Comman extends Component {
               <input
                 type="text"
                 name="TruckDesc"
-                placeholder="Other"
+                placeholder="TruckDesc"
+                value={el.TruckDesc || ""}
                 onChange={this.UITruckTypeChange.bind(this, i)}
               />
             ) : null}
@@ -476,17 +495,52 @@ class Comman extends Component {
   }
 
   UITruckTypeChange(i, e) {
+    debugger;
     const { name, value } = e.target;
 
     let TruckTypeData = [...this.state.TruckTypeData];
-    TruckTypeData[i] = {
-      ...TruckTypeData[i],
-      [name]: name === "Quantity" ? parseInt(value) : value,
-      ["TruckDesc"]:
-        name === "TruckName"
-          ? e.target.options[e.target.selectedIndex].text
-          : TruckTypeData[i].TruckDesc
-    };
+
+    if (name === "Quantity") {
+      TruckTypeData[i] = {
+        ...TruckTypeData[i],
+        [name]: parseInt(value)
+      };
+    }
+
+    if (name === "TruckDesc") {
+      TruckTypeData[i] = {
+        ...TruckTypeData[i],
+        [name]: value
+      };
+    }
+
+    if (name === "TruckName") {
+      if (value !== "others") {
+        TruckTypeData[i] = {
+          ...TruckTypeData[i],
+          [name]: e.target.selectedOptions[0].innerText
+        };
+        TruckTypeData[i] = {
+          ...TruckTypeData[i],
+          ["TruckID"]: value
+        };
+      } else {
+        TruckTypeData[i] = {
+          ...TruckTypeData[i],
+          [name]: value
+        };
+        TruckTypeData[i] = {
+          ...TruckTypeData[i],
+          ["TruckID"]: "others"
+        };
+      }
+    }
+
+    // TruckTypeData[i] = {
+    //   ...TruckTypeData[i],
+    //   [name]: name === "Quantity" ? parseInt(value) : value,
+    //   ["TruckDesc"]: name === "TruckName" ? value : TruckTypeData[i].TruckDesc
+    // };
     this.setState({ TruckTypeData });
 
     setTimeout(() => {
@@ -517,8 +571,10 @@ class Comman extends Component {
           : null}
         {this.props.containerLoadType === "FCL" ? this.CreateMultiCBM() : null}
 
-        {this.props.containerLoadType === "FTL"
-          ? this.createUITruckType()
+        {this.props.TruckTypeData 
+          ? this.props.containerLoadType === "FTL"
+            ? this.createUITruckType()
+            : null
           : null}
       </>
     );

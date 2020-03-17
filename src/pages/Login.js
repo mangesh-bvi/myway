@@ -150,6 +150,7 @@ class Login extends React.Component {
         headers: authHeader("no")
       })
         .then(function(response) {
+          debugger;
           var data = response.data;
           window.localStorage.setItem("st", new Date());
           window.localStorage.setItem(
@@ -227,6 +228,9 @@ class Login extends React.Component {
             "emailid",
             encryption(data.Table[0].email_id, "enc")
           );
+          window.localStorage.setItem("isCopy", true);
+
+          
           ////
           window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
           GenerateToken(username, password);

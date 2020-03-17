@@ -679,7 +679,7 @@ class Analytics extends Component {
   };
 
   toggleBtnsInv = e => {
-    console.log(e.target.id);
+    
     if (e.target.id === "ship-inv") {
       this.setState({
         toggleShipInv: true,
@@ -1038,6 +1038,7 @@ class Analytics extends Component {
   }
 
   handleSegregated(e) {
+    debugger;
     var value = e.target.value;
 
     this.setState({
@@ -1045,7 +1046,8 @@ class Analytics extends Component {
       checkFTL: false,
       checkLTL: false,
       cargoTypeLCL: false,
-      ReportType: value
+      ReportType: value,
+      toggleAIR:true
     });
   }
   render() {

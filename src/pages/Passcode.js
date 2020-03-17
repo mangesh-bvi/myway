@@ -94,12 +94,21 @@ function ValidatePassCode(emailaddress, passcode) {
   return fetch(`${appSettings.APIURL}/ValidatePasscode`, requestOptions)
     .then(handleResponse)
     .catch(error => {
-      console.log(error);
+      store.addNotification({
+        // title: "Error",
+        message: "Error",
+        type: "danger", // 'default', 'success', 'info', 'warning','danger'
+        container: "top-right", // where to position the notifications
+        dismiss: {
+          duration: appSettings.NotficationTime
+        }
+      });
+      
     });
 }
 
 function handleResponse(response) {
-  console.log(response);
+  
   return response.text().then(text => {
     const data = text && JSON.parse(text);
     if (!response.ok) {

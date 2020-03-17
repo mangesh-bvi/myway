@@ -318,6 +318,7 @@ class SideMenu extends Component {
               <img
                 src={DashboardIcon}
                 alt="green-counter-icon"
+                title={"Dashboard"}
                 className="header-greencounter-icon"
               />
               <span className="menuname">Dashboard</span>
@@ -341,6 +342,7 @@ class SideMenu extends Component {
                     <Accordion.Toggle as={Button} variant="link" eventKey="1">
                       <img
                         src={ShipmentsIcon}
+                        title={"Shipment"}
                         alt="green-counter-icon"
                         className="header-greencounter-icon"
                       />
@@ -428,6 +430,7 @@ class SideMenu extends Component {
                         >
                           <img
                             src={RatesIcon}
+                            title={"Rates"}
                             alt="green-counter-icon"
                             className="header-greencounter-icon"
                           />
@@ -443,6 +446,7 @@ class SideMenu extends Component {
                         >
                           <img
                             src={RatesIcon}
+                            title={"Rates"}
                             alt="green-counter-icon"
                             className="header-greencounter-icon"
                           />
@@ -508,6 +512,7 @@ class SideMenu extends Component {
                     <Accordion.Toggle as={Button} variant="link" eventKey="1">
                       <img
                         src={QuotesIcon}
+                        title={"Quotes"}
                         alt="green-counter-icon"
                         className="header-greencounter-icon"
                       />
@@ -585,6 +590,7 @@ class SideMenu extends Component {
                     <Accordion.Toggle as={Button} variant="link" eventKey="1">
                       <img
                         src={BookingsIcon}
+                        title={"Bookings"}
                         alt="green-counter-icon"
                         className="header-greencounter-icon"
                       />
@@ -654,6 +660,7 @@ class SideMenu extends Component {
                   >
                     <img
                       src={ShipmentPlannerIcon}
+                      title={"Shipment Planner"}
                       alt="green-counter-icon"
                       className="header-greencounter-icon"
                     />
@@ -672,6 +679,7 @@ class SideMenu extends Component {
             >
               <img
                 src={AnalyticsIcon}
+                title={"Analytics"}
                 alt="green-counter-icon"
                 className="header-greencounter-icon"
               />
@@ -691,6 +699,7 @@ class SideMenu extends Component {
                     <img
                       src={GreenCounterIcon}
                       alt="green-counter-icon"
+                      title={"Green Counter"}
                       className="header-greencounter-icon"
                     />
 
@@ -709,6 +718,7 @@ class SideMenu extends Component {
                   <Link to="/add-user">
                     <img
                       src={AdminIcon}
+                      title={"Admin"}
                       alt="green-counter-icon"
                       className="header-greencounter-icon"
                     />
