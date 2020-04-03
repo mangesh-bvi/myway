@@ -3453,7 +3453,7 @@ input[type="range"]::-moz-range-track {
   margin-right: 0;
 }
 .rate-tab-spot.spec-inner-cntr input {
-  width: 40px;
+  width: 50px;
   padding: 3px 5px;
 }
 .pol-pod-popup .rate-tab-spot label {

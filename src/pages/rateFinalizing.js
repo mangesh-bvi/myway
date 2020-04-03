@@ -352,33 +352,35 @@ class RateFinalizing extends Component {
             });
           }
         } else if (containerLoadType == "FTL") {
-          if (TruckTypeData != null) {
-            if (TruckTypeData.length > 0) {
-              for (var i = 0; i < TruckTypeData.length; i++) {
-                CargoDetailsArr.push({
-                  PackageType: "",
-                  SpecialContainerCode: "",
-                  ContainerType: TruckTypeData[i].TruckDesc,
-                  Packaging: "-",
-                  Quantity: TruckTypeData[i].Quantity,
-                  Lenght: "-",
-                  Width: "-",
-                  Height: "-",
-                  Weight: "-",
-                  Gross_Weight: "-",
-                  Temperature: "-",
-                  CBM: "-"
-                });
+          // if (TruckTypeData != null) {
+          if (TruckTypeData.length > 0) {
+            for (var i = 0; i < TruckTypeData.length; i++) {
+              CargoDetailsArr.push({
+                PackageType: "",
+                SpecialContainerCode: "",
+                ContainerType: TruckTypeData[i].TruckDesc,
+                Packaging: "-",
+                Quantity: TruckTypeData[i].Quantity,
+                Lenght: "-",
+                Width: "-",
+                Height: "-",
+                Weight: "-",
+                Gross_Weight: "-",
+                Temperature: "-",
+                CBM: "-"
+              });
 
-                if (containerLoadType == "FTL") {
-                  TruckDetailsArr.push({
-                    TransportType: TruckTypeData[i].TruckDesc,
-                    Quantity: TruckTypeData[i].Quantity
-                  });
-                }
+              if (containerLoadType == "FTL") {
+                TruckDetailsArr.push({
+                  TransportType: TruckTypeData[i].TruckDesc,
+                  Quantity: TruckTypeData[i].Quantity
+                });
               }
             }
+          } else {
+            PackageDetailsArr = multiCBM;
           }
+          // }
         } else if (containerLoadType == "AIR") {
           if (multiCBM != null) {
             if (multiCBM.length > 0) {
@@ -434,6 +436,19 @@ class RateFinalizing extends Component {
             }
           }
         }
+        if (
+          multiCBM != null &&
+          containerLoadType == "FCL" &&
+          this.props.location.state.isViewRate
+        ) {
+          if (
+            multiCBM.length > 0 &&
+            containerLoadType == "FCL" &&
+            this.props.location.state.isViewRate
+          ) {
+            PackageDetailsArr = MultiCBM;
+          }
+        }
         const newSelected = Object.assign({}, this.state.cSelectedRow);
 
         var selectedRow = [];
@@ -481,7 +496,7 @@ class RateFinalizing extends Component {
             });
           }
         }
-        debugger;
+
         var custID = this.props.location.state.companyId;
         var Customer = this.props.location.state.Customer;
         var cbmVal = this.props.location.state.cbmVal;
@@ -684,7 +699,9 @@ class RateFinalizing extends Component {
               if (response.data.Table.length > 0) {
                 TypeofMove = response.data.Table[0].TypeOfMove;
                 IncoTerms = response.data.Table[0].IncoTerm;
-                CompanyName = response.data.Table[0].company_name;
+                CompanyName =
+                  response.data.Table[0].company_name ||
+                  response.data.Table[0].CompanyName;
                 companyID = response.data.Table[0].companyID;
                 Company_Address = response.data.Table[0].Company_Address;
                 Company_AddressID = response.data.Table[0].Company_AddressID;
@@ -762,7 +779,7 @@ class RateFinalizing extends Component {
             var manProfitAmt = [];
             var localProfitamt = [];
             var aTotalAmount = 0;
-            debugger;
+
             for (let i = 0; i < rateDetails.length; i++) {
               profitLossAmt = 0;
               BuyRate = 0;
@@ -781,7 +798,7 @@ class RateFinalizing extends Component {
                 RateLineId: idrate,
                 Total: 0
               });
-              debugger;
+
               newSelected[rateDetails[i].saleQuoteLineID] = true;
               selectedRow.push(rateDetails[i]);
               self.setState({
@@ -944,23 +961,24 @@ class RateFinalizing extends Component {
                     });
 
                     // if (table[i].PackageType !== null) {
-                      PackageDetailsArr.push({
-                        PackageType: table[i].PackageType || "",
-                        Quantity: table[i].Quantity||0,
-                        Lengths: table[i].Lengths||0,
-                        Width: table[i].Width||0,
-                        Height: table[i].Height||0,
-                        GrossWt: table[i].GrossWt||0,
-                        CBM:
-                          response.data.Table[0].ModeOfTransport.toUpperCase() ===
-                          "AIR"
-                            ? table[i].ChgWeight
-                            : table[i].CBM === undefined
-                            ? "-"
-                            : table[i].CBM,
-                        VolumeWeight: table[i].ChgWeight||0,
-                        Editable: true
-                      });
+                    PackageDetailsArr.push({
+                      PackageType: table[i].PackageType || "",
+                      Quantity: table[i].Quantity || 0,
+                      Lengths: table[i].Lengths || 0,
+                      Width: table[i].Width || 0,
+                      Height: table[i].Height || 0,
+                      GrossWt: table[i].GrossWt || 0,
+                      CBM:
+                        response.data.Table[0].ModeOfTransport.toUpperCase() ===
+                        "AIR"
+                          ? table[i].ChgWeight
+                          : table[i].CBM === undefined
+                          ? "-"
+                          : table[i].CBM,
+                      VolumeWeight:
+                        table[i].ChgWeight || table[i].VolumeWeight || 0,
+                      Editable: true
+                    });
                     // }
 
                     multiCBM.push({
@@ -970,7 +988,8 @@ class RateFinalizing extends Component {
                       Width: table[i].Width || 0,
                       Height: table[i].Height || 0,
                       GrossWt: table[i].GrossWt || 0,
-                      VolumeWeight: table[i].VolumeWeight || 0,
+                      VolumeWeight:
+                        table[i].VolumeWeight || table[i].ChargeableWeight || 0,
                       Volume:
                         param.type.toUpperCase() === "LCL" ? table[i].CBM : 0
                     });
@@ -1032,7 +1051,6 @@ class RateFinalizing extends Component {
   }
 
   HandleLocalCharges() {
-    debugger;
     let self = this;
     var RoutingInformation = [];
     var rateDetails = this.state.rateDetails;
@@ -1120,9 +1138,7 @@ class RateFinalizing extends Component {
           fltLocalCharges: response.data.Table
         });
       })
-      .catch(error => {
-        
-      });
+      .catch(error => {});
   }
 
   HandleSurCharges() {
@@ -1206,7 +1222,8 @@ class RateFinalizing extends Component {
         } else {
           if (
             this.state.rateOrgDetails[i].RateLineId ===
-            this.state.selectedDataRow[0].RateLineId
+            (this.state.selectedDataRow[0].RateLineId ||
+              this.state.selectedDataRow[0].RateLineID)
           ) {
             ProfitAmount = this.state.manProfitAmt[i].Total;
 
@@ -1328,14 +1345,12 @@ class RateFinalizing extends Component {
   }
 
   togglePreview() {
-    debugger;
     this.setState(prevState => ({
       modalPreview: !prevState.modalPreview
     }));
   }
 
   toggleEdit(e) {
-    debugger;
     // if (!this.state.modalEdit) {
     //   var valuetype = e.target.getAttribute("data-valuetype");
     //   var valuequantity = e.target.getAttribute("data-valuequantity");
@@ -1367,7 +1382,6 @@ class RateFinalizing extends Component {
   }
 
   SendRequestChange() {
-    debugger;
     if (this.state.selectedDataRow.length > 0) {
       if (this.state.CompanyID === 0) {
         store.addNotification({
@@ -1400,27 +1414,9 @@ class RateFinalizing extends Component {
         txtRequestComments = document.getElementById("txtRequestComments")
           .value;
       }
-      debugger;
+
       var FCLSQLocalChargesarr = [];
       var FCLSQSurChargesarr = [];
-
-      // var chkslocalcharge = document.getElementsByName("localCharge");
-      // for (var i = 0; i < chkslocalcharge.length; i++) {
-      //   if (chkslocalcharge[i].checked) {
-      //     FCLSQLocalChargesarr.push({
-      //       LocalChargeID: 0,
-      //       Description: chkslocalcharge[0].attributes["data-chargedesc"].value,
-      //       Amount:
-      //         chkslocalcharge[0].attributes["data-amountinbasecurrency"].value,
-      //       Currency: chkslocalcharge[0].attributes["data-currency"].value,
-      //       Minimum: 0,
-      //       Tax: 0,
-      //       ChargeItem: chkslocalcharge[0].attributes["data-chargeitem"].value,
-      //       RateID: 0,
-      //       Exrate: 0
-      //     });
-      //   }
-      // }
 
       if (this.state.SurchargeLocalchargeID.length > 0) {
         for (let j = 0; j < this.state.SurchargeLocalchargeID.length; j++) {
@@ -1448,7 +1444,9 @@ class RateFinalizing extends Component {
           subratedetails.push(data);
         } else {
           var data = this.state.rateSubDetails.filter(
-            x => x.RateLineID === rateDetailsarr[i].RateLineId
+            x =>
+              x.RateLineID === rateDetailsarr[i].RateLineId ||
+              rateDetailsarr[i].RateLineID
           );
           for (let i = 0; i < data.length; i++) {
             subratedetails.push(data[i]);
@@ -1461,7 +1459,8 @@ class RateFinalizing extends Component {
       for (var i = 0; i < rateDetailsarr.length; i++) {
         if (containerLoadType == "FCL") {
           FCLSQBaseFreight.push({
-            RateID: rateDetailsarr[i].RateLineId,
+            RateID:
+              rateDetailsarr[i].RateLineId || rateDetailsarr[i].RateLineID,
             RateType: rateDetailsarr[i].TypeOfRate
           });
         }
@@ -1478,7 +1477,8 @@ class RateFinalizing extends Component {
           });
         } else if (containerLoadType == "AIR") {
           FCLSQBaseFreight.push({
-            RateID: rateDetailsarr[i].RateLineId,
+            RateID:
+              rateDetailsarr[i].RateLineId || rateDetailsarr[i].RateLineID,
             RateType: rateDetailsarr[i].TypeOfRate
           });
         }
@@ -1490,7 +1490,8 @@ class RateFinalizing extends Component {
         for (var j = 0; j < rateSubDetailsarr.length; j++) {
           if (containerLoadType == "FCL") {
             if (
-              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
+              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId ||
+              rateDetailsarr[i].RateLineID
             ) {
               FCLSQCharges.push({
                 ChargeID: rateSubDetailsarr[j].ChargeID,
@@ -1505,7 +1506,7 @@ class RateFinalizing extends Component {
                 ChargeItem: rateSubDetailsarr[j].ChargeItem,
                 Exrate: rateSubDetailsarr[j].Exrate,
                 ChargeType: rateSubDetailsarr[j].ChargeType,
-                TotalAmount: rateSubDetailsarr[j].TotalAmount
+                TotalAmount: rateSubDetailsarr[j].TotalAmount || 0
               });
               // }
             }
@@ -1528,7 +1529,7 @@ class RateFinalizing extends Component {
                 ChargeItem: rateSubDetailsarr[j].ChargeItem,
                 Exrate: rateSubDetailsarr[j].Exrate,
                 ChargeType: rateSubDetailsarr[j].ChargeType,
-                TotalAmount: rateSubDetailsarr[j].TotalAmount
+                TotalAmount: rateSubDetailsarr[j].TotalAmount || 0
               });
             }
             // }
@@ -1562,7 +1563,8 @@ class RateFinalizing extends Component {
           }
           if (containerLoadType == "AIR") {
             if (
-              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId
+              rateSubDetailsarr[j].RateLineID == rateDetailsarr[i].RateLineId ||
+              rateDetailsarr[i].RateLineID
             ) {
               FCLSQCharges.push({
                 ChargeID: rateSubDetailsarr[j].ChargeID,
@@ -1660,15 +1662,27 @@ class RateFinalizing extends Component {
           }
         }
 
-        if (flattack_openTop != null) {
+        if (flattack_openTop != null && !this.props.location.state.isViewRate) {
           if (flattack_openTop.length > 0) {
             for (var i = 0; i < flattack_openTop.length; i++) {
               RateQueryDim.push({
                 Quantity: flattack_openTop[i].Quantity,
-                Lengths: flattack_openTop[i].length,
-                Width: flattack_openTop[i].width,
-                Height: flattack_openTop[i].height,
-                GrossWt: flattack_openTop[i].Gross_Weight,
+                Lengths:
+                  flattack_openTop[i].length == undefined
+                    ? flattack_openTop[i].Lengths
+                    : flattack_openTop[i].length,
+                Width:
+                  flattack_openTop[i].width == undefined
+                    ? flattack_openTop[i].Width
+                    : flattack_openTop[i].width,
+                Height:
+                  flattack_openTop[i].height == undefined
+                    ? flattack_openTop[i].Height
+                    : flattack_openTop[i].height,
+                GrossWt:
+                  flattack_openTop[i].Gross_Weight == undefined
+                    ? flattack_openTop[i].Weight
+                    : flattack_openTop[i].Gross_Weight,
                 VolumeWeight: 0,
                 Volume: 0,
                 PackageType:
@@ -1679,126 +1693,39 @@ class RateFinalizing extends Component {
             }
           }
         }
-      } else if (containerLoadType == "LCL") {
-        var multiCBM = this.state.multiCBM;
-        if (this.state.isediting) {
-          if (this.state.cmbTypeRadio === "ALL") {
-            for (var i = 0; i < multiCBM.length; i++) {
-              RateQueryDim.push({
-                Quantity: parseFloat(multiCBM[i].Quantity),
-                Lengths: parseFloat(multiCBM[i].Length),
-                Width: parseFloat(multiCBM[i].Width),
-                Height: parseFloat(multiCBM[i].height),
-                GrossWt: parseFloat(multiCBM[i].GrossWeight),
-                VolumeWeight: parseFloat(multiCBM[i].VolumeWeight),
-                Volume: parseFloat(multiCBM[i].Volume),
-                PackageType: multiCBM[i].PackageType
-              });
-            }
-          } else {
-            RateQueryDim.push({
-              Quantity: 0,
-              Lengths: 0,
-              Width: 0,
-              Height: 0,
-              GrossWt: 0,
-              VolumeWeight: 0,
-              Volume: parseFloat(this.state.cbmVal) || 0,
-              PackageType: ""
-            });
-          }
-        } else {
-          if (this.state.cmbTypeRadio === "ALL") {
-            for (var i = 0; i < multiCBM.length; i++) {
-              RateQueryDim.push({
-                Quantity: multiCBM[i].Quantity,
-                Lengths: multiCBM[i].Lengths,
-                Width: multiCBM[i].Width,
-                Height: multiCBM[i].Height,
-                GrossWt: multiCBM[i].GrossWt,
-                VolumeWeight: multiCBM[i].VolumeWeight,
-                Volume: multiCBM[i].Volume,
-                PackageType: multiCBM[i].PackageType
-              });
-            }
-          } else {
-            RateQueryDim.push({
-              Quantity: 0,
-              Lengths: 0,
-              Width: 0,
-              Height: 0,
-              GrossWt: 0,
-              VolumeWeight: 0,
-              Volume: parseFloat(this.state.cbmVal) || 0,
-              PackageType: ""
-            });
-          }
+
+        if (RateQueryDim.length == 0) {
+          RateQueryDim = this.state.multiCBM;
         }
+      } else if (containerLoadType == "LCL") {
+        var RateQueryDim = this.state.multiCBM;
       } else if (containerLoadType == "FTL") {
         var TruckTypeData = this.state.TruckTypeData;
-        for (var i = 0; i < TruckTypeData.length; i++) {
-          RateQueryDim.push({
-            Quantity: TruckTypeData[i].Quantity,
-            Lengths: 0,
-            Width: 0,
-            Height: 0,
-            GrossWt: 0,
-            VolumeWeight: 0,
-            Volume: 0,
-            PackageType: TruckTypeData[i].TruckDesc
-          });
-        }
-        //
-      } else if (containerLoadType == "AIR" || containerLoadType == "LTL") {
-        var multiCBM = this.state.multiCBM;
-
-        if (this.state.cmbTypeRadio === "ALL") {
-          for (var i = 0; i < multiCBM.length; i++) {
+        if (TruckTypeData.length > 0) {
+          for (var i = 0; i < TruckTypeData.length; i++) {
             RateQueryDim.push({
-              Quantity: multiCBM[i].Quantity,
-              Lengths:
-                containerLoadType == "AIR"
-                  ? multiCBM[i].Length
-                  : multiCBM[i].Lengths,
-              Width: multiCBM[i].Width,
-              Height:
-                containerLoadType == "AIR"
-                  ? multiCBM[i].height
-                  : multiCBM[i].Height,
-              GrossWt:
-                containerLoadType == "AIR"
-                  ? multiCBM[i].GrossWeight
-                  : multiCBM[i].GrossWt,
-              VolumeWeight: multiCBM[i].VolumeWeight,
-              Volume: containerLoadType == "AIR" ? 0 : multiCBM[i].Volume,
-              PackageType: multiCBM[i].PackageType
-            });
-          }
-        } else if (this.state.cmbTypeRadio === "CBM") {
-          RateQueryDim.push({
-            Quantity: 0,
-            Lengths: 0,
-            Width: 0,
-            Height: 0,
-            GrossWt: 0,
-            VolumeWeight: 0,
-            Volume: parseFloat(this.state.cbmVal) || 0,
-            PackageType: ""
-          });
-        } else {
-          for (var i = 0; i < multiCBM.length; i++) {
-            RateQueryDim.push({
-              Quantity: multiCBM[i].Quantity,
-              Lengths: multiCBM[i].Length,
-              Width: multiCBM[i].Width,
-              Height: multiCBM[i].height,
-              GrossWt: multiCBM[i].GrossWeight,
+              Quantity: TruckTypeData[i].Quantity,
+              Lengths: 0,
+              Width: 0,
+              Height: 0,
+              GrossWt: 0,
               VolumeWeight: 0,
               Volume: 0,
-              PackageType: multiCBM[i].PackageType
+              PackageType: TruckTypeData[i].TruckDesc
             });
           }
+        } else {
+          if (this.props.location.state.isViewRate) {
+            RateQueryDim = this.state.multiCBM;
+          }
+          if (this.state.isCopy) {
+            RateQueryDim = this.state.multiCBM;
+          }
         }
+
+        //
+      } else if (containerLoadType == "AIR" || containerLoadType == "LTL") {
+        var RateQueryDim = this.state.multiCBM;
       }
 
       var PickUpAddress = "";
@@ -1840,11 +1767,11 @@ class RateFinalizing extends Component {
       if (this.state.typeofMove == 2) {
         if (this.props.location.state.pickUpAddress.length > 0) {
           PickUpAddressDetails = {
-            Street: this.props.location.state.pickUpAddress[0].Area,
-            Country: this.props.location.state.pickUpAddress[0].Country,
-            State: this.props.location.state.pickUpAddress[0].State,
-            City: this.props.location.state.pickUpAddress[0].City,
-            ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
+            Street: this.props.location.state.pickUpAddress[0].Area || "",
+            Country: this.props.location.state.pickUpAddress[0].Country || "",
+            State: this.props.location.state.pickUpAddress[0].State || "",
+            City: this.props.location.state.pickUpAddress[0].City || "",
+            ZipCode: this.props.location.state.pickUpAddress[0].ZipCode || 0
           };
         } else {
           PickUpAddressDetails = {
@@ -1867,11 +1794,11 @@ class RateFinalizing extends Component {
       if (this.state.typeofMove == 4) {
         if (this.props.location.state.pickUpAddress.length > 0) {
           PickUpAddressDetails = {
-            Street: this.props.location.state.pickUpAddress[0].Area,
-            Country: this.props.location.state.pickUpAddress[0].Country,
-            State: this.props.location.state.pickUpAddress[0].State,
-            City: this.props.location.state.pickUpAddress[0].City,
-            ZipCode: this.props.location.state.pickUpAddress[0].ZipCode
+            Street: this.props.location.state.pickUpAddress[0].Area || "",
+            Country: this.props.location.state.pickUpAddress[0].Country || "",
+            State: this.props.location.state.pickUpAddress[0].State || "",
+            City: this.props.location.state.pickUpAddress[0].City || "",
+            ZipCode: this.props.location.state.pickUpAddress[0].ZipCode || 0
           };
         } else {
           PickUpAddressDetails = {
@@ -1882,15 +1809,25 @@ class RateFinalizing extends Component {
             ZipCode: 0
           };
         }
-
-        DestinationAddressDetails = {
-          Street: this.props.location.state.destAddress[0].Area,
-          Country: this.props.location.state.destAddress[0].Country,
-          State: this.props.location.state.destAddress[0].State,
-          City: this.props.location.state.destAddress[0].City,
-          ZipCode: this.props.location.state.destAddress[0].ZipCode
-        };
+        if (this.props.location.state.destAddress.length > 0) {
+          DestinationAddressDetails = {
+            Street: this.props.location.state.destAddress[0].Area || "",
+            Country: this.props.location.state.destAddress[0].Country || "",
+            State: this.props.location.state.destAddress[0].State || "",
+            City: this.props.location.state.destAddress[0].City || "",
+            ZipCode: this.props.location.state.destAddress[0].ZipCode || 0
+          };
+        } else {
+          DestinationAddressDetails = {
+            Street: "",
+            Country: "",
+            State: "",
+            City: "",
+            ZipCode: 0
+          };
+        }
       }
+
       if (this.state.typeofMove == 3) {
         PickUpAddress =
           this.state.isCopy === true
@@ -1899,24 +1836,36 @@ class RateFinalizing extends Component {
             ? this.state.polfullAddData.AirportLongName
             : this.state.polfullAddData.OceanPortLongName;
 
-        DestinationAddressDetails = {
-          Street: this.props.location.state.destAddress[0].Area,
-          Country: this.props.location.state.destAddress[0].Country,
-          State: this.props.location.state.destAddress[0].State,
-          City: this.props.location.state.destAddress[0].City,
-          ZipCode: this.props.location.state.destAddress[0].ZipCode
-        };
+        if (this.props.location.state.destAddress.length > 0) {
+          DestinationAddressDetails = {
+            Street: this.props.location.state.destAddress[0].Area || "",
+            Country: this.props.location.state.destAddress[0].Country || "",
+            State: this.props.location.state.destAddress[0].State || "",
+            City: this.props.location.state.destAddress[0].City || "",
+            ZipCode: this.props.location.state.destAddress[0].ZipCode || 0
+          };
+        } else {
+          DestinationAddressDetails = {
+            Street: "",
+            Country: "",
+            State: "",
+            City: "",
+            ZipCode: 0
+          };
+        }
       }
 
       var RateDataArr = [];
       for (var i = 0; i < rateDetailsarr.length; i++) {
         var AIRObjdata = new Object();
 
-        AIRObjdata.RateID = rateDetailsarr[i].RateLineId;
+        AIRObjdata.RateID =
+          rateDetailsarr[i].RateLineId || rateDetailsarr[i].RateLineID;
         AIRObjdata.RateType = rateDetailsarr[i].TypeOfRate;
 
         RateDataArr.push(AIRObjdata);
       }
+
       if (RateQueryDim.length == 0) {
         var RequestRateDim = new Object();
 
@@ -1953,7 +1902,7 @@ class RateFinalizing extends Component {
         MyWayComments: txtRequestComments || "",
         MyWayDiscount: parseFloat(txtRequestDiscount) || 0,
         MyWayFreeTime: parseFloat(txtRequestFreeTime) || 0,
-        IsRequestForChange: 1,
+        IsRequestForChange: 0,
         SQCharges: FCLSQCharges,
         RateTypes: FCLSQBaseFreight
       };
@@ -1965,6 +1914,7 @@ class RateFinalizing extends Component {
         "desc"
       );
       let self = this;
+
       axios({
         method: "post",
         url: `${appSettings.APIURL}/SpotRateRequestChangesInsertion`,
@@ -1986,22 +1936,10 @@ class RateFinalizing extends Component {
                       duration: appSettings.NotficationTime
                     }
                   });
-                  var SalesQuoteNo = response.data.Table[0].SalesQuoteNo;
-                  if (usertype !== "Sales User") {
-                    if (SalesQuoteNo) {
-                      self.setState({
-                        SalesQuoteNo,
-                        reloding: false
-                      });
 
-                      self.AcceptQuotes();
-                    } else {
-                    }
-                  } else {
-                    setTimeout(() => {
-                      self.props.history.push("./spot-rate-table");
-                    }, 4000);
-                  }
+                  setTimeout(() => {
+                    self.props.history.push("./spot-rate-table");
+                  }, 4000);
                 }
               }
             }
@@ -2128,7 +2066,9 @@ class RateFinalizing extends Component {
                 });
               } else {
                 FCLSQBaseFreight.push({
-                  RateID: rateDetailsarr[i].RateLineId,
+                  RateID:
+                    rateDetailsarr[i].RateLineId ||
+                    rateDetailsarr[i].RateLineID,
                   RateType: rateDetailsarr[i].TypeOfRate
                 });
               }
@@ -2140,7 +2080,8 @@ class RateFinalizing extends Component {
             }
           } else if (containerLoadType == "FTL" || containerLoadType == "LTL") {
             FCLSQBaseFreight.push({
-              RateID: rateDetailsarr[i].RateLineID,
+              RateID:
+                rateDetailsarr[i].RateLineID || rateDetailsarr[i].RateLineId,
               RateType: rateDetailsarr[i].TypeOfRate
             });
           } else if (containerLoadType == "AIR") {
@@ -2148,7 +2089,8 @@ class RateFinalizing extends Component {
               RateID:
                 this.state.isCopy === true
                   ? rateDetailsarr[i].saleQuoteLineID
-                  : rateDetailsarr[i].RateLineId,
+                  : rateDetailsarr[i].RateLineId ||
+                    rateDetailsarr[i].RateLineID,
               RateType:
                 this.state.isCopy === true
                   ? rateDetailsarr[i].TypeOfRate
@@ -2180,9 +2122,10 @@ class RateFinalizing extends Component {
                       ChargeItem: rateSubDetailsarr[j].Chargeitem,
                       Exrate: rateSubDetailsarr[j].ExRate,
                       ChargeType: rateSubDetailsarr[j].Type,
-                      TotalAmount: parseFloat(
-                        rateSubDetailsarr[j].Total.split("U")[0].trim()
-                      )
+                      TotalAmount:
+                        parseFloat(
+                          rateSubDetailsarr[j].Total.split("U")[0].trim()
+                        ) || 0
                     });
                   }
                 }
@@ -2204,7 +2147,7 @@ class RateFinalizing extends Component {
                     ChargeItem: rateSubDetailsarr[j].ChargeItem,
                     Exrate: rateSubDetailsarr[j].Exrate,
                     ChargeType: rateSubDetailsarr[j].ChargeType,
-                    TotalAmount: rateSubDetailsarr[j].TotalAmount
+                    TotalAmount: rateSubDetailsarr[j].TotalAmount || 0
                   });
                 }
               }
@@ -2236,9 +2179,10 @@ class RateFinalizing extends Component {
                           ? ""
                           : rateSubDetailsarr[j].ExRate,
                       ChargeType: rateSubDetailsarr[j].Type,
-                      TotalAmount: parseFloat(
-                        rateSubDetailsarr[j].Total.split(" ")[0].trim()
-                      )
+                      TotalAmount:
+                        parseFloat(
+                          rateSubDetailsarr[j].Total.split(" ")[0].trim()
+                        ) || 0
                     });
                   }
                 } else {
@@ -2287,7 +2231,7 @@ class RateFinalizing extends Component {
                     ChargeItem: rateSubDetailsarr[j].ChargeItem,
                     Exrate: rateSubDetailsarr[j].Exrate,
                     ChargeType: rateSubDetailsarr[j].ChargeType,
-                    TotalAmount: rateSubDetailsarr[j].TotalAmount
+                    TotalAmount: rateSubDetailsarr[j].TotalAmount || 0
                   });
                 }
               }
@@ -2344,9 +2288,10 @@ class RateFinalizing extends Component {
                       ChargeItem: rateSubDetailsarr[j].ChargeItem || "",
                       Exrate: rateSubDetailsarr[j].Exrate || 1,
                       ChargeType: rateSubDetailsarr[j].ChargeType || "",
-                      TotalAmount: parseFloat(
-                        rateSubDetailsarr[j].Total.split(" ")[0].trim()
-                      )
+                      TotalAmount:
+                        parseFloat(
+                          rateSubDetailsarr[j].Total.split(" ")[0].trim()
+                        ) || 0
                     });
                   }
                 }
@@ -2451,7 +2396,10 @@ class RateFinalizing extends Component {
             }
           }
 
-          if (flattack_openTop != null) {
+          if (
+            flattack_openTop != null &&
+            !this.props.location.state.isViewRate
+          ) {
             if (flattack_openTop.length > 0) {
               for (var i = 0; i < flattack_openTop.length; i++) {
                 RateQueryDim.push({
@@ -2482,24 +2430,37 @@ class RateFinalizing extends Component {
               }
             }
           }
+          if (RateQueryDim.length == 0) {
+            RateQueryDim = this.state.multiCBM;
+          }
         } else if (containerLoadType == "LCL") {
           var RateQueryDim = this.state.multiCBM;
         } else if (containerLoadType == "FTL") {
           var TruckTypeData = this.state.TruckTypeData;
-          for (var i = 0; i < TruckTypeData.length; i++) {
-            //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
-            RateQueryDim.push({
-              Quantity: TruckTypeData[i].Quantity,
-              Lengths: 0,
-              Width: 0,
-              Height: 0,
-              GrossWt: 0,
-              VolumeWeight: 0,
-              Volume: 0,
-              PackageType: TruckTypeData[i].TruckDesc
-            });
+          if (
+            TruckTypeData.length > 0 &&
+            !this.props.location.state.isViewRate
+          ) {
+            for (var i = 0; i < TruckTypeData.length; i++) {
+              RateQueryDim.push({
+                Quantity: TruckTypeData[i].Quantity,
+                Lengths: 0,
+                Width: 0,
+                Height: 0,
+                GrossWt: 0,
+                VolumeWeight: 0,
+                Volume: 0,
+                PackageType: TruckTypeData[i].TruckDesc
+              });
+            }
+          } else {
+            if (this.props.location.state.isViewRate) {
+              RateQueryDim = this.state.multiCBM;
+            }
+            if (this.state.isCopy) {
+              RateQueryDim = this.state.multiCBM;
+            }
           }
-          //
         } else if (containerLoadType == "AIR" || containerLoadType == "LTL") {
           var RateQueryDim = this.state.multiCBM;
         }
@@ -2520,7 +2481,7 @@ class RateFinalizing extends Component {
           City: "",
           ZipCode: 0
         };
-        debugger;
+
         if (this.state.typeofMove == 1) {
           if (this.state.isCopy === true) {
             PickUpAddress = this.state.PickUpAddress;
@@ -2669,18 +2630,21 @@ class RateFinalizing extends Component {
             );
             var aProfit = 0;
             var rateid = 0;
-            if (
-              data[0].RateLineId === this.state.rateOrgDetails[j].RateLineId &&
-              data[0].TotalAmount >= this.state.rateOrgDetails[j].Total
-            ) {
-              // aProfit =
-              //   data[0].TotalAmount - this.state.rateOrgDetails[j].Total;
-              aProfit = this.state.manProfitAmt[j].Total;
+            if (data.length > 0) {
+              if (
+                data[0].RateLineId ===
+                  this.state.rateOrgDetails[j].RateLineId &&
+                data[0].TotalAmount >= this.state.rateOrgDetails[j].Total
+              ) {
+                // aProfit =
+                //   data[0].TotalAmount - this.state.rateOrgDetails[j].Total;
+                aProfit = this.state.manProfitAmt[j].Total;
 
-              rateid = this.state.rateOrgDetails[j].RateLineId;
-              objProfitList.RateLineID = rateid;
-              objProfitList.Profit = aProfit;
-              ProfitListarr.push(objProfitList);
+                rateid = this.state.rateOrgDetails[j].RateLineId;
+                objProfitList.RateLineID = rateid;
+                objProfitList.Profit = aProfit;
+                ProfitListarr.push(objProfitList);
+              }
             }
           }
           senrequestpara.ProfitList = ProfitListarr;
@@ -2704,16 +2668,19 @@ class RateFinalizing extends Component {
             );
             var aProfit = 0;
             var rateid = 0;
-            if (
-              data.length > 0 &&
-              data[0].RateLineId === this.state.rateOrgDetails[j].RateLineId &&
-              data[0].TotalAmount >= this.state.rateOrgDetails[j].Total
-            ) {
-              aProfit = this.state.manProfitAmt[j].Total;
-              rateid = this.state.rateOrgDetails[j].RateLineId;
-              objProfitList.RateLineID = rateid;
-              objProfitList.Profit = aProfit;
-              ProfitListarr.push(objProfitList);
+            if (data.length > 0) {
+              if (
+                data.length > 0 &&
+                data[0].RateLineId ===
+                  this.state.rateOrgDetails[j].RateLineId &&
+                data[0].TotalAmount >= this.state.rateOrgDetails[j].Total
+              ) {
+                aProfit = this.state.manProfitAmt[j].Total;
+                rateid = this.state.rateOrgDetails[j].RateLineId;
+                objProfitList.RateLineID = rateid;
+                objProfitList.Profit = aProfit;
+                ProfitListarr.push(objProfitList);
+              }
             }
           }
           senrequestpara.ProfitList = ProfitListarr;
@@ -2733,20 +2700,28 @@ class RateFinalizing extends Component {
           for (let j = 0; j < this.state.rateOrgDetails.length; j++) {
             var objProfitList = {};
             var data = this.state.selectedDataRow.filter(
-              x => x.RateLineId === this.state.rateOrgDetails[j].RateLineId
+              x =>
+                (x.RateLineId || x.RateLineID) ===
+                (this.state.rateOrgDetails[j].RateLineId ||
+                  this.state.rateOrgDetails[j].RateLineID)
             );
             var aProfit = 0;
             var rateid = 0;
-            if (
-              data.length > 0 &&
-              data[0].RateLineId === this.state.rateOrgDetails[j].RateLineId &&
-              data[0].TotalAmount >= this.state.rateOrgDetails[j].Total
-            ) {
-              aProfit = this.state.manProfitAmt[j].Total;
-              rateid = this.state.rateOrgDetails[j].RateLineId;
-              objProfitList.RateLineID = rateid;
-              objProfitList.Profit = aProfit;
-              ProfitListarr.push(objProfitList);
+            if (data.length > 0) {
+              if (
+                data.length > 0 &&
+                (data[0].RateLineId || data[0].RateLineID) ===
+                  (this.state.rateOrgDetails[j].RateLineId ||
+                    this.state.rateOrgDetails[j].RateLineID) &&
+                parseFloat(data[0].TotalAmount) >=
+                  this.state.rateOrgDetails[j].Total
+              ) {
+                aProfit = this.state.manProfitAmt[j].Total;
+                rateid = this.state.rateOrgDetails[j].RateLineId;
+                objProfitList.RateLineID = rateid;
+                objProfitList.Profit = aProfit;
+                ProfitListarr.push(objProfitList);
+              }
             }
           }
           senrequestpara.ProfitList = ProfitListarr;
@@ -2768,15 +2743,18 @@ class RateFinalizing extends Component {
             );
             var aProfit = 0;
             var rateid = 0;
-            if (
-              data[0].RateLineId === this.state.rateOrgDetails[j].RateLineId &&
-              data[0].TotalAmount >= this.state.rateOrgDetails[j].Total
-            ) {
-              aProfit = this.state.manProfitAmt[j].Total;
-              rateid = this.state.rateOrgDetails[j].RateLineId;
-              objProfitList.RateLineID = rateid;
-              objProfitList.Profit = aProfit;
-              ProfitListarr.push(objProfitList);
+            if (data.length > 0) {
+              if (
+                data[0].RateLineId ===
+                  this.state.rateOrgDetails[j].RateLineId &&
+                data[0].TotalAmount >= this.state.rateOrgDetails[j].Total
+              ) {
+                aProfit = this.state.manProfitAmt[j].Total;
+                rateid = this.state.rateOrgDetails[j].RateLineId;
+                objProfitList.RateLineID = rateid;
+                objProfitList.Profit = aProfit;
+                ProfitListarr.push(objProfitList);
+              }
             }
           }
           senrequestpara.ProfitList = ProfitListarr;
@@ -2820,9 +2798,13 @@ class RateFinalizing extends Component {
                       });
                       self.AcceptQuotes();
                     } else {
-                      setTimeout(function() {
-                        window.location.href = "quote-table";
-                      }, appSettings.NotficationTime);
+                      self.setState({
+                        SalesQuoteNo
+                      });
+                      self.SendMail("Create");
+                      // setTimeout(function() {
+                      //   window.location.href = "quote-table";
+                      // }, appSettings.NotficationTime);
                     }
                   }
                 }
@@ -2878,12 +2860,11 @@ class RateFinalizing extends Component {
         txtRequestFreeTime = 0;
         var containerLoadType = this.state.containerLoadType;
 
-        var rateDetailsarr = this.state.rateDetails;
+        var rateDetailsarr = this.state.selectedDataRow;
         var rateSubDetailsarr = this.state.rateSubDetails;
 
         var SQCopyChargesList = [];
 
-        debugger;
         for (var j = 0; j < rateSubDetailsarr.length; j++) {
           if (containerLoadType == "FCL") {
             SQCopyChargesList.push({
@@ -2963,14 +2944,14 @@ class RateFinalizing extends Component {
           if (this.state.containerLoadType == "FCL") {
             //CargoDetailsArr.push({ContainerType: multiCBM[i].PackageType, "Packaging":"-", Quantity: multiCBM[i].Quantity, Lenght:multiCBM[i].Lengths,Width:multiCBM[i].Width,Height:multiCBM[i].Height,Weight:multiCBM[i].GrossWt,Gross_Weight: "-",Temperature:"-",Volume:multiCBM[i].Volume,VolumeWeight:multiCBM[i].VolumeWeight})
             RateQueryDim.push({
-              Quantity: multiCBM[i].Quantity,
-              Lengths: multiCBM[i].Lengths,
-              Width: multiCBM[i].Width,
-              Height: multiCBM[i].Height,
-              GrossWt: multiCBM[i].GrossWt,
+              Quantity: multiCBM[i].Quantity || 0,
+              Lengths: multiCBM[i].Lengths || 0,
+              Width: multiCBM[i].Width || 0,
+              Height: multiCBM[i].Height || 0,
+              GrossWt: multiCBM[i].GrossWt || 0,
               VolumeWeight: 0,
               Volume: 0,
-              PackageType: multiCBM[i].PackageType
+              PackageType: multiCBM[i].PackageType || ""
             });
           }
           if (this.state.containerLoadType == "LCL") {
@@ -3013,33 +2994,8 @@ class RateFinalizing extends Component {
 
         var RateQueryDimData = RateQueryDim;
 
-        // if (this.state.cmbTypeRadio === "ALL") {
-        //   RateQueryDimData = RateQueryDim;
-        // } else {
-        //   if (
-        //     this.state.containerLoadType === "FCL" ||
-        //     this.state.containerLoadType === "FTL"
-        //   ) {
-        //     RateQueryDimData = RateQueryDim;
-        //   } else {
-        //     RateQueryDimData = [
-        //       {
-        //         Quantity: 0,
-        //         Lengths: 0,
-        //         Width: 0,
-        //         Height: 0,
-        //         GrossWt: 0,
-        //         VolumeWeight: 0,
-        //         Volume: parseFloat(this.state.cbmVal) || 0,
-        //         PackageType: ""
-        //       }
-        //     ];
-        //   }
-        // }
-        //;
-
         var ProfitListData = [];
-        debugger;
+
         for (let k = 0; k < this.state.manProfitAmt.length; k++) {
           var obj = {};
           obj.RateLineID = this.state.manProfitAmt[k].RateLineId;
@@ -3124,7 +3080,6 @@ class RateFinalizing extends Component {
           .catch(error => {
             //;
             self.setState({ loding: false });
-            
           });
       } else {
         store.addNotification({
@@ -3219,7 +3174,8 @@ class RateFinalizing extends Component {
         } else {
           if (
             this.state.rateOrgDetails[i].RateLineId ===
-            this.state.selectedDataRow[0].RateLineId
+            (this.state.selectedDataRow[0].RateLineId ||
+              this.state.selectedDataRow[0].RateLineID)
           ) {
             alledProfitAmount = this.state.manProfitAmt[i].Total;
             if (alledProfitAmount > 0) {
@@ -3229,7 +3185,7 @@ class RateFinalizing extends Component {
         }
       }
     }
-    debugger;
+
     var subratedetails = [];
     for (let i = 0; i < rateDetailsarr.length; i++) {
       if (this.state.isCopy === true) {
@@ -3246,11 +3202,15 @@ class RateFinalizing extends Component {
         );
       } else {
         var data = this.state.rateSubDetails.filter(
-          x => x.RateLineID === rateDetailsarr[i].RateLineId
+          x =>
+            x.RateLineID ===
+            (rateDetailsarr[i].RateLineId || rateDetailsarr[i].RateLineID)
         );
 
         var getindex = this.state.manProfitAmt.findIndex(
-          x => x.RateLineId == rateDetailsarr[i].RateLineId
+          x =>
+            x.RateLineId ==
+            (rateDetailsarr[i].RateLineId || rateDetailsarr[i].RateLineID)
         );
         this.state.manProfitAmt[getindex].Total = parseFloat(
           this.state.ProfitAmount
@@ -3262,7 +3222,7 @@ class RateFinalizing extends Component {
       }
     }
     var rateSubDetailsarr = subratedetails;
-    debugger;
+
     for (var i = 0; i < rateDetailsarr.length; i++) {
       if (this.state.isCopy == true) {
         var rateOrgDetailsarr = this.state.rateOrgDetails.filter(
@@ -3284,7 +3244,7 @@ class RateFinalizing extends Component {
               this.state.manProfitAmt[i].Total = parseFloat(
                 this.state.ProfitAmount
               );
-              debugger;
+
               for (var k = 0; k < rateSubDetailsarr.length; k++) {
                 if (rateSubDetailsarr[k].Type == "Freight") {
                   rateSubDetailsarr[k].Total =
@@ -3326,7 +3286,9 @@ class RateFinalizing extends Component {
         }
       } else {
         var rateOrgDetailsarr = this.state.rateOrgDetails.filter(
-          x => x.RateLineId === rateDetailsarr[i].RateLineId
+          x =>
+            x.RateLineId ===
+            (rateDetailsarr[i].RateLineId || rateDetailsarr[i].RateLineID)
         );
         var tAmount = (
           parseFloat(rateDetailsarr[i].TotalAmount) -
@@ -3364,7 +3326,7 @@ class RateFinalizing extends Component {
         }
       }
     }
-    debugger;
+
     for (let j = 0; j < rateSubDetailsarr.length; j++) {
       if (this.state.isCopy === true) {
         var total = parseFloat(rateSubDetailsarr[j].Total.split(" ")[0]);
@@ -3488,7 +3450,7 @@ class RateFinalizing extends Component {
   ////handle profity add
   hanleProfitAmountSubmit() {
     var rateDetailsarr = this.state.selectedDataRow;
-    debugger;
+
     var subratedetails = [];
     var BuyRate = 0;
     for (let i = 0; i < rateDetailsarr.length; i++) {
@@ -3502,7 +3464,9 @@ class RateFinalizing extends Component {
         }
       } else {
         var data = this.state.rateSubDetails.filter(
-          x => x.RateLineID === rateDetailsarr[i].RateLineId
+          x =>
+            x.RateLineID === rateDetailsarr[i].RateLineId ||
+            rateDetailsarr[i].RateLineID
         );
         for (let i = 0; i < data.length; i++) {
           subratedetails.push(data[i]);
@@ -3532,7 +3496,9 @@ class RateFinalizing extends Component {
         rateDetailsarr[i].TotalAmount = totalval.toFixed(2);
 
         var getindex = this.state.manProfitAmt.findIndex(
-          x => x.RateLineId == rateDetailsarr[i].RateLineId
+          x =>
+            x.RateLineId == rateDetailsarr[i].RateLineId ||
+            rateDetailsarr[i].RateLineID
         );
         this.state.manProfitAmt[getindex].Total += parseFloat(
           this.state.ProfitAmount
@@ -3628,7 +3594,8 @@ class RateFinalizing extends Component {
         } else {
           if (
             this.state.rateOrgDetails[i].RateLineId ===
-            this.state.selectedDataRow[0].RateLineId
+            (this.state.selectedDataRow[0].RateLineId ||
+              this.state.selectedDataRow[0].RateLineID)
           ) {
             alledProfitAmount = this.state.manProfitAmt[i].Total;
             if (alledProfitAmount > 0) {
@@ -3650,7 +3617,9 @@ class RateFinalizing extends Component {
           subratedetails = data;
         } else {
           var data = this.state.rateSubDetails.filter(
-            x => x.RateLineID === rateDetailsarr[i].RateLineId
+            x =>
+              x.RateLineID ===
+              (rateDetailsarr[i].RateLineId || rateDetailsarr[i].RateLineID)
           );
           for (let i = 0; i < data.length; i++) {
             subratedetails.push(data[i]);
@@ -3681,7 +3650,7 @@ class RateFinalizing extends Component {
             this.state.manProfitAmt[getindex].Total -= parseFloat(
               this.state.ProfitAmount
             );
-            debugger;
+
             for (var i = 0; i <= rateSubDetailsarr.length; i++) {
               if (rateSubDetailsarr[i].Type == "Freight") {
                 rateSubDetailsarr[i].Total =
@@ -3719,7 +3688,9 @@ class RateFinalizing extends Component {
           }
         } else {
           var rateOrgDetailsarr = this.state.rateOrgDetails.filter(
-            x => x.RateLineId === rateDetailsarr[i].RateLineId
+            x =>
+              x.RateLineId ===
+              (rateDetailsarr[i].RateLineId || rateDetailsarr[i].RateLineID)
           );
 
           var tAmount = (
@@ -3732,7 +3703,9 @@ class RateFinalizing extends Component {
               parseFloat(this.state.ProfitAmount)
             ).toFixed(2);
             var getindex = this.state.manProfitAmt.findIndex(
-              x => x.RateLineId == rateDetailsarr[i].RateLineId
+              x =>
+                x.RateLineId ==
+                (rateDetailsarr[i].RateLineId || rateDetailsarr[i].RateLineID)
             );
             this.state.manProfitAmt[getindex].Total -= parseFloat(
               this.state.ProfitAmount
@@ -3898,10 +3871,8 @@ class RateFinalizing extends Component {
               });
 
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeCode + element.ChargeID + index] = !this
-                .state.cSelectChackBox[
-                element.ChargeCode + element.ChargeID + index
-              ];
+              newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                .cSelectChackBox[element.RowIndex + element.ChargeCode];
 
               this.setState({
                 localsurAmount,
@@ -3912,20 +3883,27 @@ class RateFinalizing extends Component {
                 BuyRate: element.Buying,
                 Amount: element.Amount + " " + element.Currency,
                 Currency: element.Currency,
-                saleQuoteLineID: this.state.rateDetails[getindex]
-                  .saleQuoteLineID,
                 ChargeCode: element.ChargeCode,
                 ChargeDesc: element.ChargeDesc,
                 Tax: 0,
                 Chargeitem: element.ChargeItem,
                 ExRate: element.Exrate,
-                ChargeType: element.ChargeCode,
+                ChargeType: e.target.name,
                 Total:
                   parseFloat(element.AmountInBaseCurrency) +
                   " " +
                   element.BaseCurrency,
                 BaseCurrency: element.BaseCurrency
               };
+              if (this.state.containerLoadType == "LCL") {
+                newrateSubDetails.SaleQuoteIDLineID = this.state.rateDetails[
+                  getindex
+                ].saleQuoteLineID;
+              } else {
+                newrateSubDetails.saleQuoteLineID = this.state.rateDetails[
+                  getindex
+                ].saleQuoteLineID;
+              }
               if (
                 this.state.containerLoadType == "FTL" ||
                 this.state.containerLoadType == "LTL"
@@ -3989,10 +3967,8 @@ class RateFinalizing extends Component {
                 profitLossPer: finalprofitLossPer
               });
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeCode + element.ChargeID + index] = !this
-                .state.cSelectChackBox[
-                element.ChargeCode + element.ChargeID + index
-              ];
+              newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                .cSelectChackBox[element.RowIndex + element.ChargeCode];
 
               this.setState({
                 localsurAmount,
@@ -4003,27 +3979,34 @@ class RateFinalizing extends Component {
                 BuyRate: element.Buying,
                 Amount: element.Amount + " " + element.Currency,
                 Currency: element.Currency,
-                saleQuoteLineID: this.state.rateDetails[getindex]
-                  .saleQuoteLineID,
                 ChargeCode: element.ChargeCode,
                 ChargeDesc: element.ChargeDesc,
                 Tax: 0,
-                ChargeItem: element.ChargeItem,
-                Exrate: element.Exrate,
-                ChargeType: element.ChargeCode,
+                Chargeitem: element.ChargeItem,
+                ExRate: element.Exrate,
+                ChargeType: e.target.name,
                 Total:
                   parseFloat(element.AmountInBaseCurrency) +
                   " " +
                   element.BaseCurrency,
                 BaseCurrency: element.BaseCurrency
               };
+              if (this.state.containerLoadType == "LCL") {
+                newrateSubDetails.SaleQuoteIDLineID = this.state.rateDetails[
+                  getindex
+                ].saleQuoteLineID;
+              } else {
+                newrateSubDetails.saleQuoteLineID = this.state.rateDetails[
+                  getindex
+                ].saleQuoteLineID;
+              }
               if (
                 this.state.containerLoadType == "FTL" ||
                 this.state.containerLoadType == "LTL"
               ) {
-                newrateSubDetails.RateLineID = this.state.rateDetails[
+                newrateSubDetails.saleQuoteLineID = this.state.rateDetails[
                   i
-                ].RateLineID;
+                ].saleQuoteLineID;
               }
 
               this.state.rateSubDetails = this.state.rateSubDetails.concat(
@@ -4086,10 +4069,8 @@ class RateFinalizing extends Component {
               });
 
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeCode + element.ChargeID + index] = !this
-                .state.cSelectChackBox[
-                element.ChargeCode + element.ChargeID + index
-              ];
+              newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                .cSelectChackBox[element.RowIndex + element.ChargeCode];
 
               this.setState({
                 localsurAmount,
@@ -4100,20 +4081,28 @@ class RateFinalizing extends Component {
                 BuyRate: element.Buying,
                 Amount: element.Amount + " " + element.Currency,
                 Currency: element.Currency,
-                saleQuoteLineID: this.state.rateDetails[getindex]
-                  .saleQuoteLineID,
+
                 ChargeCode: element.ChargeCode,
                 ChargeDesc: element.ChargeDesc,
                 Tax: 0,
                 Chargeitem: element.ChargeItem,
                 ExRate: element.Exrate,
-                ChargeType: element.ChargeCode,
+                ChargeType: e.target.name,
                 Total:
                   parseFloat(element.AmountInBaseCurrency) +
                   " " +
                   element.BaseCurrency,
                 BaseCurrency: element.BaseCurrency
               };
+              if (this.state.containerLoadType == "LCL") {
+                newrateSubDetails.SaleQuoteIDLineID = this.state.rateDetails[
+                  getindex
+                ].saleQuoteLineID;
+              } else {
+                newrateSubDetails.saleQuoteLineID = this.state.rateDetails[
+                  getindex
+                ].saleQuoteLineID;
+              }
               if (
                 this.state.containerLoadType == "FTL" ||
                 this.state.containerLoadType == "LTL"
@@ -4136,7 +4125,9 @@ class RateFinalizing extends Component {
             if (this.state.containerLoadType === "FCL") {
               if (element.ContainerType === rateDetailsarr[i].ContainerType) {
                 getindex = this.state.rateDetails.findIndex(
-                  x => x.RateLineId === rateDetailsarr[i].RateLineId
+                  x =>
+                    x.RateLineId === rateDetailsarr[i].RateLineId ||
+                    rateDetailsarr[i].RateLineID
                 );
 
                 this.state.rateDetails[getindex].TotalAmount =
@@ -4191,7 +4182,7 @@ class RateFinalizing extends Component {
                   Tax: 0,
                   ChargeItem: element.ChargeItem,
                   Exrate: element.Exrate,
-                  ChargeType: element.ChargeCode,
+                  ChargeType: e.target.name,
                   TotalAmount: parseFloat(element.AmountInBaseCurrency),
                   BaseCurrency: element.BaseCurrency
                 };
@@ -4208,11 +4199,8 @@ class RateFinalizing extends Component {
                   {},
                   this.state.cSelectChackBox
                 );
-                newSelected[
-                  element.ChargeCode + element.ChargeID + index
-                ] = !this.state.cSelectChackBox[
-                  element.ChargeCode + element.ChargeID + index
-                ];
+                newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                  .cSelectChackBox[element.RowIndex + element.ChargeCode];
 
                 this.setState({
                   localsurAmount,
@@ -4234,7 +4222,9 @@ class RateFinalizing extends Component {
               }
             } else {
               getindex = this.state.rateDetails.findIndex(
-                x => x.RateLineId === rateDetailsarr[i].RateLineId
+                x =>
+                  x.RateLineId === rateDetailsarr[i].RateLineId ||
+                  rateDetailsarr[i].RateLineID
               );
 
               this.state.rateDetails[getindex].TotalAmount =
@@ -4290,7 +4280,7 @@ class RateFinalizing extends Component {
                 Tax: 0,
                 ChargeItem: element.ChargeItem,
                 Exrate: element.Exrate,
-                ChargeType: element.ChargeCode,
+                ChargeType: e.target.name,
                 TotalAmount: parseFloat(element.AmountInBaseCurrency),
                 BaseCurrency: element.BaseCurrency
               };
@@ -4304,10 +4294,8 @@ class RateFinalizing extends Component {
               SurchargeLocalchargeID.push(objSurchargeLocal);
 
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeCode + element.ChargeID + index] = !this
-                .state.cSelectChackBox[
-                element.ChargeCode + element.ChargeID + index
-              ];
+              newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                .cSelectChackBox[element.RowIndex + element.ChargeCode];
               this.setState({
                 localsurAmount,
                 SurchargeLocalchargeID,
@@ -4333,7 +4321,9 @@ class RateFinalizing extends Component {
               this.state.containerLoadType == "LCL"
             ) {
               getindex = this.state.rateDetails.findIndex(
-                x => x.RateLineId === rateDetailsarr[i].RateLineId
+                x =>
+                  x.RateLineId === rateDetailsarr[i].RateLineId ||
+                  rateDetailsarr[i].RateLineID
               );
               this.state.rateDetails[i].TotalAmount = (
                 parseFloat(
@@ -4388,7 +4378,7 @@ class RateFinalizing extends Component {
                 Tax: 0,
                 ChargeItem: element.ChargeItem,
                 Exrate: element.Exrate,
-                ChargeType: element.ChargeCode,
+                ChargeType: e.target.name,
                 TotalAmount: parseFloat(element.AmountInBaseCurrency),
                 BaseCurrency: element.BaseCurrency
               };
@@ -4400,12 +4390,10 @@ class RateFinalizing extends Component {
               objSurchargeLocal.SurchargeId = element.ChargeID;
               objSurchargeLocal.ChargeType = e.target.name;
               SurchargeLocalchargeID.push(objSurchargeLocal);
-debugger;
+
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeCode + element.ChargeID + index] = !this
-                .state.cSelectChackBox[
-                element.ChargeCode + element.ChargeID + index
-              ];
+              newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                .cSelectChackBox[element.RowIndex + element.ChargeCode];
               this.setState({
                 localsurAmount,
                 SurchargeLocalchargeID,
@@ -4448,7 +4436,6 @@ debugger;
       this.forceUpdate();
     }
     if (!e.target.checked) {
-      debugger;
       var getindex = 0;
       for (var i = 0; i < rateDetailsarr.length; i++) {
         var linename = "";
@@ -4513,10 +4500,8 @@ debugger;
 
               this.setState({ localsurAmount });
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeCode + element.ChargeID + index] = !this
-                .state.cSelectChackBox[
-                element.ChargeCode + element.ChargeID + index
-              ];
+              newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                .cSelectChackBox[element.RowIndex + element.ChargeCode];
 
               this.setState({
                 localsurAmount,
@@ -4526,6 +4511,7 @@ debugger;
                 if (
                   this.state.rateSubDetails[j]["ChargeCode"] ==
                     element.ChargeCode &&
+                  this.state.rateSubDetails[j]["ChargeType"] == e.target.name &&
                   this.state.rateDetails[getindex].saleQuoteLineID ===
                     this.state.rateSubDetails[j]["saleQuoteLineID"]
                 ) {
@@ -4583,11 +4569,8 @@ debugger;
                   {},
                   this.state.cSelectChackBox
                 );
-                newSelected[
-                  element.ChargeCode + element.ChargeID + index
-                ] = !this.state.cSelectChackBox[
-                  element.ChargeCode + element.ChargeID + index
-                ];
+                newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                  .cSelectChackBox[element.RowIndex + element.ChargeCode];
 
                 this.setState({
                   localsurAmount,
@@ -4597,6 +4580,8 @@ debugger;
                   if (
                     this.state.rateSubDetails[j]["ChargeCode"] ==
                       element.ChargeCode &&
+                    this.state.rateSubDetails[j]["ChargeType"] ==
+                      e.target.name &&
                     this.state.rateDetails[getindex].saleQuoteLineID ===
                       this.state.rateSubDetails[j]["saleQuoteLineID"]
                   ) {
@@ -4604,11 +4589,96 @@ debugger;
                     break;
                   }
                 }
+              } else {
+                var amount = this.processText(
+                  this.state.rateDetails[getindex].Total
+                );
+                this.state.rateDetails[getindex].Total =
+                  (
+                    parseFloat(amount[0]) -
+                    parseFloat(element.AmountInBaseCurrency)
+                  ).toFixed(2) +
+                  " " +
+                  amount[1];
+                var calAmount = parseFloat(element.AmountInBaseCurrency);
+                var localsurAmount = this.state.localsurAmount - calAmount;
+                var DatarateSubDetails = this.state.rateSubDetails.filter(
+                  x =>
+                    x.saleQuoteLineID ===
+                    this.state.rateDetails[getindex].saleQuoteLineID
+                );
+
+                var newprofitLossAmt = 0;
+                var BuyRate = 0;
+                var finalAmountInBaseCurrency =
+                  element.AmountInBaseCurrency - element.Buying;
+
+                for (let j = 0; j < DatarateSubDetails.length; j++) {
+                  newprofitLossAmt +=
+                    DatarateSubDetails[j].TotalAmount -
+                    DatarateSubDetails[j].BuyRate;
+                  BuyRate += DatarateSubDetails[j].BuyRate;
+                }
+                var profitLossPer1 = (newprofitLossAmt * 100) / BuyRate;
+                var finalprofitLossPer = profitLossPer - profitLossPer1;
+
+                newprofitLossAmt -= finalAmountInBaseCurrency;
+                BuyRate -= element.Buying;
+
+                var profitLossPer = (newprofitLossAmt * 100) / BuyRate;
+                finalprofitLossPer += profitLossPer;
+
+                this.setState({
+                  profitLossAmt: profitLossAmt - finalAmountInBaseCurrency,
+                  profitLossPer: finalprofitLossPer
+                });
+
+                this.setState({ localsurAmount });
+                const newSelected = Object.assign(
+                  {},
+                  this.state.cSelectChackBox
+                );
+                newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                  .cSelectChackBox[element.RowIndex + element.ChargeCode];
+
+                this.setState({
+                  localsurAmount,
+                  cSelectChackBox: newSelected
+                });
+                for (var j = 0; j <= this.state.rateSubDetails.length; j++) {
+                  if ((this.state.containerLoadType = "LCL")) {
+                    if (
+                      this.state.rateSubDetails[j]["ChargeCode"] ==
+                        element.ChargeCode &&
+                      this.state.rateSubDetails[j]["ChargeType"] ==
+                        e.target.name &&
+                      this.state.rateDetails[getindex].saleQuoteLineID ===
+                        this.state.rateSubDetails[j]["SaleQuoteIDLineID"]
+                    ) {
+                      this.state.rateSubDetails.splice(j, 1);
+                      break;
+                    }
+                  } else {
+                    if (
+                      this.state.rateSubDetails[j]["ChargeCode"] ==
+                        element.ChargeCode &&
+                      this.state.rateSubDetails[j]["ChargeType"] ==
+                        e.target.name &&
+                      this.state.rateDetails[getindex].saleQuoteLineID ===
+                        this.state.rateSubDetails[j]["saleQuoteLineID"]
+                    ) {
+                      this.state.rateSubDetails.splice(j, 1);
+                      break;
+                    }
+                  }
+                }
               }
             }
           } else {
             getindex = this.state.rateDetails.findIndex(
-              x => x.RateLineId === rateDetailsarr[i].RateLineId
+              x =>
+                x.RateLineId === rateDetailsarr[i].RateLineId ||
+                rateDetailsarr[i].RateLineID
             );
             if (
               this.state.containerLoadType === "FCL" &&
@@ -4655,14 +4725,12 @@ debugger;
 
               this.setState({ localsurAmount });
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeCode + element.ChargeID + index] = !this
-                .state.cSelectChackBox[
-                element.ChargeCode + element.ChargeID + index
-              ];
+              newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                .cSelectChackBox[element.RowIndex + element.ChargeCode];
               this.setState({
                 cSelectChackBox: newSelected
               });
-              debugger;
+
               var getindexLocal = this.state.SurchargeLocalchargeID.findIndex(
                 x =>
                   x.RateQueryid ===
@@ -4674,6 +4742,7 @@ debugger;
                 if (
                   this.state.rateSubDetails[j]["ChargeCode"] ==
                     element.ChargeCode &&
+                  this.state.rateSubDetails[j]["ChargeType"] == e.target.name &&
                   this.state.rateDetails[getindex].RateLineId ===
                     this.state.rateSubDetails[j]["RateLineID"]
                 ) {
@@ -4727,15 +4796,12 @@ debugger;
                   {},
                   this.state.cSelectChackBox
                 );
-                newSelected[
-                  element.ChargeCode + element.ChargeID + index
-                ] = !this.state.cSelectChackBox[
-                  element.ChargeCode + element.ChargeID + index
-                ];
+                newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                  .cSelectChackBox[element.RowIndex + element.ChargeCode];
                 this.setState({
                   cSelectChackBox: newSelected
                 });
-                debugger;
+
                 var getindexLocal = this.state.SurchargeLocalchargeID.findIndex(
                   x =>
                     x.RatequeryID ===
@@ -4748,6 +4814,8 @@ debugger;
                   if (
                     this.state.rateSubDetails[j]["ChargeCode"] ==
                       element.ChargeCode &&
+                    this.state.rateSubDetails[j]["ChargeType"] ==
+                      e.target.name &&
                     this.state.rateDetails[getindex].RateLineId ===
                       this.state.rateSubDetails[j]["RateLineID"]
                   ) {
@@ -4808,10 +4876,8 @@ debugger;
 
               this.setState({ localsurAmount });
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeCode + element.ChargeID + index] = !this
-                .state.cSelectChackBox[
-                element.ChargeCode + element.ChargeID + index
-              ];
+              newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                .cSelectChackBox[element.RowIndex + element.ChargeCode];
 
               this.setState({
                 localsurAmount,
@@ -4821,6 +4887,7 @@ debugger;
                 if (
                   this.state.rateSubDetails[j]["ChargeCode"] ==
                     element.ChargeCode &&
+                  this.state.rateSubDetails[j]["ChargeType"] == e.target.name &&
                   this.state.rateDetails[getindex].saleQuoteLineID ===
                     this.state.rateSubDetails[j]["saleQuoteLineID"]
                 ) {
@@ -4829,9 +4896,6 @@ debugger;
                 }
               }
             } else {
-              // getindex = this.state.rateDetails.findIndex(
-              //   x => x.RateLineId === rateDetailsarr[i].RateLineId
-              // );
               this.state.rateDetails[i].TotalAmount =
                 parseFloat(this.state.rateDetails[i].TotalAmount) -
                 parseFloat(element.AmountInBaseCurrency);
@@ -4871,15 +4935,12 @@ debugger;
               });
               this.setState({ localsurAmount });
               const newSelected = Object.assign({}, this.state.cSelectChackBox);
-              newSelected[element.ChargeCode + element.ChargeID + index] = !this
-                .state.cSelectChackBox[
-                element.ChargeCode + element.ChargeID + index
-              ];
+              newSelected[element.RowIndex + element.ChargeCode] = !this.state
+                .cSelectChackBox[element.RowIndex + element.ChargeCode];
               this.setState({
                 cSelectChackBox: newSelected
               });
 
-              debugger;
               var getindexLocal = this.state.SurchargeLocalchargeID.findIndex(
                 x =>
                   x.RateQueryid ===
@@ -4891,6 +4952,7 @@ debugger;
                 if (
                   this.state.rateSubDetails[j]["ChargeCode"] ==
                     element.ChargeCode &&
+                  this.state.rateSubDetails[j]["ChargeType"] == e.target.name &&
                   this.state.rateDetails[i].RateLineId ===
                     this.state.rateSubDetails[j]["RateLineID"]
                 ) {
@@ -4937,36 +4999,60 @@ debugger;
       self.setState({ commodityData });
     });
   }
-  // newMultiCBMHandleChange(i, e) {
-  //   const { name, value } = e.target;
-  //   this.setState({
-  //     currentPackageType: value
-  //   });
-  //   this.forceUpdate();
-  // }
 
   SubmitCargoDetails(e) {
-    debugger;
     var PackageDetailsArr = [];
     let CargoDetailsArr = [];
+    var multiCBM = [];
     if (
       this.state.containerLoadType == "AIR" ||
       this.state.containerLoadType == "LCL" ||
       this.state.containerLoadType == "LTL" ||
-      this.state.containerLoadType == "FTL"
+      this.state.containerLoadType == "FTL" ||
+      this.state.containerLoadType == "FCL" ||
+      this.state.containerLoadType == "INLAND"
     ) {
-      let multiCBM = [...this.state.multiCBM];
-      for (var i = 0; i < multiCBM.length; i++) {
-        PackageDetailsArr.push({
-          PackageType: multiCBM[i].PackageType,
-          Quantity: multiCBM[i].Quantity,
-          Lengths: multiCBM[i].Lengths,
-          Width: multiCBM[i].Width,
-          Height: multiCBM[i].Width,
-          GrossWt: multiCBM[i].GrossWt,
-          VolumeWeight: multiCBM[i].VolumeWeight,
-          Volume: multiCBM[i].Volume
-        });
+      if (
+        this.state.flattack_openTop.length > 0 &&
+        !this.props.location.state.isViewRate
+      ) {
+        for (var i = 0; i < this.state.flattack_openTop.length; i++) {
+          PackageDetailsArr.push({
+            PackageType: this.state.flattack_openTop[i].PackageType,
+            Quantity: this.state.flattack_openTop[i].Quantity,
+            Lengths: this.state.flattack_openTop[i].length,
+            Width: this.state.flattack_openTop[i].width,
+            Height: this.state.flattack_openTop[i].height,
+            GrossWt: this.state.flattack_openTop[i].Gross_Weight,
+            VolumeWeight: this.state.flattack_openTop[i].VolumeWeight,
+            Volume: this.state.flattack_openTop[i].Volume
+          });
+          multiCBM.push({
+            PackageType: this.state.flattack_openTop[i].PackageType,
+            Quantity: this.state.flattack_openTop[i].Quantity,
+            Lengths: this.state.flattack_openTop[i].length,
+            Width: this.state.flattack_openTop[i].width,
+            Height: this.state.flattack_openTop[i].height,
+            GrossWt: this.state.flattack_openTop[i].Gross_Weight,
+            VolumeWeight: this.state.flattack_openTop[i].VolumeWeight,
+            Volume: this.state.flattack_openTop[i].Volume
+          });
+        }
+        this.setState({ multiCBM });
+      } else {
+        multiCBM = [...this.state.multiCBM];
+        for (var i = 0; i < multiCBM.length; i++) {
+          PackageDetailsArr.push({
+            PackageType: multiCBM[i].PackageType,
+            Quantity: multiCBM[i].Quantity,
+            Lengths: multiCBM[i].Lengths,
+            Width: multiCBM[i].Width,
+            Height: multiCBM[i].Height,
+            GrossWt: multiCBM[i].GrossWt,
+            VolumeWeight: multiCBM[i].VolumeWeight,
+            Volume: multiCBM[i].Volume
+          });
+        }
       }
 
       this.setState({
@@ -5149,25 +5235,22 @@ debugger;
       headers: authHeader()
     })
       .then(function(response) {
+        debugger;
         if (response != null) {
           if (response.data != null) {
             if (response.data.Table != null) {
               if (response.data.Table.length > 0) {
-                if (usertype !== "Sales User") {
-                } else {
-                  store.addNotification({
-                    // title: "Success",
-                    message: response.data.Table[0].Message,
-                    type: "success", // 'default', 'success', 'info', 'warning','danger'
-                    container: "top-right", // where to position the notifications
-                    dismiss: {
-                      duration: appSettings.NotficationTime
-                    }
-                  });
-                  setTimeout(() => {
-                    self.SendMail("Create");
-                  }, 1000);
-                }
+                store.addNotification({
+                  // title: "Success",
+                  message: response.data.Table[0].Message,
+                  type: "success", // 'default', 'success', 'info', 'warning','danger'
+                  container: "top-right", // where to position the notifications
+                  dismiss: {
+                    duration: appSettings.NotficationTime
+                  }
+                });
+
+                self.SendMail("Create");
               }
             }
           }
@@ -5193,7 +5276,7 @@ debugger;
 
   SendMail(action) {
     let self = this;
-    this.togglePreview();
+    // this.togglePreview();
 
     var stringHtmlMain =
       "<!DOCTYPE html><html><head><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif}.row{display:flex;flex-wrap:wrap}.col-12{flex:0 0 100%;max-width:100 %}.col-md-6{flex: 0 0 50%;max-width:50%}.col-md-4{flex:0 0 33.333333%;max-width:33.333333%}.popupbox{background:#f1f2f2;padding: 20px;} .row {display: flex;} .col-md-6 {max-width: 50%;} .modal-body{background-color:#f1f2f2;padding:20px;position:relative;border-radius:0}.close{position:absolute;right:-8px;top:-12px;color:#333;font-weight:400;background:#fff !important;opacity:1 !important;border-radius:50%;width:25px;font-size:21px;font-weight:700}.logohheader{background:#fff;padding:5px;width:100%}.logohheader img{width:175px}.preview-date-num{}.preview-date-num p{font-size:14px;font-weight:600;color:#8f8f8f;margin:5px 0;padding:0 20px;white-space: nowrap;}.preview-date-num p span{color:#333}.firstbox{background:#fff;padding:0 20px 0px;}.firstbox label{display:block;color:#8f8f8f;font-weight:600;margin:5px 0;font-size:14px}.firstbox label span{color:#333}.thirdbox{background:#fff;margin-bottom:0}.thirdbox h3{font-size:18px;font-weight:bold;text-align:center;padding:20px 20px 0;margin:0;margin-bottom:15px;color:#333;background:transparent}.thirdbox .table-responsive{display:table}.table-responsive{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.table{width:100%;font-size:14px;width:100%;border-spacing:inherit;margin-bottom:0;color:#212529}.thirdbox table thead{background:#cbcbcb;font-size:12px}.thirdbox table tbody{font-size:12px}table thead th{vertical-align:bottom;border-bottom:2px solid #dee2e6;text-align:left}.table td,.table th{padding: .75rem;vertical-align:top}table tbody tr:last-child{border-bottom:0}table td{color:#696969;background-color:#fff;padding:12px}.secondbox{background:#fff;padding:20px;margin-bottom:0}.secondbox h3{font-size:18px;margin:0;font-weight:bold;padding:0;margin-bottom:15px;text-align:center;background:transparent;color:#333}hr{margin-top:7px;margin-bottom:5px;border:0;border-top:1px solid rgba(0, 0, 0, .1)}table td{color:#696969;background-color:#fff;font-weight:600;padding:12px;font-size:14px}.table td,.table th{vertical-align:top}.secondbox label{display:block;color:#8f8f8f;margin:5px 0;font-weight:600;font-size:14px}.secondbox label span{color:#333}.mb-0{margin-bottom:0}.txt-right{text-align:right}</style></head><body> <div class='popupbox'>";
@@ -5204,7 +5287,7 @@ debugger;
     stringHtmlMain = stringHtmlMain.replace("col-sm-6", "col-md-6");
     stringHtmlMain = stringHtmlMain.replace("col-sm-4", "col-md-4");
 
-    this.togglePreview();
+    // this.togglePreview();
 
     var inputParameter = {};
     inputParameter.SalesQuoteType = this.state.containerLoadType;
@@ -5219,7 +5302,6 @@ debugger;
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
         if (response != null) {
           if (response.data != null) {
             if (response.data) {
@@ -5274,7 +5356,6 @@ debugger;
   }
 
   newMultiCBMHandleChange(i, e) {
-    debugger;
     const { name, value } = e.target;
 
     let flattack_openTop = [...this.state.flattack_openTop];
@@ -5325,7 +5406,6 @@ debugger;
   }
 
   addMultiDim() {
-    debugger;
     this.setState(prevState => ({
       flattack_openTop: [
         ...prevState.flattack_openTop,
@@ -5345,7 +5425,6 @@ debugger;
   }
 
   removeMultiDim(i) {
-    debugger;
     let flattack_openTop = [...this.state.flattack_openTop];
     flattack_openTop.splice(i, 1);
     this.setState({ flattack_openTop });
@@ -5376,7 +5455,6 @@ debugger;
   }
 
   MultiCreateCBM() {
-    debugger;
     return this.state.flattack_openTop.map((el, i) => (
       <div className="row cbm-space" key={i}>
         {/* <div className="col-md">
@@ -5504,7 +5582,6 @@ debugger;
   }
 
   toggleRow(rateID, rowData) {
-    debugger;
     const newSelected = Object.assign({}, this.state.cSelectedRow);
     newSelected[rateID] = !this.state.cSelectedRow[rateID];
     this.setState({
@@ -5892,15 +5969,15 @@ debugger;
       var multiCBM = callBackObj;
       this.setState({ multiCBM });
     }
-    debugger;
+
     if (this.state.containerLoadType === "FTL" && this.state.TruckTypeData) {
-      var TruckTypeData = callBackObj;
-      this.setState({ TruckTypeData });
+      if (!this.props.location.state.isViewRate) {
+        var TruckTypeData = callBackObj;
+        this.setState({ TruckTypeData });
+      }
       var multiCBM = callBackObj;
-      this.setState({PackageDetailsArr:multiCBM, multiCBM });
-    }
-    else
-    {
+      this.setState({ multiCBM });
+    } else {
       var multiCBM = callBackObj;
       this.setState({ multiCBM });
     }
@@ -5962,7 +6039,7 @@ debugger;
       "desc"
     );
     inputParameter.IsSearchFromSpotRate = this.props.location.state.IsSearchFromSpotRate;
-    inputParameter.RatequeryID = 0;
+    inputParameter.RatequeryID = this.props.location.state.RatequeryID;
     inputParameter.Commodity = this.state.commoditySelect;
     inputParameter.CustomerId = this.state.CompanyID;
     inputParameter.RateID = RateID;
@@ -6013,6 +6090,12 @@ debugger;
     var i = 0;
     var equipVal = "";
     var tDate = moment(this.state.todayDate).format("L");
+    var finalTotal = 0;
+    if (this.state.selectedDataRow.length > 0 && this.state.isCopy === true) {
+      finalTotal = this.state.selectedDataRow.reduce(function(prev, cur) {
+        return prev + parseFloat(cur.Total.split(" ")[0]);
+      }, 0);
+    }
 
     if (this.state.selected.length > 0) {
     } else {
@@ -6044,10 +6127,10 @@ debugger;
                 id={"local" + (index + 1)}
                 value={item.Amount}
                 type="checkbox"
-                name={"localCharge"}
+                name={"LocalCharge"}
                 checked={
                   this.state.cSelectChackBox[
-                    item.ChargeCode + item.ChargeID + index
+                    item.RowIndex + item.ChargeCode
                   ] === true
                 }
                 onChange={this.HandleLocalSearchCharges.bind(this, item, index)}
@@ -6084,10 +6167,10 @@ debugger;
                 id={"local" + (index + 1)}
                 value={item.Amount}
                 type="checkbox"
-                name={"localCharge"}
+                name={"LocalCharge"}
                 checked={
                   this.state.cSelectChackBox[
-                    item.ChargeCode + item.ChargeID + index
+                    item.RowIndex + item.ChargeCode
                   ] === true
                 }
                 onChange={this.HandleLocalSearchCharges.bind(this, item, index)}
@@ -6117,7 +6200,6 @@ debugger;
           </div>
         );
       } else {
-        debugger;
         return (
           <div>
             <div className="d-flex line-first">
@@ -6125,10 +6207,10 @@ debugger;
                 id={"local" + (index + 1)}
                 value={item.Amount}
                 type="checkbox"
-                name={"localCharge"}
+                name={"LocalCharge"}
                 checked={
                   this.state.cSelectChackBox[
-                    item.ChargeCode + item.ChargeID + index
+                    item.RowIndex + item.ChargeCode
                   ] === true
                 }
                 onChange={this.HandleLocalSearchCharges.bind(this, item, index)}
@@ -6168,17 +6250,16 @@ debugger;
         this.state.modeoftransport === "SEA" ||
         this.state.modeoftransport == "Ocean"
       ) {
-        debugger;
         return (
           <div>
             <div className="d-flex line-first">
               <input
                 id={"Sur" + (index + 1)}
                 type="checkbox"
-                name={"surcharge"}
+                name={"Surcharge"}
                 checked={
                   this.state.cSelectChackBox[
-                    item.ChargeCode + item.ChargeID + index
+                    item.RowIndex + item.ChargeCode
                   ] === true
                 }
                 onChange={this.HandleLocalSearchCharges.bind(this, item, index)}
@@ -6214,10 +6295,10 @@ debugger;
               <input
                 id={"Sur" + (index + 1)}
                 type="checkbox"
-                name={"surcharge"}
+                name={"Surcharge"}
                 checked={
                   this.state.cSelectChackBox[
-                    item.ChargeCode + item.ChargeID + index
+                    item.RowIndex + item.ChargeCode
                   ] === true
                 }
                 onChange={this.HandleLocalSearchCharges.bind(this, item, index)}
@@ -6246,17 +6327,16 @@ debugger;
           </div>
         );
       } else {
-        debugger;
         return (
           <div>
             <div className="d-flex line-first">
               <input
                 id={"Sur" + (index + 1)}
                 type="checkbox"
-                name={"surcharge"}
+                name={"Surcharge"}
                 checked={
                   this.state.cSelectChackBox[
-                    item.ChargeCode + item.ChargeID + index
+                    item.RowIndex + item.ChargeCode
                   ] === true
                 }
                 onChange={this.HandleLocalSearchCharges.bind(this, item, index)}
@@ -6311,7 +6391,7 @@ debugger;
     }
 
     var DocumentCharges = [];
-    
+
     const { PackageDetailsArr, TruckDetailsArr } = this.state;
     var colClassName = "";
     if (localStorage.getItem("isColepse") === "true") {
@@ -7503,8 +7583,7 @@ debugger;
                                   accessor: "VolumeWeight",
                                   minWidth: 140,
                                   show:
-                                    this.state.containerLoadType !== "LCL" &&
-                                    this.state.containerLoadType !== "FCL"
+                                    this.state.containerLoadType !== "LCL"
                                       ? true
                                       : false
                                 },
@@ -8305,16 +8384,7 @@ debugger;
                                 <th></th>
                                 {this.state.isCopy ? (
                                   <th className="total-align txt-right">
-                                    {this.state.selectedDataRow.reduce(function(
-                                      prev,
-                                      cur
-                                    ) {
-                                      return (
-                                        prev +
-                                        parseFloat(cur.Total.split(" ")[0])
-                                      );
-                                    },
-                                    0)}
+                                    {finalTotal.toFixed(2)}
                                     {" " + this.state.currencyCode}
                                   </th>
                                 ) : (
@@ -8403,137 +8473,20 @@ debugger;
                 <>
                   {this.state.containerLoadType === "FCL" ? (
                     // this.state.specialEquipment === true ? (
-                    this.state.flattack_openTop.length > 0 ? (
+                    this.state.flattack_openTop.length > 0 &&
+                    !this.props.location.state.isViewRate ? (
                       <div className="">
                         <div id="cbmInner">
                           <>{this.MultiCreateCBM()}</>
                         </div>
                       </div>
                     ) : (
-                      <div className="row cbm-space" key={i}>
-                        <div className="col-md">
-                          <div className="spe-equ">
-                            <select
-                              className="select-text"
-                              onChange={this.newMultiCBMHandleChange.bind(
-                                this,
-                                i
-                              )}
-                              name="PackageType"
-                              //value={el.PackageType}
-                            >
-                              <option selected>Select</option>
-                              {this.state.packageTypeData.map((item, i) => (
-                                <option key={i} value={item.PackageName}>
-                                  {item.PackageName}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-                        <div className="col-md">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              onChange={this.newMultiCBMHandleChange.bind(
-                                this,
-                                i
-                              )}
-                              placeholder={"QTY"}
-                              className="w-100"
-                              name="Quantity"
-                              // value={el.Quantity || ""}
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              onChange={this.newMultiCBMHandleChange.bind(
-                                this,
-                                i
-                              )}
-                              placeholder={"L (cm)"}
-                              className="w-100"
-                              name="length"
-                              //value={el.length || ""}
-                              // onBlur={this.cbmChange}
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              onChange={this.newMultiCBMHandleChange.bind(
-                                this,
-                                i
-                              )}
-                              placeholder={"W (cm)"}
-                              className="w-100"
-                              name="width"
-                              //value={el.width || ""}
-                              //onBlur={this.cbmChange}
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              onChange={this.newMultiCBMHandleChange.bind(
-                                this,
-                                i
-                              )}
-                              placeholder="H (cm)"
-                              className="w-100"
-                              name="height"
-                              //value={el.height || ""}
-                              //onBlur={this.cbmChange}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="col-md">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              onChange={this.newMultiCBMHandleChange.bind(
-                                this,
-                                i
-                              )}
-                              placeholder={"G W"}
-                              name="Gross_Weight"
-                              //value={el.Gross_Weight}
-                              className="w-100"
-                            />
-                          </div>
-                        </div>
-
-                        {i === 0 ? (
-                          <div className="">
-                            <div className="spe-equ">
-                              <i
-                                className="fa fa-plus mt-2"
-                                aria-hidden="true"
-                                onClick={this.addMultiDim.bind(this)}
-                              ></i>
-                            </div>
-                          </div>
-                        ) : null}
-                        {this.state.flattack_openTop.length > 1 ? (
-                          <div className="">
-                            <div className="spe-equ">
-                              <i
-                                className="fa fa-minus mt-2"
-                                aria-hidden="true"
-                                onClick={this.removeMultiDim.bind(this, i)}
-                              ></i>
-                            </div>
-                          </div>
-                        ) : null}
-                      </div>
+                      <Comman
+                        parentCallback={this.callbackFunction}
+                        packageTypeData={this.state.packageTypeData}
+                        containerLoadType={this.state.containerLoadType}
+                        multiCBM={this.state.multiCBM}
+                      />
                     )
                   ) : this.state.TruckDetailsArr.length > 0 ? (
                     <div className="row cbm-space" key={i}>
@@ -8664,7 +8617,6 @@ debugger;
                     </div>
                   ) : (
                     <>
-                      {/* {this.state.cmbTypeRadio === "ALL" ? ( */}
                       <Comman
                         parentCallback={this.callbackFunction}
                         packageTypeData={this.state.packageTypeData}
@@ -8673,27 +8625,6 @@ debugger;
                         multiCBM={this.state.multiCBM}
                         heightData={this.state.heightData}
                       />
-                      {/* ) : (
-                        <div className="col-md-4 m-auto">
-                          <div className="spe-equ">
-                            <input
-                              type="text"
-                              minLength={1}
-                              onChange={this.HandleCMBtextChange.bind(this)}
-                              placeholder={
-                                this.state.modeoftransport != "AIR"
-                                  ? "CBM"
-                                  : "KG"
-                              }
-                              className="w-100"
-                              value={this.state.cbmVal}
-                            />
-                          </div>
-                          <span className="equip-error">
-                            
-                          </span>
-                        </div>
-                      )} */}
                     </>
                   )}
                 </>
@@ -8714,75 +8645,130 @@ debugger;
           </Modal>
         </div>
         <div style={{ display: "none" }}>
-          <div id="printdiv">
-            <div class="">
-              <div className="row" style={{ margin: 0 }}>
-                <div className="logohheader">
-                  <div className="row align-items-center" style={{ margin: 0 }}>
-                    <div className="col-12 col-md-6">
+          <div id="printdiv1">
+            <div className="row" style={{ margin: 0 }}>
+              <div className="logohheader">
+                <table className="table">
+                  <tr>
+                    <td
+                      rowspan={"2"}
+                      style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                    >
                       <img
-                        src={appSettings.imageURL + "ATAFreight_console.png"}
-                        alt="ATAFreight Console"
-                      ></img>
-                    </div>
-                    <div className="col-12 col-md-6">
-                      <div className="preview-date-num">
-                        <p>
-                          Date : <span>{tDate}</span>
-                        </p>
-                        <p>Sales Quote No. :{this.state.SalesQuoteNo}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-12 col-md-6">
-                  <div className="firstbox">
-                    <label>
-                      Sales Person :
-                      <span>
-                        {encryption(
-                          window.localStorage.getItem("username"),
-                          "desc"
-                        )}
-                      </span>
-                    </label>
-                    <label>
-                      E-Mail :
-                      <span>
-                        {encryption(
-                          window.localStorage.getItem("emailid"),
-                          "desc"
-                        ).toString()}
-                      </span>
-                    </label>
-                    <label>
-                      Phone : <span>{this.state.SalesPersonPhone}</span>
-                    </label>
-                    <label>
-                      Fax : <span>{this.state.SalesPersonFax}</span>
-                    </label>
-                  </div>
-                </div>
-                <div className="col-12 col-md-6">
-                  <div className="firstbox">
-                    <label>
-                      ATNN : <span>{this.state.ContactName}</span>
-                    </label>
-                    <label>
-                      E-Mail : <span>{this.state.ContactEmail}</span>
-                    </label>
-                    <label>
-                      Phone : <span>{this.state.Contact_Phone}</span>
-                    </label>
-                    <label>
-                      Fax : <span></span>
-                    </label>
-                  </div>
-                </div>
+                        style={{ height: "50px", Width: "50px" }}
+                        src="https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                      />
+                    </td>
+                    <td
+                      className="preview-date-num"
+                      style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                    >
+                      <p>
+                        Date : <span>{tDate}</span>
+                      </p>
+                      <p>
+                        Sales Quote No. :<span>{this.state.SalesQuoteNo}</span>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
               </div>
 
+              <div
+                className="row"
+                style={{
+                  paddingTop: "0",
+                  paddingRight: "20px",
+                  paddingLeft: "20px",
+                  background: "#fff"
+                }}
+              >
+                <table className="table firstbox bordernone">
+                  <tr className="">
+                    <td
+                      style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                    >
+                      <label>
+                        Sales Person :{" "}
+                        <span>
+                          {encryption(
+                            window.localStorage.getItem("username"),
+                            "desc"
+                          )}
+                        </span>
+                      </label>
+                    </td>
+                    <td
+                      className="preview-date-num"
+                      style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                    >
+                      <label>
+                        ATNN : <span>{this.state.ContactName}</span>
+                      </label>
+                    </td>
+                  </tr>
+
+                  <tr className="">
+                    <td
+                      style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                    >
+                      <label>
+                        E-Mail :
+                        <span>
+                          {" "}
+                          {encryption(
+                            window.localStorage.getItem("emailid"),
+                            "desc"
+                          ).toString()}
+                        </span>
+                      </label>
+                    </td>
+                    <td
+                      className="preview-date-num"
+                      style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                    >
+                      <label>
+                        E-Mail : <span>{this.state.ContactEmail}</span>
+                      </label>
+                    </td>
+                  </tr>
+                  <tr className="">
+                    <td
+                      style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                    >
+                      <label>
+                        Phone : <span>{this.state.SalesPersonPhone}</span>
+                      </label>
+                    </td>
+                    <td
+                      className="preview-date-num"
+                      style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                    >
+                      <label>
+                        Phone : <span>{this.state.Contact_Phone}</span>
+                      </label>
+                    </td>
+                  </tr>
+                  <tr className="">
+                    <td
+                      style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                    >
+                      <label>
+                        Fax : <span>{this.state.SalesPersonFax}</span>
+                      </label>
+                    </td>
+
+                    <td
+                      className="preview-date-num"
+                      style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                    >
+                      <label>
+                        Fax : <span></span>
+                      </label>
+                    </td>
+                  </tr>
+                </table>
+              </div>
               <div className="row">
                 <div className="col-12">
                   <div className="thirdbox">
@@ -8863,7 +8849,7 @@ debugger;
                   </div>
                 </div>
               </div>
-
+              <hr />
               {this.state.selectedDataRow.map(item => (
                 <>
                   <div className="row">
@@ -9177,15 +9163,7 @@ debugger;
                             <th></th>
                             {this.state.isCopy ? (
                               <th className="total-align txt-right">
-                                {this.state.selectedDataRow.reduce(function(
-                                  prev,
-                                  cur
-                                ) {
-                                  return (
-                                    prev + parseFloat(cur.Total.split(" ")[0])
-                                  );
-                                },
-                                0)}
+                                {finalTotal.toFixed(2)}
                                 {" " + this.state.currencyCode}
                               </th>
                             ) : (

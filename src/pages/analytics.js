@@ -1038,7 +1038,7 @@ class Analytics extends Component {
   }
 
   handleSegregated(e) {
-    debugger;
+    
     var value = e.target.value;
 
     this.setState({

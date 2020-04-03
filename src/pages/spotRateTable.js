@@ -329,7 +329,7 @@ class SpotRateTable extends Component {
                           "PickUpAddress",
                           "DestinationAddress",
                           "ExpiryDate",
-                          "Status"
+                          "STATUS"
                         ],
                         threshold: matchSorter.rankings.WORD_STARTS_WITH
                       });

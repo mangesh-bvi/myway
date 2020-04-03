@@ -437,6 +437,19 @@ class NewRateSearch extends Component {
       this.BindTruckTypeData();
     }
   }
+  BindTruckTypeData() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/TruckTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ TruckType: data });
+    });
+  }
 
   ////Handle Check Validation
   HandleValidation() {
@@ -654,18 +667,6 @@ class NewRateSearch extends Component {
     }
   }
 
-  //// Handle Truck Type Method
-  BindTruckTypeData() {
-    let self = this;
-    axios({
-      method: "post",
-      url: `${appSettings.APIURL}/TruckTypeListDropdown`,
-      headers: authHeader()
-    }).then(function(response) {
-      var data = response.data.Table;
-      self.setState({ TruckType: data });
-    });
-  }
   //// end method
 
   //// End Truck Tyep Dynamic element
@@ -1291,6 +1292,7 @@ class NewRateSearch extends Component {
   }
 
   HandleChangeSpacEqmtType(i, e) {
+    
     const { name, value } = e.target;
 
     let spacEqmtType = [...this.state.spacEqmtType];
@@ -1303,12 +1305,14 @@ class NewRateSearch extends Component {
   }
 
   removeClickSpacEqmtType(i) {
+    
     let spacEqmtType = [...this.state.spacEqmtType];
     spacEqmtType.splice(i, 1);
     let flattack_openTop = [...this.state.flattack_openTop];
     if (this.state.flattack_openTop.length > 0) {
       flattack_openTop.splice(i - 1, 1);
     }
+
     this.setState({ spacEqmtType, flattack_openTop });
   }
 
@@ -1411,7 +1415,6 @@ class NewRateSearch extends Component {
   }
 
   UISpecialChange(i, e) {
-    debugger;
     const { name, value } = e.target;
 
     let referType = [...this.state.referType];
@@ -1561,7 +1564,7 @@ class NewRateSearch extends Component {
 
   newMultiCBMHandleChange(i, e) {
     const { name, value } = e.target;
-    debugger;
+
     let flattack_openTop = [...this.state.flattack_openTop];
     if (name === "PackageType") {
       flattack_openTop[i] = {
@@ -1585,7 +1588,7 @@ class NewRateSearch extends Component {
             if (index != -1 && splitText.length === 2) {
               flattack_openTop[i] = {
                 ...flattack_openTop[i],
-                [name]:value
+                [name]: value
               };
             }
           } else {
@@ -1753,6 +1756,7 @@ class NewRateSearch extends Component {
   }
 
   newremoveClick(i) {
+    
     let users = [...this.state.users];
     if (users[i].ContainerName === "Special Equipment") {
       this.setState({ specialEquipment: false, isSpacialEqt: true });
@@ -1951,7 +1955,7 @@ class NewRateSearch extends Component {
     } else {
     }
 
-    this.setState({ fields: {} });
+    this.setState({ fields: {}, polpodData: [] });
     // next
     document.getElementById("typeMove").classList.add("typeMove");
     if (document.getElementById("cbmInner") == null) {
@@ -2684,6 +2688,149 @@ class NewRateSearch extends Component {
     if (this.state.containerLoadType === "FCL") {
     }
   };
+
+  UITruckTypeChange(i, e) {
+    const { name, value } = e.target;
+
+    let TruckTypeData = [...this.state.TruckTypeData];
+
+    if (name === "Quantity") {
+      TruckTypeData[i] = {
+        ...TruckTypeData[i],
+        [name]: parseInt(value)
+      };
+    }
+
+    if (name === "TruckDesc") {
+      TruckTypeData[i] = {
+        ...TruckTypeData[i],
+        [name]: value
+      };
+    }
+
+    if (name === "TruckName") {
+      if (value !== "others") {
+        TruckTypeData[i] = {
+          ...TruckTypeData[i],
+          [name]: e.target.selectedOptions[0].innerText
+        };
+        TruckTypeData[i] = {
+          ...TruckTypeData[i],
+          ["TruckID"]: value
+        };
+      } else {
+        TruckTypeData[i] = {
+          ...TruckTypeData[i],
+          [name]: value
+        };
+        TruckTypeData[i] = {
+          ...TruckTypeData[i],
+          ["TruckID"]: "others"
+        };
+      }
+    }
+
+    // TruckTypeData[i] = {
+    //   ...TruckTypeData[i],
+    //   [name]: name === "Quantity" ? parseInt(value) : value,
+    //   ["TruckDesc"]: name === "TruckName" ? value : TruckTypeData[i].TruckDesc
+    // };
+    this.setState({ TruckTypeData });
+
+    var pathName = window.location.pathname;
+    if (pathName === "/new-rate-search") {
+      document.getElementById("cbm").classList.add("cbm");
+      document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+      document.getElementById("containerLoad").classList.add("less-padd");
+
+      document
+        .getElementById("cntrLoadIconCntr")
+        .classList.add("cntrLoadIconCntr");
+      document.getElementById("cntrLoadName").classList.remove("d-none");
+      document.getElementById("cntrLoadMinusClick").classList.add("d-none");
+      document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
+    }
+  }
+  //// Create Trcuk Type dropdown dynamic element UI
+
+  addClickTruckType() {
+    this.setState(prevState => ({
+      TruckTypeData: [
+        ...prevState.TruckTypeData,
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: 1,
+          TruckDesc: ""
+        }
+      ]
+    }));
+  }
+  removeClickTruckType(i) {
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData.splice(i, 1);
+    this.setState({ TruckTypeData });
+  }
+
+  createUITruckType() {
+    return this.state.TruckTypeData.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr">
+          <div className="spe-equ" style={{ margin: "auto" }}>
+            <select
+              className="select-text mr-3"
+              name="TruckName"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+            >
+              <option>Select</option>
+              {this.state.TruckType.map((item, i) => (
+                <option key={i} value={item.TruckID}>
+                  {item.TruckName}
+                </option>
+              ))}
+              <option value="others">Others</option>
+            </select>
+            <input
+              className="mr-3"
+              type="text"
+              name="Quantity"
+              value={el.Quantity || 0}
+              placeholder="Quantity"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+            />
+            {el.TruckName === "others" ? (
+              <input
+                type="text"
+                name="TruckDesc"
+                placeholder="Other"
+                onChange={this.UITruckTypeChange.bind(this, i)}
+              />
+            ) : null}
+
+            {i === 0 ? (
+              <div className="spe-equ">
+                <i
+                  className="fa fa-plus mt-2"
+                  aria-hidden="true"
+                  onClick={this.addClickTruckType.bind(this)}
+                ></i>
+              </div>
+            ) : null}
+            {this.state.TruckTypeData.length > 1 ? (
+              <div className="spe-equ mt-2">
+                <i
+                  className="fa fa-minus"
+                  aria-hidden="true"
+                  onClick={this.removeClickTruckType.bind(this)}
+                ></i>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      );
+    });
+  }
+
   render() {
     let self = this;
 
@@ -3043,13 +3190,13 @@ class NewRateSearch extends Component {
                             </div>
                           ) : null
                         ) : (
-                          // this.createUITruckType()
-                          <Comman
-                            containerLoadType={this.state.containerLoadType}
-                            TruckTypeData={this.state.TruckTypeData}
-                            TruckType={this.state.TruckType}
-                            parentCallback={this.callbackFunction}
-                          />
+                          this.createUITruckType()
+                          // <Comman
+                          //   containerLoadType={this.state.containerLoadType}
+                          //   TruckTypeData={this.state.TruckTypeData}
+                          //   TruckType={this.state.TruckType}
+                          //   parentCallback={this.callbackFunction}
+                          // />
                         )}
                         {this.state.containerLoadType !== "FTL" ? (
                           this.state.cmbTypeRadio === "ALL" ? (

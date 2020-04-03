@@ -1084,6 +1084,7 @@ class RateFinalizingStillBooking extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
+        
         var QuotationData = response.data.Table4;
         var QuotationSubData = response.data.Table5;
         var Booking = response.data.Table;
@@ -1108,18 +1109,16 @@ class RateFinalizingStillBooking extends Component {
         } else {
           for (let i = 0; i < CargoDetails.length; i++) {
             var objcargo = new Object();
-
             objcargo.BookingPackID = CargoDetails[i].BookingPackID || 0;
             objcargo.PackageType = CargoDetails[i].PackageType || "";
             objcargo.Quantity = CargoDetails[i].QTY || 0;
             objcargo.Lengths = CargoDetails[i].Lengths || 0;
             objcargo.Width = CargoDetails[i].Width || 0;
             objcargo.Height = CargoDetails[i].Height || 0;
-            objcargo.GrossWt = CargoDetails[i].GrossWeight || 0;
+            objcargo.GrossWt = CargoDetails[i].GrossWt || 0;
             objcargo.VolumeWeight = CargoDetails[i].VolumeWeight || 0;
             objcargo.Volume = CargoDetails[i].Volume || 0;
             objcargo.TotalGrossWeight = CargoDetails[i].TotalGrossWeight || 0;
-
             multiCargo.push(objcargo);
           }
         }
@@ -1788,9 +1787,9 @@ class RateFinalizingStillBooking extends Component {
             <div className="rate-fin-tit title-sect mb-4">
               <h2>
                 {this.state.copy === true
-                  ? "Booking Copy " +this.state.strBooking_No
+                  ? "Booking Copy " + this.state.strBooking_No
                   : this.state.BookingNo !== "" && this.state.isView === true
-                  ? "Update Booking "+this.state.strBooking_No
+                  ? "Update Booking " + this.state.strBooking_No
                   : this.state.BookingNo !== "" && this.state.isView === true
                   ? "Booking Details " + this.state.newloding === true
                     ? ""
@@ -2087,11 +2086,19 @@ class RateFinalizingStillBooking extends Component {
                                 {
                                   accessor: "Total",
                                   Cell: row => {
+                                    var Totalamount = parseFloat(
+                                      row.original.Total.split(" ")[0]
+                                    );
+                                    var curency = row.original.Total.split(
+                                      " "
+                                    )[1];
                                     return (
                                       <React.Fragment>
                                         <p className="details-title">Price</p>
                                         <p className="details-para">
-                                          {row.original.Total}
+                                          {Totalamount.toFixed(2) +
+                                            " " +
+                                            curency}
                                         </p>
                                       </React.Fragment>
                                     );
@@ -2887,7 +2894,19 @@ class RateFinalizingStillBooking extends Component {
                                   },
                                   {
                                     Header: "Volume Weight",
-                                    accessor: "VolumeWeight"
+                                    accessor: "VolumeWeight",
+                                    show:
+                                      this.state.ContainerLoad !== "LCL"
+                                        ? true
+                                        : false
+                                  },
+                                  {
+                                    Header: "Volume",
+                                    accessor: "Volume",
+                                    show:
+                                      this.state.ContainerLoad == "LCL"
+                                        ? true
+                                        : false
                                   }
                                 ]
                               }

@@ -708,7 +708,7 @@ class ShippingDetailsTwo extends Component {
 
   //// Bind Activity Message Data
   BindActivityMessageData() {
-    debugger;
+    
     let self = this;
     var HblNo = "";
     if (typeof this.props.location.state != "undefined") {

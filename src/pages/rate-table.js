@@ -198,7 +198,8 @@ class RateTable extends Component {
       error: "",
       fields: {},
       isNotData: "",
-      sloding: false
+      sloding: false,
+      commodityname: ""
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -216,11 +217,25 @@ class RateTable extends Component {
     this.toggleQuantPOLSave = this.toggleQuantPOLSave.bind(this);
     this.toggleQuantPODSave = this.toggleQuantPODSave.bind(this);
     this.toggleQuantQuantity = this.toggleQuantQuantity.bind(this);
+    this.BindTruckTypeData = this.BindTruckTypeData.bind(this);
   }
 
+  BindTruckTypeData() {
+    let self = this;
+
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/TruckTypeListDropdown`,
+
+      headers: authHeader()
+    }).then(function(response) {
+      var data = response.data.Table;
+      self.setState({ TruckType: data });
+    });
+  }
   componentDidMount() {
-    debugger;
     setTimeout(() => {
+      this.BindTruckTypeData();
       this.HandleCommodityData();
       this.HandlePackgeTypeData();
     }, 100);
@@ -420,7 +435,7 @@ class RateTable extends Component {
           }
 
           this.state.flattack_openTop = paramData.flattack_openTop;
-
+          this.state.CommodityID = paramData.CommodityID || 49;
           this.state.RatequeryID =
             paramData.isViewRate == true ? paramData.RatequeryID : 0;
           this.state.IsSearchFromSpotRate =
@@ -440,6 +455,7 @@ class RateTable extends Component {
           var cbmVal = paramData.cbmVal;
 
           this.setState({
+            CommodityID: this.state.CommodityID,
             cbmVal,
             Customer,
             cmbTypeRadio: paramData.cmbTypeRadio,
@@ -505,10 +521,18 @@ class RateTable extends Component {
               }
             }
 
+            var polFilterArray = [];
+            polFilterArray.push(polAddress);
+            var podFilterArray = [];
+            podFilterArray.push(podAddress);
+
             // this.state.multiCBM = this.props.location.state.multiCBM;
             var currencyCode = paramData.currencyCode;
-
+            var RatequeryID = this.props.location.state.RatequeryID;
             this.setState({
+              polFilterArray,
+              podFilterArray,
+              RatequeryID,
               spolAddress,
               spodAddress,
               currencyCode,
@@ -671,7 +695,7 @@ class RateTable extends Component {
 
       for (let i = 0; i < multiCBM.length; i++) {
         var ObjMultiCMB = new Object();
-        ObjMultiCMB.PackageType = multiCBM[i].ObjMultiCMB || "";
+        ObjMultiCMB.PackageType = multiCBM[i].PackageType || "";
         ObjMultiCMB.Quantity = multiCBM[i].Quantity || 0;
         ObjMultiCMB.Lengths = multiCBM[i].Lengths || 0;
         ObjMultiCMB.Width = multiCBM[i].Width || 0;
@@ -736,6 +760,7 @@ class RateTable extends Component {
         RateQueryDim: multiCBMData,
         Commodity: this.state.CommodityID,
         CustomerId: compID,
+        Chargeableweight: parseFloat(this.state.cbmVal || 0),
         PickUpAddressDetails: {
           Street: "",
           Country: "",
@@ -765,7 +790,11 @@ class RateTable extends Component {
         var commodityData = response.data.Table2;
 
         if (ratetable.length > 0) {
+          if (commodityData.length > 0) {
+            self.setState({ commodityData });
+          }
           if (ratetable != null) {
+            var commodityname = ratetable[0].Commodity;
             var MinTTArray = [];
             var MaxTTArray = [];
             var AmtArray = [];
@@ -775,11 +804,12 @@ class RateTable extends Component {
               AmtArray.push(ratetable[i].TotalAmount);
               //MaxAmtArray.push(ratetable[i].TotalAmount);
             }
+
             self.setState({
               RateDetails: ratetable,
               tempRateDetails: ratetable,
               loading: false,
-              commodityData,
+              // commodityData,
               MinTT: Math.min(...MinTTArray),
               MaxTT: Math.max(...MaxTTArray),
               MinAmt: Math.min(...AmtArray),
@@ -802,9 +832,8 @@ class RateTable extends Component {
         }
       })
       .catch(response => {
-        debugger;
         // self.setState({ loading: false, RateDetails: [], RateSubDetails: [] });
-        self.setState({ loading: false});
+        self.setState({ loading: false });
       });
     // // }
   }
@@ -965,7 +994,6 @@ class RateTable extends Component {
   }
 
   HandleRateDetailsFCL(paramData) {
-    debugger;
     var dataParameter = {};
     var pickUpAddress = {
       Street: "",
@@ -1013,7 +1041,7 @@ class RateTable extends Component {
       }
 
       /////Equipment flattack_openTop RateQueryDIM
-      debugger;
+
       var RateQueryData = [];
       if (paramData.containerLoadType === "FCL") {
         if (paramData.flattack_openTop.length > 0) {
@@ -1162,7 +1190,6 @@ class RateTable extends Component {
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
       };
 
-      debugger;
       if (
         cmbvalue != null &&
         cmbvalue != 0 &&
@@ -1307,6 +1334,9 @@ class RateTable extends Component {
         }
 
         if (ratetable.length > 0) {
+          if (ratetable2.length > 0) {
+            self.setState({ commodityData: ratetable2 });
+          }
           if (ratetable != null) {
             var MinTTArray = [];
             var MaxTTArray = [];
@@ -1320,8 +1350,6 @@ class RateTable extends Component {
             self.setState({
               RateDetails: ratetable,
               tempRateDetails: ratetable,
-
-              commodityData: ratetable2,
               MinTT: Math.min(...MinTTArray),
               MaxTT: Math.max(...MaxTTArray),
               MinAmt: Math.min(...AmtArray),
@@ -1352,7 +1380,6 @@ class RateTable extends Component {
         self.setState({ loading: false });
       })
       .catch(error => {
-        debugger;
         if (error.response) {
           var temperror = error.response.data;
           var err = temperror.split(":");
@@ -1937,8 +1964,9 @@ class RateTable extends Component {
               <div>
                 <input
                   type="radio"
-                  name={"TemperatureType"}
                   id={"exist-cust" + i}
+                  name={"TemperatureTypeC"}
+                  style={{ display: "none" }}
                   value={el.TemperatureType}
                   checked={el.TemperatureType === "C" ? true : false}
                   onChange={this.UISpecialChange.bind(this, i)}
@@ -1953,8 +1981,9 @@ class RateTable extends Component {
               <div>
                 <input
                   type="radio"
-                  name={"TemperatureType"}
                   id={"new-cust" + i}
+                  name={"TemperatureTypeF"}
+                  style={{ display: "none" }}
                   value={el.TemperatureType}
                   checked={el.TemperatureType === "F" ? true : false}
                   onChange={this.UISpecialChange.bind(this, i)}
@@ -1980,7 +2009,6 @@ class RateTable extends Component {
   }
 
   UISpecialChange(i, e) {
-    debugger;
     const { name, value } = e.target;
 
     let referType = [...this.state.referType];
@@ -1996,10 +2024,20 @@ class RateTable extends Component {
           };
         }
       }
+    } else if (name === "TemperatureTypeC") {
+      referType[i] = {
+        ...referType[i],
+        ["TemperatureType"]: "C"
+      };
+    } else if (name === "TemperatureTypeF") {
+      referType[i] = {
+        ...referType[i],
+        ["TemperatureType"]: "F"
+      };
     } else {
       referType[i] = {
         ...referType[i],
-        [name]: name === "TemperatureType" ? value : parseFloat(value)
+        [name]: parseFloat(value)
       };
     }
     this.setState({ referType });
@@ -2143,7 +2181,6 @@ class RateTable extends Component {
     this.setState({ flattack_openTop });
   }
   addClickMultiCBM(optionsVal) {
-    debugger;
     this.setState(prevState => ({
       flattack_openTop: [
         ...prevState.flattack_openTop,
@@ -2158,11 +2195,29 @@ class RateTable extends Component {
         }
       ]
     }));
+    this.setState(prevState => ({
+      multiCBM: [
+        ...prevState.multiCBM,
+        {
+          PackageType: "",
+          Quantity: "",
+          Lengths: "",
+          Width: "",
+          Height: "",
+          GrossWt: "",
+          VolumeWeight: "",
+          Volume: ""
+        }
+      ]
+    }));
   }
   removeClickMultiCBM(i) {
     let flattack_openTop = [...this.state.flattack_openTop];
     flattack_openTop.splice(i, 1);
-    this.setState({ flattack_openTop });
+
+    let multiCBM = [...this.state.multiCBM];
+    multiCBM.splice(i, 1);
+    this.setState({ multiCBM });
   }
 
   ////end for flattack and openTop dynamic create elements
@@ -2271,7 +2326,6 @@ class RateTable extends Component {
   }
   //// end For Equipment to create element
   specEquipChange = value => {
-    debugger;
     var difference = false;
     for (var i = 0; i < this.state.referType.length; i++) {
       if (
@@ -2306,7 +2360,7 @@ class RateTable extends Component {
         this.setState({
           specialEqtSelect: true
         });
-        // this.addClickMultiCBM(value);
+        this.addClickMultiCBM(value);
 
         this.addSpacEqmtType(value);
       }
@@ -2363,10 +2417,10 @@ class RateTable extends Component {
           <input
             type="number"
             min="1"
-            name="Quantity"
+            name="ContainerQuantity"
             placeholder="QTY"
             onChange={this.HandleChangeSpacEqmtType.bind(this, i)}
-            value={el.Quantity || 1}
+            value={el.ContainerQuantity || 1}
           />
           {/* </div> */}
           <i
@@ -2392,7 +2446,17 @@ class RateTable extends Component {
   removeClickSpacEqmtType(i) {
     let spacEqmtType = [...this.state.spacEqmtType];
     spacEqmtType.splice(i, 1);
-    this.setState({ spacEqmtType });
+    let flattack_openTop = [...this.state.flattack_openTop];
+    if (this.state.flattack_openTop.length > 0) {
+      flattack_openTop.splice(i - 1, 1);
+    }
+
+    let multiCBM = [...this.state.multiCBM];
+    if (this.state.multiCBM.length > 0) {
+      multiCBM.splice(i - 1, 1);
+    }
+
+    this.setState({ spacEqmtType, flattack_openTop, multiCBM });
   }
 
   //// end spacEqmtType dyamanic element
@@ -2875,7 +2939,6 @@ class RateTable extends Component {
   }
 
   spotRateSubmit(param) {
-    debugger;
     let self = this;
 
     var truckTypeData = [];
@@ -2920,20 +2983,7 @@ class RateTable extends Component {
         TruckTypeDesc: param.TruckTypeData[i].TruckDesc
       });
     }
-    if (param.flattack_openTop.length != 0) {
-      for (var i = 0; i < param.flattack_openTop.length; i++) {
-        MultiCBM.push({
-          PackageType: param.flattack_openTop[i].PackageType || "",
-          Quantity: param.flattack_openTop[i].Quantity || 0,
-          Lengths: param.flattack_openTop[i].length || 0,
-          Width: param.flattack_openTop[i].width || 0,
-          Height: param.flattack_openTop[i].height || 0,
-          GrossWt: param.flattack_openTop[i].Gross_Weight || 0,
-          VolumeWeight: param.flattack_openTop[i].total || 0,
-          Volume: 0
-        });
-      }
-    } else {
+    if (param.multiCBM.length != 0) {
       for (var i = 0; i < param.multiCBM.length; i++) {
         MultiCBM.push({
           PackageType: param.multiCBM[i].PackageType || "",
@@ -3066,7 +3116,7 @@ class RateTable extends Component {
       destinationAddress = param.DeliveryCity;
       originPort_ID = param.polfullAddData.UNECECode;
     }
-    debugger;
+
     if (param.containerLoadType == "AIR" || param.containerLoadType == "FCL") {
       var multiCBMData = [];
       if (this.state.cmbTypeRadio === "CBM") {
@@ -3103,11 +3153,11 @@ class RateTable extends Component {
         RateQueryDim: multiCBMData,
         MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
         CompanyID: CompanyID,
-        CommodityID: parseInt(param.CommodityID),
+        CommodityID: Number(param.CommodityID),
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
         BaseCurrency: param.currencyCode,
-        NonStackable: 0
+        NonStackable: param.NonStackable == true ? 1 : 0
       };
     }
     if (param.containerLoadType == "LTL" || param.containerLoadType == "LCL") {
@@ -3148,7 +3198,7 @@ class RateTable extends Component {
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
         BaseCurrency: param.currencyCode,
-        NonStackable: 1
+        NonStackable: param.NonStackable == true ? 1 : 0
       };
     }
     if (param.containerLoadType == "FTL") {
@@ -3175,7 +3225,7 @@ class RateTable extends Component {
         DestGeoCordinate: param.DestGeoCordinate,
         FTLTruckDetails: truckTypeData,
         BaseCurrency: param.currencyCode,
-        NonStackable: 0
+        NonStackable: param.NonStackable == true ? 1 : 0
       };
     }
 
@@ -3204,7 +3254,6 @@ class RateTable extends Component {
       })
       .catch(error => {
         self.setState({ sloding: false });
-        
       });
   }
 
@@ -3242,7 +3291,6 @@ class RateTable extends Component {
             polpodData: polpodData,
             polpodDataAdd: polpodDataAdd
           });
-          
         })
         .catch(error => console.error("Error:", error));
     } else {
@@ -3535,6 +3583,9 @@ class RateTable extends Component {
     return (e.target.src = appSettings.imageURL + "ATAFreight_console.png");
   }
   HandleBackStage(stageType, e) {
+    if (this.state.isViewRate) {
+      return false;
+    }
     if (stageType == "shipmentType") {
       this.props.history.push({
         pathname: "new-rate-search",
@@ -3587,10 +3638,10 @@ class RateTable extends Component {
       var multiCBM = callBackObj;
       this.setState({ multiCBM });
     }
-    if (this.state.containerLoadType === "FTL") {
-      var TruckTypeData = callBackObj;
-      this.setState({ TruckTypeData });
-    }
+    // if (this.state.containerLoadType === "FTL") {
+    //   var TruckTypeData = callBackObj;
+    //   this.setState({ TruckTypeData });
+    // }
     if (this.state.containerLoadType === "FCL") {
       var multiCBM = callBackObj;
       this.setState({ multiCBM });
@@ -3655,7 +3706,14 @@ class RateTable extends Component {
       polpodData: [],
 
       TruckType: [],
-      TruckTypeData: [],
+      TruckTypeData: [
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: 1,
+          TruckDesc: ""
+        }
+      ],
       CommodityID: 49,
       OriginGeoCordinates: "",
       DestGeoCordinate: "",
@@ -3723,9 +3781,168 @@ class RateTable extends Component {
       this.componentDidMount();
     }, 200);
   };
+
+  //// create dynamic truck type UI
+  createUITruckType() {
+    return this.state.TruckTypeData.map((el, i) => {
+      return (
+        <div key={i} className="equip-plus-cntr">
+          <div className="spe-equ" style={{ margin: "auto" }}>
+            <select
+              className="select-text mr-3"
+              name="TruckName"
+              value={el.TruckID || 0}
+              onChange={this.UITruckTypeChange.bind(this, i)}
+            >
+              <option selected value={"select"}>
+                Select
+              </option>
+              {this.state.TruckType.map((item, i) => (
+                <option key={i} value={item.TruckID}>
+                  {item.TruckName}
+                </option>
+              ))}
+              <option value={"others"}>Others</option>
+            </select>
+            <input
+              className="mr-3"
+              type="text"
+              name="Quantity"
+              value={el.Quantity || 1}
+              placeholder="Quantity"
+              onChange={this.UITruckTypeChange.bind(this, i)}
+            />
+            {el.TruckName === "others" ? (
+              <input
+                type="text"
+                name="TruckDesc"
+                placeholder="TruckDesc"
+                value={el.TruckDesc || ""}
+                onChange={this.UITruckTypeChange.bind(this, i)}
+              />
+            ) : null}
+
+            {i === 0 ? (
+              <div className="spe-equ">
+                <i
+                  className="fa fa-plus mt-2"
+                  aria-hidden="true"
+                  onClick={this.addClickTruckType.bind(this)}
+                ></i>
+              </div>
+            ) : null}
+            {this.state.TruckTypeData.length > 1 ? (
+              <div className="spe-equ mt-2">
+                <i
+                  className="fa fa-minus"
+                  aria-hidden="true"
+                  onClick={this.removeClickTruckType.bind(this, i)}
+                ></i>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      );
+    });
+  }
+
+  addClickTruckType() {
+    this.setState(prevState => ({
+      TruckTypeData: [
+        ...prevState.TruckTypeData,
+        {
+          TruckID: "",
+          TruckName: "",
+          Quantity: 1,
+          TruckDesc: ""
+        }
+      ]
+    }));
+  }
+
+  removeClickTruckType(i) {
+    let TruckTypeData = [...this.state.TruckTypeData];
+    TruckTypeData.splice(i, 1);
+    this.setState({ TruckTypeData });
+  }
+
+  UITruckTypeChange(i, e) {
+    const { name, value } = e.target;
+
+    let TruckTypeData = [...this.state.TruckTypeData];
+
+    if (name === "Quantity") {
+      TruckTypeData[i] = {
+        ...TruckTypeData[i],
+        [name]: parseInt(value)
+      };
+    }
+
+    if (name === "TruckDesc") {
+      TruckTypeData[i] = {
+        ...TruckTypeData[i],
+        [name]: value
+      };
+    }
+
+    if (name === "TruckName") {
+      if (value !== "others") {
+        TruckTypeData[i] = {
+          ...TruckTypeData[i],
+          [name]: e.target.selectedOptions[0].innerText
+        };
+        TruckTypeData[i] = {
+          ...TruckTypeData[i],
+          ["TruckID"]: value
+        };
+      } else {
+        TruckTypeData[i] = {
+          ...TruckTypeData[i],
+          [name]: value
+        };
+        TruckTypeData[i] = {
+          ...TruckTypeData[i],
+          ["TruckID"]: "others"
+        };
+      }
+    }
+
+    // TruckTypeData[i] = {
+    //   ...TruckTypeData[i],
+    //   [name]: name === "Quantity" ? parseInt(value) : value,
+    //   ["TruckDesc"]: name === "TruckName" ? value : TruckTypeData[i].TruckDesc
+    // };
+    this.setState({ TruckTypeData });
+
+    var pathName = window.location.pathname;
+    if (pathName === "/new-rate-search") {
+      document.getElementById("cbm").classList.add("cbm");
+      document.getElementById("cntrLoadInner").classList.add("cntrLoadType");
+      document.getElementById("containerLoad").classList.add("less-padd");
+
+      document
+        .getElementById("cntrLoadIconCntr")
+        .classList.add("cntrLoadIconCntr");
+      document.getElementById("cntrLoadName").classList.remove("d-none");
+      document.getElementById("cntrLoadMinusClick").classList.add("d-none");
+      document.getElementById("cntrLoadPlusClick").classList.remove("d-none");
+    }
+  }
+
   render() {
     var i = 0;
     var classname = "";
+
+    if (this.state.isViewRate) {
+      if (
+        this.state.commodityData.length > 0 &&
+        this.state.commodityname !== ""
+      ) {
+        this.state.CommodityID = this.state.commodityData.filter(
+          x => x.Commodity == this.state.commodityname
+        )[0].id;
+      }
+    }
 
     if (this.state.isViewRate == true) {
       classname = "butn btn-sizeRate disabled";
@@ -3773,6 +3990,7 @@ class RateTable extends Component {
                       onChange={this.filterAll}
                       style={{ marginLeft: "5px" }}
                       value={this.state.CommodityID}
+                      disabled={this.state.isViewRate}
                     >
                       {/* <option>Select</option> */}
                       {/* <option value="All">All</option> */}
@@ -3847,7 +4065,10 @@ class RateTable extends Component {
               <div className="row">
                 <div className="col-12 col-md-5 col-lg-3 less-right-rate">
                   <div className="rate-table-left">
-                    <div className="top-select d-flex justify-content-between disblo">
+                    <div
+                      className="top-select d-flex justify-content-between disblo"
+                      disabled={this.props.location.state.isViewRate || false}
+                    >
                       <span
                         onClick={this.HandleBackStage.bind(
                           this,
@@ -3886,10 +4107,10 @@ class RateTable extends Component {
                           ? "P2P"
                           : this.state.typeofMove === 2
                           ? "D2P"
-                          : this.state.typeofMove === 4
-                          ? "D2D"
                           : this.state.typeofMove === 3
                           ? "P2D"
+                          : this.state.typeofMove === 4
+                          ? "D2D"
                           : ""}
                       </span>
                     </div>
@@ -3902,6 +4123,7 @@ class RateTable extends Component {
                               type="checkbox"
                               name="HazMat"
                               checked={this.state.HazMat}
+                              disabled={this.state.isViewRate}
                             />
                             <label htmlFor="insu">HazMat</label>
                           </div>
@@ -3919,6 +4141,7 @@ class RateTable extends Component {
                                     type="checkbox"
                                     name="NonStackable"
                                     checked={this.state.NonStackable}
+                                    disabled={this.state.isViewRate}
                                   />
                                   <label htmlFor="cont-trak">
                                     NonStackable
@@ -3929,7 +4152,11 @@ class RateTable extends Component {
                             );
                           }
                         })()}
-                        <div>
+                        <div
+                          disabled={
+                            this.props.location.state.isViewRate || false
+                          }
+                        >
                           <div className="d-flex">
                             <input
                               id="cust-clear"
@@ -3937,6 +4164,7 @@ class RateTable extends Component {
                               name="Custom_Clearance"
                               checked={this.state.Custom_Clearance}
                               onChange={this.custClearToggle}
+                              disabled={this.state.isViewRate}
                             />
                             <label htmlFor="cust-clear">Custom Clearance</label>
                           </div>
@@ -3951,18 +4179,19 @@ class RateTable extends Component {
                                 type="checkbox"
                                 name="address"
                                 defaultChecked={true}
+                                disabled={this.props.location.state.isViewRate}
                                 onChange={this.toggleChangePOLPOD.bind(
                                   this,
                                   index,
                                   "POL",
-                                  mapPOL.POLGeoCordinate
+                                  mapPOL.POLGeoCordinate || mapPOL.GeoCordinate
                                 )}
                               />
                               <label htmlFor={"pol" + (index + 1)}></label>
                               <h5 htmlFor={"pol" + (index + 1)}>
                                 {mapPOL.Address !== ""
-                                  ? mapPOL.Address
-                                  : mapPOL.POL}
+                                  ? mapPOL.Address || mapPOL.NameWoDiacritics
+                                  : mapPOL.POL || mapPOL.NameWoDiacritics}
                                 {/* {mapPOL.POL} */}
                               </h5>
                             </div>
@@ -3971,7 +4200,8 @@ class RateTable extends Component {
                             <span className="rate-map-ovrly map-pol-lbl">
                               POL
                             </span>
-                            {this.state.typeofMove === 1 ||
+                            {(!this.props.location.state.isViewRate &&
+                              this.state.typeofMove === 1) ||
                             this.state.typeofMove === 2 ? (
                               <span
                                 onClick={this.togglePOLModal}
@@ -4009,18 +4239,19 @@ class RateTable extends Component {
                                 type="checkbox"
                                 name="address"
                                 defaultChecked={true}
+                                disabled={this.props.location.state.isViewRate}
                                 onChange={this.toggleChangePOLPOD.bind(
                                   this,
                                   index,
                                   "POD",
-                                  mapPOD.PODGeoCordinate
+                                  mapPOD.PODGeoCordinate || mapPOD.GeoCordinate
                                 )}
                               />
                               <label htmlFor={"pod" + (index + 1)}></label>
                               <h5 htmlFor={"pol" + (index + 1)}>
                                 {mapPOD.Address !== ""
-                                  ? mapPOD.Address
-                                  : mapPOD.POD}
+                                  ? mapPOD.Address || mapPOD.NameWoDiacritics
+                                  : mapPOD.POD || mapPOD.NameWoDiacritics}
                                 {/* {mapPOD.POD} */}
                               </h5>
                             </div>
@@ -4031,7 +4262,8 @@ class RateTable extends Component {
                     <div className="pol-pod-maps-cntr">
                       <div className="pol-pod-maps pod-maps">
                         <span className="rate-map-ovrly">POD</span>
-                        {this.state.typeofMove === 1 ||
+                        {(!this.props.location.state.isViewRate &&
+                          this.state.typeofMove === 1) ||
                         this.state.typeofMove === 2 ? (
                           <span
                             onClick={this.togglePODModal}
@@ -4706,14 +4938,14 @@ class RateTable extends Component {
                   </h3>
 
                   {this.state.containerLoadType === "FTL" ? (
-                    // this.createUITruckType()
-                    <Comman
-                      containerLoadType={this.state.containerLoadType}
-                      TruckTypeData={this.state.TruckTypeData}
-                      TruckType={this.state.TruckType}
-                      parentCallback={this.callbackFunction}
-                    />
-                  ) : this.state.containerLoadType === "FCL" ? (
+                    this.createUITruckType()
+                  ) : // <Comman
+                  //   containerLoadType={this.state.containerLoadType}
+                  //   TruckTypeData={this.state.TruckTypeData}
+                  //   TruckType={this.state.TruckType}
+                  //   parentCallback={this.callbackFunction}
+                  // />
+                  this.state.containerLoadType === "FCL" ? (
                     <>
                       {" "}
                       <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
@@ -5026,7 +5258,11 @@ class RateTable extends Component {
                     </div>
 
                     <div className="row rename-cntr login-fields">
-                      <select onChange={this.filterAll}>
+                      <select
+                        onChange={this.filterAll}
+                        value={this.state.CommodityID}
+                        disabled={this.state.isViewRate}
+                      >
                         {this.state.commodityData.map((item, i) => (
                           <option
                             key={i}
@@ -5048,14 +5284,14 @@ class RateTable extends Component {
 
                     <div className="w-100">
                       {this.state.containerLoadType === "FTL" ? (
-                        // this.createUITruckType()
-                        <Comman
-                          containerLoadType={this.state.containerLoadType}
-                          TruckTypeData={this.state.TruckTypeData}
-                          TruckType={this.state.TruckType}
-                          parentCallback={this.callbackFunction}
-                        />
-                      ) : this.state.containerLoadType === "FCL" ? (
+                        this.createUITruckType()
+                      ) : // <Comman
+                      //   containerLoadType={this.state.containerLoadType}
+                      //   TruckTypeData={this.state.TruckTypeData}
+                      //   TruckType={this.state.TruckType}
+                      //   parentCallback={this.callbackFunction}
+                      // />
+                      this.state.containerLoadType === "FCL" ? (
                         <>
                           {" "}
                           <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">

@@ -162,6 +162,7 @@ class RateFinalizingStill extends Component {
       headers: authHeader()
     })
       .then(function(response) {
+        
         var RateDetails = response.data.Table1;
         var SubRateDetails = response.data.Table2;
         var multiCBM = response.data.Table3;
@@ -189,6 +190,7 @@ class RateFinalizingStill extends Component {
                 SalesPersonPhone =
                   response.data.Table[0].SalesPersonPhone || "";
                 SalesPersonFax = response.data.Table[0].SalesPersonFax || "";
+                
                 self.setState({
                   SalesPersonName,
                   SalesPersonEmail,
@@ -359,14 +361,13 @@ class RateFinalizingStill extends Component {
   };
 
   SendMail(action) {
-    debugger;
     let self = this;
     // self.togglePreview();
 
     var stringHtmlMain = "";
 
     stringHtmlMain =
-      "<!DOCTYPE html><html><head><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif}.row{display:flex;flex-wrap:wrap}.col-12{flex:0 0 100%;max-width:100%}.col-md-6{flex:0 0 50%;max-width:50%}.col-md-4{flex:0 0 33.333333%;max-width:33.333333%}.popupbox{background: #f1f2f2;padding: 20px;} .modal-body{background-color:#f1f2f2;padding:20px;position:relative;border-radius:0}.close{position:absolute;right:-8px;top:-12px;color:#333;font-weight:400;background:#fff !important;opacity:1 !important;border-radius:50%;width:25px;font-size:21px;font-weight:700}.logohheader{background:#fff;margin-bottom:20px;padding:5px;width:100%}.logohheader img{width:200px}.preview-date-num{}.preview-date-num p{font-size:14px;font-weight:600;color:#8f8f8f;margin:5px 0}.preview-date-num p span{color:#333}.firstbox{background:#fff;padding:20px;margin-bottom:20px}.firstbox label{display:block;color:#8f8f8f;font-weight:600;margin-bottom:5px;font-size:14px}.firstbox label span{color:#333}.thirdbox{background:#fff;margin-bottom:20px}.thirdbox h3{font-size:18px;font-weight:bold;text-align:center;padding:20px 20px 0;margin-bottom:15px;color:#333;background:transparent}.thirdbox .table-responsive{display:table}.table-responsive{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.table{width:100%;font-size:14px;width:100%;border-spacing:inherit;margin-bottom:1rem;color:#212529}.thirdbox table thead{background:#cbcbcb;font-size:12px}.thirdbox table tbody{font-size:12px}table thead th{vertical-align:bottom;border-bottom:2px solid #dee2e6;text-align:left}.table td,.table th{padding: .75rem;vertical-align:top}table tbody tr:last-child{border-bottom:0}table td{color:#696969;background-color:#fff;padding:12px}.secondbox{background:#fff;padding:20px;margin-bottom:20px}.secondbox h3{font-size:18px;margin:0;font-weight:bold;padding:0;margin-bottom:15px;text-align:center;background:transparent;color:#333}hr{margin-top:1rem;margin-bottom:1rem;border:0;border-top:1px solid rgba(0, 0, 0, .1)}table td{color:#696969;background-color:#fff;font-weight:600;padding:12px;font-size:14px}.table td,.table th{vertical-align:top}.secondbox label{display:block;color:#8f8f8f;margin-bottom:5px;font-weight:600;font-size:14px}.secondbox label span{color:#333}.mb-0{margin-bottom:0}.txt-right{text-align:right}</style></head><body> <div class='popupbox'>";
+      "<!DOCTYPE html><html><head>     <style > body{ font - family:-apple - system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans - serif}.row{ display: flex; flex - wrap:wrap}.col - 12{ flex: 0 0 100 %; max - width:100 %}.col - md - 6{ flex: 0 0 50 %; max - width:50 %}.col - md - 4{ flex: 0 0 33.333333 %; max - width:33.333333 %}.popupbox{background: #f1f2f2;padding: 20px;} .bordernone {border:none;} .row {display: flex;} .col-md-6 {max-width: 50%;} .modal-body{background-color:#f1f2f2;padding:20px;position:relative;border-radius:0}.close{position:absolute;right:-8px;top:-12px;color:#333;font-weight:400;background:#fff !important;opacity:1 !important;border-radius:50%;width:25px;font-size:21px;font-weight:700}.logohheader{background:#fff;padding:5px;width:100%}.logohheader img{width:175px}.preview-date-num{}.preview-date-num p{font-size:14px;font-weight:600;color:#8f8f8f;margin:5px 0;}.preview-date-num p span{color:#333}.firstbox{background:#fff;padding:0 20px 0px;}.firstbox label{display:block;color:#8f8f8f;font-weight:600;margin:5px 0;font-size:14px}.firstbox label span{color:#333}.thirdbox{background:#fff;margin-bottom:0}.thirdbox h3{font-size:18px;font-weight:bold;text-align:center;padding:20px 20px 0;margin:0;margin-bottom:15px;color:#333;background:transparent}.thirdbox .table-responsive{display:table}.table-responsive{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.table{width:100%;font-size:14px;width:100%;border-spacing:inherit;margin-bottom:0;color:#212529}.thirdbox table thead{background:#cbcbcb;font-size:12px}.thirdbox table tbody{font-size:12px}table thead th{vertical-align:bottom;border-bottom:2px solid #dee2e6;text-align:left}.table td,.table th{padding: .75rem;vertical-align:top}table tbody tr:last-child{border-bottom:0}table td{color:#696969;background-color:#fff;padding:12px}.secondbox{background:#fff;padding:20px;margin-bottom:0}.secondbox h3{font-size:18px;margin:0;font-weight:bold;padding:0;margin-bottom:15px;text-align:center;background:transparent;color:#333}hr{margin-top:7px;margin-bottom:5px;border:0;border-top:1px solid #ddd}table td{color:#696969;background-color:#fff;font-weight:600;padding:12px;font-size:14px}.table td,.table th{vertical-align:top}.secondbox label{display:block;color:#8f8f8f;margin:5px 0;font-weight:600;font-size:14px}.secondbox label span{color:#333}.mb-0{margin-bottom:0}.txt-right{text-align:right}</style></head><body> <div class='popupbox'>";
     var stringHtmlBody = document.getElementById("printDiv1").innerHTML;
     stringHtmlMain += stringHtmlBody;
     var stringHtmlEnd = "</div></body></html>";
@@ -393,7 +394,6 @@ class RateFinalizingStill extends Component {
       headers: authHeader()
     })
       .then(function(response) {
-        debugger;
         if (response != null) {
           if (response.data != null) {
             if (response.data.length > 0) {
@@ -1383,6 +1383,14 @@ class RateFinalizingStill extends Component {
   }
 
   render() {
+    var final = 0;
+    if (this.state.RateDetails.length > 0) {
+      final = this.state.RateDetails.reduce(function(prev, cur) {
+        return parseFloat(prev) + parseFloat(cur.Total.split(" ")[0]);
+      }, 0);
+    }
+    
+
     var tDate = moment(this.state.todayDate).format("L");
     let className = "butn m-0";
     if (this.state.showContent == true) {
@@ -1799,7 +1807,7 @@ class RateFinalizingStill extends Component {
                             showPagination={false}
                             SubComponent={row => {
                               return (
-                                <div style={{ padding: "0px 0" }}>
+                                <div style={{ padding: "20px 0" }}>
                                   <ReactTable
                                     minRows={1}
                                     data={this.state.SubRateDetails.filter(
@@ -1829,12 +1837,9 @@ class RateFinalizingStill extends Component {
                                           {
                                             Header: "Units",
                                             accessor: "ChargeItem",
-                                            Cell: props => (
+                                            Cell: row => (
                                               <React.Fragment>
-                                                {props.original.Chargeitem !==
-                                                undefined
-                                                  ? props.original.Chargeitem
-                                                  : props.original.ChargeItem}
+                                                {row.original.Amount}
                                               </React.Fragment>
                                             )
                                           },
@@ -1843,14 +1848,38 @@ class RateFinalizingStill extends Component {
                                             accessor: "Amount",
                                             Cell: row => {
                                               if (
-                                                row.original.Amount !== null
+                                                row.original.Chargeitem !== null
                                               ) {
                                                 return (
-                                                  <>{row.original.Amount}</>
+                                                  <>{row.original.Chargeitem}</>
                                                 );
                                               } else {
                                                 return <>0</>;
                                               }
+                                            }
+                                          },
+                                          {
+                                            Header: "Tax",
+                                            accessor: "Tax",
+                                            Cell: row => (
+                                              <React.Fragment>
+                                                {row.original.Tax !== 0
+                                                  ? row.original.Tax
+                                                  : row.original.Tax}
+                                              </React.Fragment>
+                                            )
+                                          },
+
+                                          {
+                                            Header: "Exrate",
+                                            accessor: "Exrate" || "ExRate",
+                                            Cell: row => {
+                                              return (
+                                                <>
+                                                  {row.original.Exrate ||
+                                                    row.original.ExRate}
+                                                </>
+                                              );
                                             }
                                           },
 
@@ -2361,7 +2390,7 @@ class RateFinalizingStill extends Component {
                 {this.state.btnloding == true ? (
                   <>
                     <i
-                      style={{ marginRight: 15 }}
+                      style={{ marginRight: "15" }}
                       className="fa fa-refresh fa-spin"
                     ></i>
                     {"Please Wait ..."}
@@ -2400,7 +2429,7 @@ class RateFinalizingStill extends Component {
                 {this.state.rbtnloding == true ? (
                   <>
                     <i
-                      style={{ marginRight: 15 }}
+                      style={{ marginRight: "15" }}
                       className="fa fa-refresh fa-spin"
                     ></i>
                     {"Please Wait ..."}
@@ -2532,7 +2561,7 @@ class RateFinalizingStill extends Component {
                               {this.state.CargoDetailsArr.length > 0
                                 ? this.state.CargoDetailsArr.map(item1 => (
                                     <tr>
-                                      <td>{item1.ContainerType}</td>
+                                      <td>{item1.PackageType}</td>
                                       <td>{item1.Quantity}</td>
                                       <td>{item1.Lengths}</td>
                                       <td>{item1.Width}</td>
@@ -2850,6 +2879,42 @@ class RateFinalizingStill extends Component {
                 <div className="col-12">
                   <div className="thirdbox">
                     <div className="table-responsive">
+                      <table className="table table-responsive mb-0">
+                        <thead>
+                          <tr>
+                            <th>Final Total</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+
+                            <th className="total-align txt-right">
+                              {/* {this.state.RateDetails.reduce(function(
+                                prev,
+                                cur
+                              ) {
+                                return (
+                                  parseFloat(prev) +
+                                  parseFloat(cur.Total.split(" ")[0])
+                                );
+                              },
+                              0)} */}
+                              {final}
+                              {" " + this.state.RateDetails.length > 0
+                                ? this.state.RateDetails[0].Total.split(" ")[1]
+                                : null}
+                            </th>
+                          </tr>
+                        </thead>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-12">
+                  <div className="thirdbox">
+                    <div className="table-responsive">
                       <table className="table table-responsive">
                         <thead>
                           <tr>
@@ -2880,104 +2945,120 @@ class RateFinalizingStill extends Component {
             </div>
           </ModalBody>
         </Modal>
+        {/* ---------------------------------print div start--------------------------------- */}
         <div style={{ display: "none" }}>
           <div id="printDiv1">
-            <div className="row" style={{ margin: 0 }}>
+            <div className="row" style={{ margin: "0" }}>
               <div className="logohheader">
-                <div
-                  className="row align-items-center"
-                  style={{ margin: 0, background: "#fff" }}
-                >
-                  <div
-                    style={{
-                      float: "left",
-                      width: "300px",
-                      minWidth: "300px",
-                      maxWidth: "300px",
-                      display: "inline-block"
-                    }}
-                  >
-                    <img
-                      src={appSettings.imageURL + "ATAFreight_console.png"}
-                      alt="ATAFreight Console"
-                    ></img>
-                  </div>
-                  <div
-                    style={{
-                      float: "left",
-                      width: "300px",
-                      minWidth: "300px",
-                      maxWidth: "300px",
-                      display: "inline-block"
-                    }}
-                  >
-                    <p>
-                      Date : <span>{tDate}</span>
-                    </p>
-                    <p>
-                      Sales Quote No. :<span>{this.state.SaleQuoteID}</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="row" style={{ background: "#fff" }}>
-              <div
-                style={{
-                  float: "left",
-                  width: "300px",
-                  minWidth: "300px",
-                  maxWidth: "300px",
-                  display: "inline-block"
-                }}
-              >
-                <div className="firstbox">
-                  <label>
-                    Sales Person : <span>{this.state.SalesPersonName}</span>
-                  </label>
-                  <br></br>
-                  <label>
-                    E-Mail :<span>{this.state.SalesPersonEmail}</span>
-                  </label>
-                  <br></br>
-                  <label>
-                    Phone : <span>{this.state.SalesPersonPhone}</span>
-                  </label>
-                  <br></br>
-                  <label>
-                    Fax : <span>{this.state.SalesPersonFax}</span>
-                  </label>
-                </div>
-              </div>
-              <div
-                style={{
-                  float: "left",
-                  width: "300px",
-                  minWidth: "300px",
-                  maxWidth: "300px",
-                  display: "inline-block"
-                }}
-              >
-                <div className="firstbox">
-                  <label>
-                    ATNN : <span>{this.state.custNotification}</span>
-                  </label>
-                  <br></br>
-                  <label>
-                    E-Mail : <span>{this.state.Contact_Email}</span>
-                  </label>
-                  <br></br>
-                  <label>
-                    Phone : <span>{this.state.Contact_Phone}</span>
-                  </label>
-                  <br></br>
-                  <label>
-                    Fax : <span></span>
-                  </label>
-                </div>
+                <table className="table">
+                  <tr>
+                    <td
+                      rowspan={"2"}
+                      style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                    >
+                      <img
+                        style={{ height: "50px", Width: "50px" }}
+                        src="https://vizio.atafreight.com/MyWayFiles/ATAFreight_console.png"
+                      />
+                    </td>
+                    <td
+                      className="preview-date-num"
+                      style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                    >
+                      <p>
+                        Date : <span>{tDate}</span>
+                      </p>
+                      <p>
+                        Sales Quote No. :<span>{this.state.SaleQuoteID}</span>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
               </div>
             </div>
 
+            <div
+              className="row"
+              style={{
+                paddingTop: "0",
+                paddingRight: "20px",
+                paddingLeft: "20px",
+                background: "#fff"
+              }}
+            >
+              <table className="table firstbox bordernone">
+                <tr className="">
+                  <td
+                    style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                  >
+                    <label>
+                      Sales Person : <span>{this.state.SalesPersonName}</span>
+                    </label>
+                  </td>
+                  <td
+                    className="preview-date-num"
+                    style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                  >
+                    <label>
+                      ATNN : <span>{this.state.custNotification}</span>
+                    </label>
+                  </td>
+                </tr>
+
+                <tr className="">
+                  <td
+                    style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                  >
+                    <label>
+                      E-Mail :<span>{this.state.SalesPersonEmail}</span>
+                    </label>
+                  </td>
+                  <td
+                    className="preview-date-num"
+                    style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                  >
+                    <label>
+                      E-Mail : <span>{this.state.Contact_Email}</span>
+                    </label>
+                  </td>
+                </tr>
+                <tr className="">
+                  <td
+                    style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                  >
+                    <label>
+                      Phone : <span>{this.state.SalesPersonPhone}</span>
+                    </label>
+                  </td>
+                  <td
+                    className="preview-date-num"
+                    style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                  >
+                    <label>
+                      Phone : <span>{this.state.Contact_Phone}</span>
+                    </label>
+                  </td>
+                </tr>
+                <tr className="">
+                  <td
+                    style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                  >
+                    <label>
+                      Fax : <span>{this.state.SalesPersonFax}</span>
+                    </label>
+                  </td>
+
+                  <td
+                    className="preview-date-num"
+                    style={{ width: "50%", minWidth: "50%", maxWidth: "50%" }}
+                  >
+                    <label>
+                      Fax : <span></span>
+                    </label>
+                  </td>
+                </tr>
+              </table>
+            </div>
             <div className="row">
               <div className="col-12">
                 <div className="thirdbox">
@@ -3018,7 +3099,7 @@ class RateFinalizingStill extends Component {
                             {this.state.CargoDetailsArr.length > 0
                               ? this.state.CargoDetailsArr.map(item1 => (
                                   <tr>
-                                    <td>{item1.ContainerType}</td>
+                                    <td>{item1.PackageType}</td>
                                     <td>{item1.Quantity}</td>
                                     <td>{item1.Lengths}</td>
                                     <td>{item1.Width}</td>
@@ -3052,67 +3133,178 @@ class RateFinalizingStill extends Component {
             {this.state.RateDetails.map(item => (
               <>
                 <div className="row">
-                  <div className="col-12">
+                  <div className="">
                     <div className="secondbox">
                       <h3>Service Details</h3>
-                      <hr />
-                      <div className="row">
-                        <div className="col-12 col-md-4">
-                          <label>
-                            Type of Move :<span>{this.state.TypeofMove}</span>
-                          </label>
-                          <br></br>
-                          <label>
-                            POL : <span>{item.POL}</span>
-                          </label>
-                          <br></br>
-                          <label>
-                            POD : <span>{item.POD}</span>
-                          </label>
-                        </div>
-                        <div className="col-12 col-md-4">
-                          <label>
-                            Service Type :{" "}
-                            <span>
-                              {item.TransshipmentPort === null
-                                ? "Direct"
-                                : "Transit"}
-                            </span>
-                          </label>
-                          <br></br>
-                          <label>
-                            Inco Terms : <span>{this.state.IncoTerms}</span>
-                          </label>
-                          <br></br>
-                        </div>
-                        <div className="col-12 col-md-4">
-                          <label>
-                            Liner : <span>{item.Linename}</span>
-                          </label>
-                        </div>
-                      </div>
-                      <hr />
-                      <div className="row">
-                        <div className="col-12 col-md-4">
-                          <label>
-                            Transit Time :{" "}
-                            <span>{item.TransitTime + " Days"}</span>
-                          </label>
-                        </div>
-                        <div className="col-12 col-md-4">
-                          <label>
-                            Free Time : <span>{item.FreeTime}</span>
-                          </label>
-                        </div>
-                      </div>
-                      <hr />
-                      <div class="row">
-                        <div className="col-12">
-                          <label>
-                            Expiry Date : <span>{item.ExpiryDate}</span>
-                          </label>
-                        </div>
-                      </div>
+                      <hr></hr>
+                      <table class="table">
+                        <tr class="secondbox">
+                          <td
+                            style={{
+                              width: "46%",
+                              minWidth: "46%",
+                              maxWidth: "46%"
+                            }}
+                          >
+                            <label>
+                              Type of Move :<span>{this.state.TypeofMove}</span>
+                            </label>
+                          </td>
+                          <td
+                            style={{
+                              width: "27%",
+                              minWidth: "27%",
+                              maxWidth: "27%"
+                            }}
+                          >
+                            <label>
+                              Service Type :
+                              <span>
+                                {item.TransshipmentPort === null
+                                  ? "Direct"
+                                  : "Transit"}
+                              </span>
+                            </label>
+                          </td>
+                          <td
+                            style={{
+                              width: "27%",
+                              minWidth: "27%",
+                              maxWidth: "27%"
+                            }}
+                          >
+                            <label>
+                              Liner : <span>{item.Linename}</span>
+                            </label>
+                          </td>
+                        </tr>
+                        <tr class="secondbox">
+                          <td
+                            style={{
+                              width: "46%",
+                              minWidth: "46%",
+                              maxWidth: "46%"
+                            }}
+                          >
+                            <label>
+                              POL : <span>{item.POL}</span>
+                            </label>
+                          </td>
+                          <td
+                            style={{
+                              width: "27%",
+                              minWidth: "27%",
+                              maxWidth: "27%"
+                            }}
+                          >
+                            <label>
+                              Inco Terms : <span>{this.state.IncoTerms}</span>
+                            </label>
+                          </td>
+                          <td
+                            style={{
+                              width: "27%",
+                              minWidth: "27%",
+                              maxWidth: "27%"
+                            }}
+                          >
+                            <label>
+                              <span></span>
+                            </label>
+                          </td>
+                        </tr>
+                        <tr class="secondbox">
+                          <td
+                            style={{
+                              width: "46%",
+                              minWidth: "46%",
+                              maxWidth: "46%"
+                            }}
+                          >
+                            <label>
+                              POD : <span>{item.POD}</span>
+                            </label>
+                          </td>
+                          <td
+                            style={{
+                              width: "27%",
+                              minWidth: "27%",
+                              maxWidth: "27%"
+                            }}
+                          >
+                            <label>
+                              <span></span>
+                            </label>
+                          </td>
+                          <td
+                            style={{
+                              width: "27%",
+                              minWidth: "27%",
+                              maxWidth: "27%"
+                            }}
+                          >
+                            <label>
+                              <span></span>
+                            </label>
+                          </td>
+                        </tr>
+                      </table>
+                      <hr></hr>
+
+                      <table class="table">
+                        <tr class="secondbox">
+                          <td
+                            style={{
+                              width: "46%",
+                              minWidth: "46%",
+                              maxWidth: "46%"
+                            }}
+                          >
+                            <label>
+                              Transit Time :{" "}
+                              <span>{item.TransitTime + " Days"}</span>
+                            </label>
+                          </td>
+                          <td
+                            style={{
+                              width: "27%",
+                              minWidth: "27%",
+                              maxWidth: "27%"
+                            }}
+                          >
+                            <label>
+                              Free Time : <span>{item.FreeTime}</span>
+                            </label>
+                          </td>
+                          <td
+                            style={{
+                              width: "27%",
+                              minWidth: "27%",
+                              maxWidth: "27%"
+                            }}
+                          >
+                            <label>
+                              <span></span>
+                            </label>
+                          </td>
+                        </tr>
+                      </table>
+                      <hr></hr>
+                      <table class="table">
+                        <tr class="secondbox">
+                          <td
+                            style={{
+                              width: "100%",
+                              minWidth: "100%",
+                              maxWidth: "100%"
+                            }}
+                          >
+                            <label>
+                              Expiry Date : <span>{item.ExpiryDate}</span>
+                            </label>
+                          </td>
+                        </tr>
+                      </table>
                     </div>
                   </div>
                 </div>
@@ -3338,6 +3530,32 @@ class RateFinalizingStill extends Component {
                 ) : null}
               </>
             ))}
+            <div className="row">
+              <div className="col-12">
+                <div className="thirdbox">
+                  <div className="table-responsive">
+                    <table className="table table-responsive mb-0">
+                      <thead>
+                        <tr>
+                          <th>Final Total</th>
+                          <th></th>
+                          <th></th>
+                          <th></th>
+                          <th></th>
+
+                          <th className="total-align txt-right">
+                            {final.toFixed(2)}
+                            {" " + this.state.RateDetails.length > 0
+                              ? this.state.RateDetails[0].Total.split(" ")[1]
+                              : null}
+                          </th>
+                        </tr>
+                      </thead>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="row">
               <div className="col-12">
                 <div className="thirdbox">

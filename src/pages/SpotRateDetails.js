@@ -149,7 +149,8 @@ class SpotRateDetails extends Component {
       IsSpotRate: false,
       IsRequestForChange: false,
       CustomerID: 0,
-      Company: ""
+      Company: "",
+      CommodityID: 49
     };
 
     this.toggleSpotHistory = this.toggleSpotHistory.bind(this);
@@ -189,6 +190,7 @@ class SpotRateDetails extends Component {
             var QuotationData = response.data.Table1;
             var QuotationSubData = response.data.Table2;
             var RateQueryData = response.data.Table;
+
             if (response != null) {
               if (response.data != null) {
                 if (QuotationData.length > 0) {
@@ -214,7 +216,8 @@ class SpotRateDetails extends Component {
                 if (response.data.Table != null) {
                   if (response.data.Table.length > 0) {
                     self.setState({
-                      spotrateresponseTbl: response.data.Table[0]
+                      spotrateresponseTbl: response.data.Table[0],
+                      CommodityID: response.data.Table[0].CommodityID
                     });
                   }
                 }
@@ -470,16 +473,12 @@ class SpotRateDetails extends Component {
 
     if (spotrateresponseTbl.TypeofMove == "Port To Port") {
       this.state.typeofMove = 1;
-      this.state.typesofMove = "p2p";
     } else if (spotrateresponseTbl.TypeofMove == "Door To Port") {
       this.state.typeofMove = 2;
-      this.state.typesofMove = "d2p";
-    } else if (spotrateresponseTbl.TypeofMove == "Door To Door") {
+    } else if (spotrateresponseTbl.TypeofMove == "Port To Door") {
       this.state.typeofMove = 3;
-      this.state.typesofMove = "d2d";
     } else {
       this.state.typeofMove = 4;
-      this.state.typesofMove = "p2d";
     }
     this.state.currencyCode = this.state.spotrateresponseTbl.BaseCurrency;
     this.state.NonStackable = this.state.spotrateresponseTbl.NonStackable;
@@ -551,7 +550,7 @@ class SpotRateDetails extends Component {
   }
   /////Handle View Rate Button Click
   HandleViewRateData() {
-    window.localStorage.setItem("isCopy",true);
+    window.localStorage.setItem("isCopy", true);
     this.props.history.push({ pathname: "rate-table", state: this.state });
   }
 
@@ -873,7 +872,7 @@ class SpotRateDetails extends Component {
                         <div class="login-fields">
                           <select
                             disabled={true}
-                            value={this.state.spotrateresponseTbl.CommodityID}
+                            value={this.state.CommodityID}
                           >
                             <option>Select</option>
                             <option>All</option>
@@ -961,280 +960,303 @@ class SpotRateDetails extends Component {
                         {this.state.Status === "Rate added by Local Pricing" ? (
                           <>
                             <p className="details-title">Quotation Details</p>
+                            <div style={{backgroundColor:"#f1f2f2"}}>
+                              <ReactTable
+                                columns={[
+                                  {
+                                    columns: [
+                                      {
+                                        Cell: ({ original, row }) => {
+                                          i++;
 
-                            <ReactTable
-                              columns={[
-                                {
-                                  columns: [
-                                    {
-                                      Cell: ({ original, row }) => {
-                                        i++;
-
-                                        var lname = "";
-                                        var olname = "";
-                                        if (row._original.Linename) {
-                                          olname = row._original.Linename;
-                                          lname =
-                                            row._original.Linename.replace(
-                                              "  ",
-                                              "_"
-                                            ).replace(" ", "_") + ".png";
-                                        }
-                                        if (row._original.LineName) {
-                                          olname = row._original.LineName;
-                                          lname =
-                                            row._original.LineName.replace(
-                                              "  ",
-                                              "_"
-                                            ).replace(" ", "_") + ".png";
-                                        }
-                                        if (row._original.lineName) {
-                                          olname = row._original.lineName;
-                                          lname =
-                                            row._original.lineName
-                                              .replace("  ", "_")
-                                              .replace(" ", "_") + ".png";
-                                        }
-                                        var mode =
-                                          this.state.ModeofTransport ||
-                                          this.state.ModeOfTransport;
-
-                                        if (mode === "Ocean" && lname !== "") {
-                                          var url = "";
-                                          if (this.state.Mode == "FCL") {
-                                            url =
-                                              appSettings.imageURL +
-                                              "OEAN_LINERS/" +
-                                              lname;
-                                          } else {
-                                            url =
-                                              appSettings.imageURL +
-                                              "ATAFreight_console.png";
+                                          var lname = "";
+                                          var olname = "";
+                                          if (row._original.Linename) {
+                                            olname = row._original.Linename;
+                                            lname =
+                                              row._original.Linename.replace(
+                                                "  ",
+                                                "_"
+                                              ).replace(" ", "_") + ".png";
                                           }
+                                          if (row._original.LineName) {
+                                            olname = row._original.LineName;
+                                            lname =
+                                              row._original.LineName.replace(
+                                                "  ",
+                                                "_"
+                                              ).replace(" ", "_") + ".png";
+                                          }
+                                          if (row._original.lineName) {
+                                            olname = row._original.lineName;
+                                            lname =
+                                              row._original.lineName
+                                                .replace("  ", "_")
+                                                .replace(" ", "_") + ".png";
+                                          }
+                                          var mode =
+                                            this.state.ModeofTransport ||
+                                            this.state.ModeOfTransport;
+
+                                          if (
+                                            mode === "Ocean" &&
+                                            lname !== ""
+                                          ) {
+                                            var url = "";
+                                            if (this.state.Mode == "FCL") {
+                                              url =
+                                                appSettings.imageURL +
+                                                "OEAN_LINERS/" +
+                                                lname;
+                                            } else {
+                                              url =
+                                                appSettings.imageURL +
+                                                "ATAFreight_console.png";
+                                            }
+                                            return (
+                                              <React.Fragment>
+                                                <div className="rate-tab-img">
+                                                  <img
+                                                    title={olname}
+                                                    alt={olname}
+                                                    src={url}
+                                                    onError={this.onErrorImg.bind(
+                                                      this
+                                                    )}
+                                                  />
+                                                </div>
+                                              </React.Fragment>
+                                            );
+                                          } else if (
+                                            mode == "Air" &&
+                                            lname !== ""
+                                          ) {
+                                            return (
+                                              <React.Fragment>
+                                                <div className="rate-tab-img">
+                                                  <img
+                                                    title={olname}
+                                                    alt={olname}
+                                                    onError={this.onErrorImg.bind(
+                                                      this
+                                                    )}
+                                                    src={
+                                                      appSettings.imageURL +
+                                                      "AIR_LINERS/" +
+                                                      lname
+                                                    }
+                                                  />
+                                                </div>
+                                              </React.Fragment>
+                                            );
+                                          } else {
+                                            return (
+                                              <React.Fragment>
+                                                <div className="rate-tab-img">
+                                                  <img
+                                                    title={olname}
+                                                    onError={this.onErrorImg.bind(
+                                                      this
+                                                    )}
+                                                    src={
+                                                      appSettings.imageURL +
+                                                      "ATAFreight_console.png"
+                                                    }
+                                                    alt={olname}
+                                                  />
+                                                </div>
+                                              </React.Fragment>
+                                            );
+                                          }
+                                        },
+                                        accessor: "lineName",
+                                        Header: "Line Name"
+                                        // minWidth: 200
+                                      },
+                                      {
+                                        Header: "POL",
+                                        accessor: "POL",
+                                        Cell: row => {
                                           return (
                                             <React.Fragment>
-                                              <div className="rate-tab-img">
-                                                <img
-                                                  title={olname}
-                                                  alt={olname}
-                                                  src={url}
-                                                  onError={this.onErrorImg.bind(
-                                                    this
-                                                  )}
-                                                />
-                                              </div>
-                                            </React.Fragment>
-                                          );
-                                        } else if (
-                                          mode == "Air" &&
-                                          lname !== ""
-                                        ) {
-                                          return (
-                                            <React.Fragment>
-                                              <div className="rate-tab-img">
-                                                <img
-                                                  title={olname}
-                                                  alt={olname}
-                                                  onError={this.onErrorImg.bind(
-                                                    this
-                                                  )}
-                                                  src={
-                                                    appSettings.imageURL +
-                                                    "AIR_LINERS/" +
-                                                    lname
-                                                  }
-                                                />
-                                              </div>
-                                            </React.Fragment>
-                                          );
-                                        } else {
-                                          return (
-                                            <React.Fragment>
-                                              <div className="rate-tab-img">
-                                                <img
-                                                  title={olname}
-                                                  onError={this.onErrorImg.bind(
-                                                    this
-                                                  )}
-                                                  src={
-                                                    appSettings.imageURL +
-                                                    "ATAFreight_console.png"
-                                                  }
-                                                  alt={olname}
-                                                />
-                                              </div>
+                                              <p className=" ">
+                                                {row.original.OriginPort_Name}
+                                              </p>
                                             </React.Fragment>
                                           );
                                         }
                                       },
-                                      accessor: "lineName",
-                                      Header: "Line Name"
-                                      // minWidth: 200
-                                    },
-                                    {
-                                      Header: "POL",
-                                      accessor: "POL",
-                                      Cell: row => {
-                                        return (
-                                          <React.Fragment>
-                                            <p className=" ">
-                                              {row.original.OriginPort_Name}
-                                            </p>
-                                          </React.Fragment>
-                                        );
-                                      }
-                                    },
-                                    {
-                                      Header: "POD",
-                                      accessor: "POD",
-                                      Cell: row => {
-                                        return (
-                                          <React.Fragment>
-                                            <p className=" ">
-                                              {
-                                                row.original
-                                                  .DestinationPort_Name
-                                              }
-                                            </p>
-                                          </React.Fragment>
-                                        );
-                                      }
-                                    },
-
-                                    {
-                                      Header: "Transshipment Port",
-                                      accessor: "TranshipmentPorts",
-                                      Cell: row => {
-                                        return (
-                                          <React.Fragment>
-                                            <p className=" ">
-                                              {row.original.TranshipmentPorts}
-                                            </p>
-                                          </React.Fragment>
-                                        );
-                                      }
-                                    },
-
-                                    {
-                                      Header: "Free Time",
-                                      accessor: "FreeTime",
-                                      Cell: row => {
-                                        return (
-                                          <React.Fragment>
-                                            <p className=" ">
-                                              {row.original.FreeTime}
-                                            </p>
-                                          </React.Fragment>
-                                        );
-                                      }
-                                    },
-
-                                    {
-                                      Header: "Container Type",
-                                      accessor: "Container",
-                                      Cell: row => {
-                                        return (
-                                          <React.Fragment>
-                                            <p className=" ">
-                                              {row.original.Container}
-                                            </p>
-                                          </React.Fragment>
-                                        );
-                                      }
-                                    },
-                                    {
-                                      Header: "Transit Time",
-                                      accessor: "TransitTime",
-                                      Cell: row => {
-                                        return (
-                                          <React.Fragment>
-                                            <p className=" ">
-                                              {row.original.TransitTime}
-                                            </p>
-                                          </React.Fragment>
-                                        );
-                                      }
-                                    },
-
-                                    {
-                                      Header: "Expiry Date",
-                                      accessor: "ExpiryDate",
-                                      Cell: row => {
-                                        return (
-                                          <React.Fragment>
-                                            <p className=" ">
-                                              {new Date(
-                                                row.original.ExpiryDate
-                                              ).toLocaleDateString("en-US")}
-                                            </p>
-                                          </React.Fragment>
-                                        );
-                                      }
-                                    },
-
-                                    {
-                                      Header: "Price",
-                                      accessor: "Total",
-                                      Cell: row => {
-                                        var total = row.original.TotalAmountInBaseCureency.toFixed(
-                                          2
-                                        );
-                                        return (
-                                          <React.Fragment>
-                                            <p className=" ">{total}</p>
-                                          </React.Fragment>
-                                        );
-                                      }
-                                    }
-                                  ]
-                                }
-                              ]}
-                              data={this.state.QuotationData}
-                              minRows={0}
-                              showPagination={false}
-                              className="-striped -highlight no-mid-align"
-                              SubComponent={row => {
-                                return (
-                                  <div style={{ padding: "20px 0" }}>
-                                    <ReactTable
-                                      data={this.state.QuotationSubData.filter(
-                                        x =>
-                                          x.RateLineID ===
-                                          row.original.RateLineID
-                                      )}
-                                      columns={[
-                                        {
-                                          columns: [
-                                            {
-                                              Header: "C. Description",
-                                              accessor: "ChargeType"
-                                            },
-                                            {
-                                              Header: "C.Name",
-                                              accessor: "ChargeCode"
-                                            },
-                                            {
-                                              Header: "Units",
-                                              accessor: "ChargeItem"
-                                            },
-                                            {
-                                              Header: "Unit Price",
-                                              accessor: "Rate"
-                                            },
-                                            {
-                                              Header: "Final Payment",
-                                              accessor: "TotalAmount"
-                                            }
-                                          ]
+                                      {
+                                        Header: "POD",
+                                        accessor: "POD",
+                                        Cell: row => {
+                                          return (
+                                            <React.Fragment>
+                                              <p className=" ">
+                                                {
+                                                  row.original
+                                                    .DestinationPort_Name
+                                                }
+                                              </p>
+                                            </React.Fragment>
+                                          );
                                         }
-                                      ]}
-                                      minRows={1}
-                                      showPagination={false}
-                                    />
-                                  </div>
-                                );
-                              }}
-                            />
+                                      },
+
+                                      {
+                                        Header: "Transshipment Port",
+                                        accessor: "TranshipmentPorts",
+                                        Cell: row => {
+                                          return (
+                                            <React.Fragment>
+                                              <p className=" ">
+                                                {row.original.TranshipmentPorts}
+                                              </p>
+                                            </React.Fragment>
+                                          );
+                                        }
+                                      },
+
+                                      {
+                                        Header: "Free Time",
+                                        accessor: "FreeTime",
+                                        Cell: row => {
+                                          return (
+                                            <React.Fragment>
+                                              <p className=" ">
+                                                {row.original.FreeTime}
+                                              </p>
+                                            </React.Fragment>
+                                          );
+                                        }
+                                      },
+
+                                      {
+                                        Header: "Container Type",
+                                        accessor: "Container",
+                                        Cell: row => {
+                                          return (
+                                            <React.Fragment>
+                                              <p className=" ">
+                                                {row.original.Container}
+                                              </p>
+                                            </React.Fragment>
+                                          );
+                                        }
+                                      },
+                                      {
+                                        Header: "Transit Time",
+                                        accessor: "TransitTime",
+                                        Cell: row => {
+                                          return (
+                                            <React.Fragment>
+                                              <p className=" ">
+                                                {row.original.TransitTime}
+                                              </p>
+                                            </React.Fragment>
+                                          );
+                                        }
+                                      },
+
+                                      {
+                                        Header: "Expiry Date",
+                                        accessor: "ExpiryDate",
+                                        Cell: row => {
+                                          return (
+                                            <React.Fragment>
+                                              <p className=" ">
+                                                {new Date(
+                                                  row.original.ExpiryDate
+                                                ).toLocaleDateString("en-US")}
+                                              </p>
+                                            </React.Fragment>
+                                          );
+                                        }
+                                      },
+
+                                      {
+                                        Header: "Price",
+                                        accessor: "Total",
+                                        Cell: row => {
+                                          var total = row.original.TotalAmountInBaseCureency.toFixed(
+                                            2
+                                          );
+                                          return (
+                                            <React.Fragment>
+                                              <p className=" ">
+                                                {total +
+                                                  " " +
+                                                  row.original.BaseCurrency}
+                                              </p>
+                                            </React.Fragment>
+                                          );
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]}
+                                data={this.state.QuotationData}
+                                minRows={0}
+                                showPagination={false}
+                                className="-striped -highlight no-mid-align"
+                                SubComponent={row => {
+                                  return (
+                                    <div style={{ padding: "20px 0" }}>
+                                      <ReactTable
+                                        data={this.state.QuotationSubData.filter(
+                                          x =>
+                                            x.RateLineID ===
+                                            row.original.RateLineID
+                                        )}
+                                        columns={[
+                                          {
+                                            columns: [
+                                              {
+                                                Header: "C. Description",
+                                                accessor: "ChargeType"
+                                              },
+                                              {
+                                                Header: "C.Name",
+                                                accessor: "ChargeCode"
+                                              },
+                                              {
+                                                Header: "Units",
+                                                accessor: "ChargeItem"
+                                              },
+                                              {
+                                                Header: "Tax",
+                                                accessor: "Tax"
+                                              },
+                                              {
+                                                Header: "Exrate",
+                                                accessor: "Exrate"
+                                              },
+
+                                              {
+                                                Header: "Final Payment",
+                                                accessor: "TotalAmount",
+                                                Cell: row => {
+                                                  return (
+                                                    <>
+                                                      {row.original
+                                                        .TotalAmount +
+                                                        " " +
+                                                        row.original.Currency}
+                                                    </>
+                                                  );
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        ]}
+                                        minRows={1}
+                                        showPagination={false}
+                                      />
+                                    </div>
+                                  );
+                                }}
+                              />
+                            </div>
                           </>
                         ) : (
                           ""

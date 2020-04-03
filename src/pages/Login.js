@@ -150,7 +150,7 @@ class Login extends React.Component {
         headers: authHeader("no")
       })
         .then(function(response) {
-          debugger;
+          
           var data = response.data;
           window.localStorage.setItem("st", new Date());
           window.localStorage.setItem(
@@ -300,7 +300,7 @@ class Login extends React.Component {
         });
     } else {
       //
-      this.setState({ settoaste: true, loading: true });
+      this.setState({ settoaste: true, loading: false });
 
       var error = username === "" ? "Please enter the username\n" : "";
       error += password === "" ? "Please enter the password" : "";

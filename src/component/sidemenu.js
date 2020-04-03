@@ -407,8 +407,8 @@ class SideMenu extends Component {
               </Card>
             </Accordion>
           </li>
-          {encryption(window.localStorage.getItem("usertype"), "desc") ===
-          "Sales User" ? (
+          {/* {encryption(window.localStorage.getItem("usertype"), "desc") ===
+          "Sales User" ? ( */}
             <li
               className="sidemenu-ul-li shipmentli"
               style={{ borderTop: "1px solid #265eb5" }}
@@ -493,7 +493,7 @@ class SideMenu extends Component {
                 </Card>
               </Accordion>
             </li>
-          ) : null}
+          {/* ) : null} */}
           <li
             className="sidemenu-ul-li shipmentli"
             style={{ borderTop: "1px solid #265eb5" }}

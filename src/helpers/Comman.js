@@ -23,7 +23,7 @@ class Comman extends Component {
     };
   }
   componentDidMount() {
-    debugger;
+    
     if (
       this.props.containerLoadType == "LCL" ||
       this.props.containerLoadType == "AIR" ||
@@ -44,6 +44,10 @@ class Comman extends Component {
         this.setState({ multiCBM: this.props.multiCBM });
       }
     }
+    if (this.props.containerLoadType == "INLAND") {
+      this.setState({ multiCBM: this.props.multiCBM });
+    }
+
     if (this.props.containerLoadType == "FCL") {
       this.setState({ multiCBM: this.props.multiCBM });
     }
@@ -57,7 +61,6 @@ class Comman extends Component {
   }
   ////send back value in parent componenet data
   SendData = () => {
-    debugger;
     if (
       this.props.containerLoadType === "LCL" ||
       this.props.containerLoadType === "AIR" ||
@@ -206,6 +209,14 @@ class Comman extends Component {
             </div>
           </div>
         ) : (
+          // <input
+          //   type="text"
+          //   disabled
+          //   name={"VolumeWeight"}
+          //   placeholder={"CW"}
+          //   value={el.VolumeWeight || ""}
+          //   className="w-100 weight-icon"
+          // />
           ""
         )}
         {i === 0 ? (
@@ -235,7 +246,6 @@ class Comman extends Component {
   }
 
   addMultiCBM() {
-    debugger;
     this.setState(prevState => ({
       multiCBM: [
         ...prevState.multiCBM,
@@ -265,7 +275,6 @@ class Comman extends Component {
 
   ////Handle Change Muti CMB
   HandleChangeMultiCBM(i, e) {
-    debugger;
     const { name, value } = e.target;
 
     let multiCBM = [...this.state.multiCBM];
@@ -495,7 +504,6 @@ class Comman extends Component {
   }
 
   UITruckTypeChange(i, e) {
-    debugger;
     const { name, value } = e.target;
 
     let TruckTypeData = [...this.state.TruckTypeData];
@@ -543,10 +551,6 @@ class Comman extends Component {
     // };
     this.setState({ TruckTypeData });
 
-    setTimeout(() => {
-      this.SendData();
-    }, 200);
-
     var pathName = window.location.pathname;
     if (pathName === "/new-rate-search") {
       document.getElementById("cbm").classList.add("cbm");
@@ -566,16 +570,18 @@ class Comman extends Component {
       <>
         {this.props.containerLoadType == "AIR" ||
         this.props.containerLoadType == "LCL" ||
-        this.props.containerLoadType == "LTL"
+        this.props.containerLoadType == "LTL" ||
+        this.props.containerLoadType == "FTL"||
+        this.props.containerLoadType == "INLAND"
           ? this.CreateMultiCBM()
           : null}
         {this.props.containerLoadType === "FCL" ? this.CreateMultiCBM() : null}
 
-        {this.props.TruckTypeData 
+        {/* {this.props.TruckTypeData 
           ? this.props.containerLoadType === "FTL"
-            ? this.createUITruckType()
+            ? this.rate()
             : null
-          : null}
+          :  this.CreateMultiCBM()} */}
       </>
     );
   }

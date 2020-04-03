@@ -102,7 +102,6 @@ class BookingView extends Component {
   }
 
   componentDidUpdate() {
-    
     if (this.props.location.state) {
       var status = this.props.location.state.status;
       if (status) {
@@ -118,7 +117,6 @@ class BookingView extends Component {
   }
 
   componentDidMount() {
-    
     if (this.props.location.state.BookingNo && this.props.location.state.Mode) {
       var userType = encryption(
         window.localStorage.getItem("usertype"),
@@ -368,7 +366,6 @@ class BookingView extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        
         QuotationData = response.data.Table4;
         var QuotationSubData = response.data.Table5;
         var Booking = response.data.Table;
@@ -452,7 +449,7 @@ class BookingView extends Component {
             var Consignee_Name = Booking[0].Consignee_Name;
 
             var CargoType = Booking[0].CargoType;
-            
+
             var strBooking_No = Booking[0].strBooking_No;
             var ModeofTransport = Booking[0].ModeofTransport;
 
@@ -518,7 +515,7 @@ class BookingView extends Component {
               Consignee_Displayas,
               Consignee_Name,
               CargoType,
-              
+
               strBooking_No,
               fields: {
                 Consignee: Booking[0].Consignee_Name,
@@ -536,7 +533,7 @@ class BookingView extends Component {
 
         if (Table6.length > 0) {
           var companyID = 0;
-          var Incoterm =""
+          var Incoterm = "";
           var Customs_Clearance = Table6[0].Customs_Clearance;
           if (Table6[0].contact_name) {
             Company_Address = Table6[0].Company_Address;
@@ -550,7 +547,7 @@ class BookingView extends Component {
           }
           ShipmentType = Table6[0].ShipmentType;
           HAZMAT = Table6[0].HAZMAT;
-          Incoterm= Table6[0].IncoTerm;
+          Incoterm = Table6[0].IncoTerm;
           self.setState({
             Incoterm,
             Customs_Clearance,
@@ -662,7 +659,7 @@ class BookingView extends Component {
             var Consignee_Displayas = Booking[0].Consignee_Displayas;
             var Consignee_Name = Booking[0].Consignee_Name;
             var CargoType = Booking[0].CargoType;
-            
+
             var strBooking_No = Booking[0].strBooking_No;
             var ModeofTransport = Booking[0].ModeofTransport;
 
@@ -695,7 +692,7 @@ class BookingView extends Component {
               Consignee_Displayas,
               Consignee_Name,
               CargoType,
-              
+
               strBooking_No,
               fields: {
                 Consignee: Booking[0].Consignee_Name,
@@ -718,7 +715,7 @@ class BookingView extends Component {
           ShipmentType = Table6[0].ShipmentType;
           HAZMAT = Table6[0].HAZMAT;
           NonStackable = Table6[0].NonStackable;
-          var Incoterm=Table6[0].IncoTerm;
+          var Incoterm = Table6[0].IncoTerm;
           self.setState({
             Incoterm,
             NonStackable,
@@ -817,11 +814,10 @@ class BookingView extends Component {
   }
 
   onErrorImg(e) {
-    return (e.target.src =appSettings.imageURL+"ATAFreight_console.png");
+    return (e.target.src = appSettings.imageURL + "ATAFreight_console.png");
   }
 
   render() {
-    
     var commodityName = "";
     if (this.state.selectedCommodity !== 0) {
       commodityName = this.state.commodityData.filter(
@@ -881,7 +877,7 @@ class BookingView extends Component {
                                 {
                                   Cell: ({ original, row }) => {
                                     i++;
-                                  
+
                                     var lname = "";
                                     var olname = "";
                                     if (row._original.Linename) {
@@ -913,7 +909,9 @@ class BookingView extends Component {
                                               onError={this.onErrorImg.bind(
                                                 this
                                               )}
-                                              src={appSettings.imageURL+"OEAN_LINERS/" +
+                                              src={
+                                                appSettings.imageURL +
+                                                "OEAN_LINERS/" +
                                                 lname
                                               }
                                             />
@@ -933,7 +931,9 @@ class BookingView extends Component {
                                               onError={this.onErrorImg.bind(
                                                 this
                                               )}
-                                              src={appSettings.imageURL+"AIR_LINERS/" +
+                                              src={
+                                                appSettings.imageURL +
+                                                "AIR_LINERS/" +
                                                 lname
                                               }
                                             />
@@ -949,7 +949,9 @@ class BookingView extends Component {
                                               onError={this.onErrorImg.bind(
                                                 this
                                               )}
-                                              src={appSettings.imageURL+"ATAFreight_console.png"
+                                              src={
+                                                appSettings.imageURL +
+                                                "ATAFreight_console.png"
                                               }
                                               alt={olname}
                                             />
@@ -1065,19 +1067,17 @@ class BookingView extends Component {
                                       if (row.original.CBM) {
                                         value = row.original.CBM;
                                       }
-                                    }else if (
+                                    } else if (
                                       this.state.ContainerLoad == "AIR"
                                     ) {
                                       header = "CW";
                                       if (row.original["ChgWeight"]) {
-                                        value =
-                                          row.original["ChgWeight"];
+                                        value = row.original["ChgWeight"];
                                       }
                                     } else {
                                       header = "CW";
                                       if (row.original["ChgWeight"]) {
-                                        value =
-                                          row.original["ChgWeight"];
+                                        value = row.original["ChgWeight"];
                                       }
                                     }
 
@@ -1135,11 +1135,19 @@ class BookingView extends Component {
                                 {
                                   accessor: "Total",
                                   Cell: row => {
+                                    var Totalamount = parseFloat(
+                                      row.original.Total.split(" ")[0]
+                                    );
+                                    var curency = row.original.Total.split(
+                                      " "
+                                    )[1];
                                     return (
                                       <React.Fragment>
                                         <p className="details-title">Price</p>
                                         <p className="details-para">
-                                          {row.original.Total}
+                                          {Totalamount.toFixed(2) +
+                                            " " +
+                                            curency}
                                         </p>
                                       </React.Fragment>
                                     );
@@ -1557,11 +1565,23 @@ class BookingView extends Component {
                                   },
                                   {
                                     Header: "Gross Weight",
-                                    accessor: "GrossWeight"
+                                    accessor: "GrossWt"
                                   },
                                   {
                                     Header: "Volume Weight",
-                                    accessor: "VolumeWeight"
+                                    accessor: "VolumeWeight",
+                                    show:
+                                      this.state.CargoType !== "LCL"
+                                        ? true
+                                        : false
+                                  },
+                                  {
+                                    Header: "Volume",
+                                    accessor: "Volume",
+                                    show:
+                                      this.state.CargoType == "LCL"
+                                        ? true
+                                        : false
                                   }
                                 ]
                               }

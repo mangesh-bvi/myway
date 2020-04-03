@@ -818,7 +818,7 @@ class AddUser extends React.Component {
   }
   ////Handle Create User with Document
   HandleCreateUser(e) {
-    debugger;
+    
     const docData = new FormData();
     var userid = encryption(window.localStorage.getItem("userid"), "desc");
     this.setState({ submitted: true });
