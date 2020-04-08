@@ -127,7 +127,7 @@ function handleResponse(response) {
         "passcode",
         encryption(data[0].PassCode, "enc")
       );
-      console.log(data[0].PassCode);
+      
       window.location.href = "./passcode";
     }
     return data;

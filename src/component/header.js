@@ -3,7 +3,7 @@ import {
   UncontrolledPopover,
   PopoverHeader,
   PopoverBody,
-  Button
+  Button,
 } from "reactstrap";
 
 import Select from "react-select";
@@ -57,7 +57,8 @@ class Header extends Component {
       currencyData: [],
       currencyCode: "",
       currencyObj: {},
-      iscurrencydrp: false
+      iscurrencydrp: false,
+      CustomerType: "",
     };
     this.BindNotificationData = this.BindNotificationData.bind(this);
     this.toggleDocu = this.toggleDocu.bind(this);
@@ -69,6 +70,11 @@ class Header extends Component {
     clearTimeout(this.BindNotificationData);
   }
   componentDidMount() {
+    var CustomerType = encryption(
+      window.localStorage.getItem("CustomerType"),
+      "desc"
+    );
+    this.setState({ CustomerType });
     if (encryption(window.localStorage.getItem("username"), "desc") == null) {
       window.location.href = "./login";
     } else {
@@ -91,7 +97,7 @@ class Header extends Component {
         ).textContent = encryption(
           window.localStorage.getItem("lastlogindate"),
           "desc"
-        ))
+        )),
       });
     }
     if (window.location.pathname === "/rate-search") {
@@ -107,11 +113,11 @@ class Header extends Component {
       method: "post",
       url: `${appSettings.APIURL}/BindDropdownCommonMessage`,
 
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       self.setState({
         DropdownCommonMessage: response.data,
-        selectedType: "Subject"
+        selectedType: "Subject",
       });
     });
 
@@ -148,11 +154,11 @@ class Header extends Component {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/IncoTermsAPI`,
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       var currencyData = response.data.Table4;
       self.setState({
-        currencyData
+        currencyData,
       });
       var currencyObj = window.localStorage.getItem("currencyObj");
       var currencyCode = window.localStorage.getItem("currencyObj");
@@ -165,8 +171,8 @@ class Header extends Component {
   }
 
   toggleDocu() {
-    this.setState(prevState => ({
-      modalDocu: !prevState.modalDocu
+    this.setState((prevState) => ({
+      modalDocu: !prevState.modalDocu,
     }));
 
     var sPath = window.location.pathname;
@@ -174,14 +180,14 @@ class Header extends Component {
 
     if (sPage == "shipment-details") {
       this.setState({
-        popupHBLNO: document.getElementById("popupHBLNO").value
+        popupHBLNO: document.getElementById("popupHBLNO").value,
       });
     }
   }
 
   toggleProfile() {
-    this.setState(prevState => ({
-      modalProfile: !prevState.modalProfile
+    this.setState((prevState) => ({
+      modalProfile: !prevState.modalProfile,
     }));
   }
 
@@ -191,16 +197,12 @@ class Header extends Component {
       url: `${appSettings.APIURL}/TopNotificationData`,
       data: {
         UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        IsRead: 1
+        IsRead: 1,
       },
-      headers: authHeader()
+      headers: authHeader(),
     })
-      .then(function(response) {
-        
-      })
-      .catch(response => {
-        
-      });
+      .then(function (response) {})
+      .catch((response) => {});
   }
 
   ////Bind Notification Data
@@ -211,11 +213,11 @@ class Header extends Component {
       method: "post",
       url: `${appSettings.APIURL}/UserNotification`,
       data: {
-        UserID: encryption(window.localStorage.getItem("userid"), "desc")
+        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
       },
-      headers: authHeader()
+      headers: authHeader(),
     })
-      .then(function(response) {
+      .then(function (response) {
         var today = new Date();
         today.setDate(today.getDate() - 8);
 
@@ -227,8 +229,8 @@ class Header extends Component {
                 date = "2019-10-21";
                 self.setState({
                   notificationData: response.data.Table.filter(
-                    item => item.ActivityDate > date
-                  )
+                    (item) => item.ActivityDate > date
+                  ),
                 });
 
                 document.getElementById("Notificationcount").innerHTML =
@@ -239,7 +241,7 @@ class Header extends Component {
           }
         }
       })
-      .catch(response => {});
+      .catch((response) => {});
   };
   ////Bind Activity Data
   BindActivityDetails() {
@@ -250,15 +252,15 @@ class Header extends Component {
       method: "post",
       url: `${appSettings.APIURL}/FetchActivityDetails`,
       data: {
-        UserID: UserID //341 //UserID
+        UserID: UserID, //341 //UserID
       },
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       var ActivityDateArry = response.data.Table;
       if (ActivityDateArry.length > 0) {
         self.setState({
           tooltipOpen: !self.state.tooltipOpen,
-          ActivityDateArry
+          ActivityDateArry,
         });
       }
     });
@@ -266,7 +268,7 @@ class Header extends Component {
   closepopover() {
     this.setState({
       tooltipOpen: false,
-      ActivityDateArry: []
+      ActivityDateArry: [],
     });
   }
   onLogout() {
@@ -274,10 +276,10 @@ class Header extends Component {
     this.props.history.push("/login");
   }
 
-  onDocumentChangeHandler = event => {
+  onDocumentChangeHandler = (event) => {
     this.setState({
       selectedFile: event.target.files[0],
-      selectedFileName: event.target.files[0].name
+      selectedFileName: event.target.files[0].name,
     });
   };
   ////Handle Send message
@@ -293,8 +295,8 @@ class Header extends Component {
         type: "danger", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
       drpshipment.focus();
       return false;
@@ -310,8 +312,8 @@ class Header extends Component {
         type: "danger", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
       txtShipmentNo.focus();
       return false;
@@ -323,8 +325,8 @@ class Header extends Component {
         type: "danger", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
       txtshipmentcomment.focus();
       return false;
@@ -355,10 +357,10 @@ class Header extends Component {
         TypeOfMessage: drpshipment.value.trim(),
         CustomerID: CustomerID,
         SubjectMessage: subject,
-        Message: txtshipmentcomment.value.trim()
+        Message: txtshipmentcomment.value.trim(),
       },
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       if (response != null) {
         if (response.data != null) {
           if (response.data.length > 0) {
@@ -370,8 +372,8 @@ class Header extends Component {
                 type: "success", // 'default', 'success', 'info', 'warning','danger'
                 container: "top-right", // where to position the notifications
                 dismiss: {
-                  duration: appSettings.NotficationTime
-                }
+                  duration: appSettings.NotficationTime,
+                },
               });
             }
           }
@@ -388,9 +390,9 @@ class Header extends Component {
     this.toggleDocu();
   };
 
-  onShipmentNoChangeHandler = event => {
+  onShipmentNoChangeHandler = (event) => {
     this.setState({
-      popupHBLNO: event.target.value
+      popupHBLNO: event.target.value,
     });
   };
 
@@ -401,8 +403,8 @@ class Header extends Component {
         state: {
           BookingNostr: RefNo,
           bookingNo: ID,
-          Mode: Product
-        }
+          Mode: Product,
+        },
       });
     } else if (Type === "SalesQuote") {
       var ptype = Product;
@@ -411,20 +413,20 @@ class Header extends Component {
       var detail = {
         Quotes: qnumber,
         Type: ptype,
-        Status: Status
+        Status: Status,
       };
       //
 
       this.props.history.push({
         pathname: "rate-finalizing-still",
         state: {
-          detail: detail
-        }
+          detail: detail,
+        },
       });
     } else {
       this.props.history.push({
         pathname: "shipment-details",
-        state: { detail: RefNo }
+        state: { detail: RefNo },
       });
     }
   }
@@ -436,26 +438,26 @@ class Header extends Component {
     if (ActivityTypeID === 3) {
       this.props.history.push({
         pathname: "shipment-details",
-        state: { detail: CSV }
+        state: { detail: CSV },
       });
     } else if (ActivityTypeID === 5 && MODE !== "") {
       var detail = {
         Quotes: CSV,
-        Type: MODE
+        Type: MODE,
       };
       this.props.history.push({
         pathname: "rate-finalizing-still",
         state: {
-          detail: detail
-        }
+          detail: detail,
+        },
       });
     } else if (ActivityTypeID === 30 && MODE !== "") {
       this.props.history.push({
         pathname: "booking-view",
         state: {
           bookingNo: CSV,
-          Mode: MODE
-        }
+          Mode: MODE,
+        },
       });
     } else {
       store.addNotification({
@@ -464,8 +466,8 @@ class Header extends Component {
         type: "danger", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
     }
   }
@@ -483,33 +485,33 @@ class Header extends Component {
         url: `${appSettings.APIURL}/CustomerAutoSearchMessage`,
         data: {
           UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-          CompanyName: customertxtlen
+          CompanyName: customertxtlen,
         },
-        headers: authHeader()
-      }).then(function(response) {
+        headers: authHeader(),
+      }).then(function (response) {
         if (response.data.length != 0) {
           if (field == "CustomerList") {
             self.setState({
               customerData: response.data,
-              fields
+              fields,
             });
           } else {
             self.setState({
               customerData: response.data,
-              fields
+              fields,
             });
           }
         } else {
           self.state.error = "Please enter valid Consignee";
         }
         self.setState({
-          error: self.state.error
+          error: self.state.error,
         });
       });
     } else {
       self.setState({
         customerData: [],
-        fields
+        fields,
       });
     }
   }
@@ -528,7 +530,7 @@ class Header extends Component {
       CompanyName: compName,
       CompanyAddress: companyAddress,
       ContactName: contactName,
-      ContactEmail: contactEmail
+      ContactEmail: contactEmail,
     });
   }
 
@@ -546,7 +548,7 @@ class Header extends Component {
   HandleCurrencyChange(e) {
     this.setState({
       currencyCode: e.CurrencyCode,
-      currencyObj: e
+      currencyObj: e,
     });
     window.localStorage.setItem(
       "prevCurrencyCode",
@@ -677,8 +679,8 @@ class Header extends Component {
                     <Select
                       className="rate-dropdown mt-0 CurrencyCodecss "
                       closeMenuOnSelect={true}
-                      getOptionLabel={option => option.BaseCurrencyName}
-                      getOptionValue={option => option.CurrencyCode}
+                      getOptionLabel={(option) => option.BaseCurrencyName}
+                      getOptionValue={(option) => option.CurrencyCode}
                       value={this.state.currencyObj}
                       isSearchable={false}
                       isDisabled={this.state.iscurrencydrp}
@@ -686,7 +688,7 @@ class Header extends Component {
                       onChange={this.HandleCurrencyChange.bind(this)}
                       defaultValue={{
                         BaseCurrencyName: "US Dollars",
-                        CurrencyCode: "USD"
+                        CurrencyCode: "USD",
                       }}
                     />
                   </li>
@@ -708,7 +710,14 @@ class Header extends Component {
                     </div>
                   </li>
 
-                  <li className="br-none" style={{ padding: "20px" }}>
+                  <li
+                    className={
+                      this.state.CustomerType === "New"
+                        ? "br-none lidisabled"
+                        : "br-none"
+                    }
+                    style={{ padding: "20px" }}
+                  >
                     <img
                       src={ChatIcon}
                       alt="chat-icon"
@@ -735,7 +744,7 @@ class Header extends Component {
                           style={{
                             background: "#fff",
                             padding: "15px",
-                            borderRadius: "15px"
+                            borderRadius: "15px",
                           }}
                         >
                           <h3 className="mb-4">Send Message</h3>
@@ -761,7 +770,7 @@ class Header extends Component {
                               <Autocomplete
                                 id="searchtxt"
                                 className="title-sect p-0 pt-2"
-                                getItemValue={item => item.Company_Name}
+                                getItemValue={(item) => item.Company_Name}
                                 items={this.state.customerData}
                                 renderItem={(item, isHighlighted) => (
                                   <div
@@ -769,7 +778,7 @@ class Header extends Component {
                                       background: isHighlighted
                                         ? "lightgray"
                                         : "white",
-                                      padding: "5px"
+                                      padding: "5px",
                                     }}
                                   >
                                     {item.Company_Name}
@@ -786,7 +795,7 @@ class Header extends Component {
                                   "Company_Name"
                                 )}
                                 inputProps={{
-                                  placeholder: "Search Account/Consignee"
+                                  placeholder: "Search Account/Consignee",
                                 }}
                               />
                             </div>

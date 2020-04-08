@@ -14,75 +14,75 @@ import Image1 from "./../assets/img/Tree-CO2.png";
 
 var carboneOptions = {
   legend: {
-    display: false
+    display: false,
   },
   scales: {
     yAxes: [
       {
         gridLines: {
-          drawOnChartArea: false
+          drawOnChartArea: false,
         },
         ticks: {
           fontColor: "white",
-          fontSize: 14
-        }
-      }
+          fontSize: 14,
+        },
+      },
     ],
     xAxes: [
       {
         gridLines: {
-          drawOnChartArea: false
+          drawOnChartArea: false,
         },
         ticks: {
           fontColor: "white",
-          fontSize: 14
-        }
-      }
-    ]
-  }
+          fontSize: 14,
+        },
+      },
+    ],
+  },
 };
 
 var volumeOptions = {
   legend: {
-    display: false
+    display: false,
   },
   scales: {
     yAxes: [
       {
         gridLines: {
-          drawOnChartArea: false
+          drawOnChartArea: false,
         },
         ticks: {
           fontColor: "black",
-          fontSize: 14
-        }
-      }
+          fontSize: 14,
+        },
+      },
     ],
     xAxes: [
       {
         gridLines: {
-          drawOnChartArea: false
+          drawOnChartArea: false,
         },
         ticks: {
           fontColor: "black",
-          fontSize: 14
-        }
-      }
-    ]
-  }
+          fontSize: 14,
+        },
+      },
+    ],
+  },
 };
 
 var greencounterOption = {
   legend: {
-    display: false
+    display: false,
   },
   tooltips: {
-    enabled: false
+    enabled: false,
   },
   rotation: 0.75 * Math.PI,
   circumference: 1.5 * Math.PI,
   cutoutPercentage: 80,
-  padding: 40
+  padding: 40,
 };
 
 class GreenCounter extends Component {
@@ -96,25 +96,33 @@ class GreenCounter extends Component {
       volume: 0,
       selectData: [
         { key: "Year", value: "Year" },
-        { key: "Month", value: "Month" }
+        { key: "Month", value: "Month" },
       ],
       volumeselectType: "Year",
       carboneselectType: "Year",
       treecount: "",
       cotowemission: "",
-      totalTreeCO2: ""
+      totalTreeCO2: "",
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    var CustomerType = encryption(
+      window.localStorage.getItem("CustomerType"),
+      "desc"
+    );
+    if (CustomerType === "New") {
+      this.props.history.push("/new-rate-search");
+      return false;
+    }
     this.BindVolumeChartData();
     this.BindCarboneChartData();
     this.BindGreenCounterChartData();
     this.BindTreePlantaionData();
   }
-  handleOnChange = value => {
+  handleOnChange = (value) => {
     this.setState({
-      volume: value
+      volume: value,
     });
   };
 
@@ -141,10 +149,10 @@ class GreenCounter extends Component {
         UserID: userid,
         ViewType: selectvalnew,
         publicIPAddress: ipaddress,
-        PrivateIPAddress: ""
+        PrivateIPAddress: "",
       },
-      headers: authHeader()
-    }).then(response => {
+      headers: authHeader(),
+    }).then((response) => {
       self.setState({ volumechartData: response.data.Table });
     });
   }
@@ -165,12 +173,12 @@ class GreenCounter extends Component {
         UserID: userid,
         ViewType: selectcartype,
         publicIPAddress: ipaddress,
-        PrivateIPAddress: ""
+        PrivateIPAddress: "",
       },
-      headers: authHeader()
-    }).then(response => {
+      headers: authHeader(),
+    }).then((response) => {
       self.setState({
-        carbonechartData: response.data.Table
+        carbonechartData: response.data.Table,
       });
     });
   }
@@ -184,13 +192,13 @@ class GreenCounter extends Component {
       url: `${appSettings.APIURL}/TreePlantationData`,
       data: {
         YEAR: year,
-        UserID: encryption(window.localStorage.getItem("userid"), "desc")
+        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
       },
-      headers: authHeader()
-    }).then(response => {
+      headers: authHeader(),
+    }).then((response) => {
       self.setState({
         totalTreePlanted: response.data[0].TreePlanted,
-        totalTreeCO2: response.data[0].CO2Emmision
+        totalTreeCO2: response.data[0].CO2Emmision,
       });
     });
   }
@@ -207,16 +215,15 @@ class GreenCounter extends Component {
         UserID: userid,
         ViewType: "Web",
         publicIPAddress: ipaddress,
-        PrivateIPAddress: ""
+        PrivateIPAddress: "",
       },
-      headers: authHeader()
-    }).then(response => {
-      
+      headers: authHeader(),
+    }).then((response) => {
       self.setState({ greencounterData: response.data.Table });
       var greendata = response.data.Table;
       self.setState({
         treecount: greendata[0]["NoOfTreesPlanted"],
-        cotowemission: greendata[0]["CarbonEmission"].toFixed(2)
+        cotowemission: greendata[0]["CarbonEmission"].toFixed(2),
       });
     });
   }
@@ -233,10 +240,10 @@ class GreenCounter extends Component {
           data: [70, 30],
           backgroundColor: ["#63CD16", "#EF1617"],
           hoverBackgroundColor: ["#63CD16", "#EF1617"],
-          borderWidth: 0
-        }
+          borderWidth: 0,
+        },
       ],
-      text: "23%"
+      text: "23%",
     };
 
     for (let i = 0; i < this.state.volumechartData.length; i++) {
@@ -255,9 +262,9 @@ class GreenCounter extends Component {
           backgroundColor: "rgba(11,182,226,1)",
           borderColor: "rgba(11,182,226,1)",
           borderWidth: 2,
-          data: volumnedata
-        }
-      ]
+          data: volumnedata,
+        },
+      ],
     };
 
     const carboneCharData = {
@@ -281,9 +288,9 @@ class GreenCounter extends Component {
           pointHoverBorderWidth: 2,
           pointRadius: 1,
           pointHitRadius: 10,
-          data: carbonelabledata
-        }
-      ]
+          data: carbonelabledata,
+        },
+      ],
     };
     var lbl = { 1: "1M", 2: "2M", 3: "3M" };
     var colClassName = "";
@@ -311,7 +318,7 @@ class GreenCounter extends Component {
                         className="brncuntr-select"
                         onChange={this.HandleVolumeChangeSelect.bind(this)}
                       >
-                        {this.state.selectData.map(team => (
+                        {this.state.selectData.map((team) => (
                           <option key={team.key} value={team.value}>
                             {team.value}
                           </option>
@@ -367,7 +374,7 @@ class GreenCounter extends Component {
                       className="brncuntr-select1"
                       onChange={this.HandleCarboneChangeSelect.bind(this)}
                     >
-                      {this.state.selectData.map(team => (
+                      {this.state.selectData.map((team) => (
                         <option key={team.key} value={team.value}>
                           {team.value}
                         </option>

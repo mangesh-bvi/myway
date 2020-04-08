@@ -47,36 +47,46 @@ class SideMenu extends Component {
       profileImgURL: "",
       imageFile: {},
       loading: false,
-      QrModal: false
+      QrModal: false,
+      QRCode: "",
+      CustomerType: "",
     };
 
     this.highlightClass = this.highlightClass.bind(this);
     this.toggleProfile = this.toggleProfile.bind(this);
-    this.toggleQRModal = this.toggleQRModal.bind(this);
+    this.toggleCloseQRModal = this.toggleCloseQRModal.bind(this);
+    this.toggleOpenQRModal = this.toggleOpenQRModal.bind(this);
   }
   shouldComponentUpdate(nextProps, nextState) {
     return true;
   }
   componentDidMount() {
+    
+    var CustomerType = encryption(
+      window.localStorage.getItem("CustomerType"),
+      "desc"
+    );
+    this.setState({ CustomerType });
+
     var previousAir = window.localStorage.getItem("aircount");
     var previousQuotePending = window.localStorage.getItem("quotepending");
     var previousBookPending = window.localStorage.getItem("bookpending");
     setInterval(() => {
       if (window.localStorage.getItem("aircount") !== previousAir) {
         this.setState({
-          aircount: window.localStorage.getItem("aircount")
+          aircount: window.localStorage.getItem("aircount"),
         });
       }
       if (
         window.localStorage.getItem("quotepending") !== previousQuotePending
       ) {
         this.setState({
-          quotePendingCount: window.localStorage.getItem("quotepending")
+          quotePendingCount: window.localStorage.getItem("quotepending"),
         });
       }
       if (window.localStorage.getItem("bookpending") !== previousBookPending) {
         this.setState({
-          bookPendingCount: window.localStorage.getItem("bookpending")
+          bookPendingCount: window.localStorage.getItem("bookpending"),
         });
       }
     }, 1);
@@ -107,8 +117,8 @@ class SideMenu extends Component {
   }
 
   toggleProfile() {
-    this.setState(prevState => ({
-      modalProfile: !prevState.modalProfile
+    this.setState((prevState) => ({
+      modalProfile: !prevState.modalProfile,
     }));
   }
 
@@ -143,8 +153,8 @@ class SideMenu extends Component {
       this.props.history.push({
         pathname: "booking-table",
         state: {
-          status: value
-        }
+          status: value,
+        },
       });
     }
   }
@@ -169,12 +179,12 @@ class SideMenu extends Component {
       method: "post",
       url: `${appSettings.APIURL}/UpdateProfilePic`,
       data: formData,
-      headers: authHeader()
+      headers: authHeader(),
     })
-      .then(function(response) {
+      .then(function (response) {
         if (response.data.Table.length > 0) {
           self.setState({
-            profileImgURL: response.data.Table[0].UserLogo
+            profileImgURL: response.data.Table[0].UserLogo,
           });
 
           store.addNotification({
@@ -183,8 +193,8 @@ class SideMenu extends Component {
             type: "success", // 'default', 'success', 'info', 'warning','danger'
             container: "top-right", // where to position the notifications
             dismiss: {
-              duration: appSettings.NotficationTime
-            }
+              duration: appSettings.NotficationTime,
+            },
           });
           window.localStorage.setItem(
             "UserLogo",
@@ -200,7 +210,7 @@ class SideMenu extends Component {
           self.forceUpdate();
         }
       })
-      .catch(error => {
+      .catch((error) => {
         self.setState({ loading: false });
 
         store.addNotification({
@@ -209,8 +219,8 @@ class SideMenu extends Component {
           type: "danger", // 'default', 'success', 'info', 'warning','danger'
           container: "top-right", // where to position the notifications
           dismiss: {
-            duration: appSettings.NotficationTime
-          }
+            duration: appSettings.NotficationTime,
+          },
         });
       });
   }
@@ -218,10 +228,7 @@ class SideMenu extends Component {
   ////Handle File Input Data
   HandleFileInput(e) {
     var file = e.target.files[0];
-    var t = file.type
-      .split("/")
-      .pop()
-      .toLowerCase();
+    var t = file.type.split("/").pop().toLowerCase();
 
     if (t != "jpeg" && t != "jpg" && t != "png" && t != "gif") {
       store.addNotification({
@@ -230,8 +237,8 @@ class SideMenu extends Component {
         type: "danger", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
     } else {
       var reader = new FileReader();
@@ -239,7 +246,7 @@ class SideMenu extends Component {
       var imgtag = document.getElementById("profileImg");
       imgtag.title = file.name;
 
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         imgtag.src = e.target.result;
       };
 
@@ -248,8 +255,37 @@ class SideMenu extends Component {
     }
   }
   ////toggle QR Code Modal
-  toggleQRModal() {
-    this.setState({ QrModal: !this.state.QrModal });
+  toggleCloseQRModal() {
+    this.setState({ QrModal: false });
+  }
+
+  toggleOpenQRModal() {
+    this.handleBindQRCode();
+  }
+
+  handleBindQRCode() {
+    let self = this;
+    var userid = Number(
+      encryption(window.localStorage.getItem("userid"), "desc")
+    );
+    axios({
+      method: "post",
+      url: `${appSettings.APIURL}/GenerateQRCode`,
+      data: {
+        UserID: userid,
+        IsRefresh: 1,
+      },
+      headers: authHeader(),
+    })
+      .then(function (response) {
+        var data = response.data;
+        if (data.length > 0) {
+          self.setState({ QRCode: data[0].QRCode, QrModal: true });
+        }
+      })
+      .catch((response) => {
+        console.log(response);
+      });
   }
   render() {
     var urlShipSum = window.location.pathname;
@@ -309,7 +345,13 @@ class SideMenu extends Component {
         </div>
 
         <ul className="sidemenu-ul">
-          <li className="sidemenu-ul-li">
+          <li
+            className={
+              this.state.CustomerType === "New"
+                ? "sidemenu-ul-li lidisabled"
+                : "sidemenu-ul-li"
+            }
+          >
             <Link
               to="/dashboard"
               className="side-menus"
@@ -325,7 +367,11 @@ class SideMenu extends Component {
             </Link>
           </li>
           <li
-            className="sidemenu-ul-li shipmentli"
+            className={
+              this.state.CustomerType === "New"
+                ? "sidemenu-ul-li shipmentli lidisabled"
+                : "sidemenu-ul-li shipmentli"
+            }
             style={{ borderTop: "1px solid #265eb5" }}
           >
             <Accordion
@@ -407,93 +453,89 @@ class SideMenu extends Component {
               </Card>
             </Accordion>
           </li>
-          {/* {encryption(window.localStorage.getItem("usertype"), "desc") ===
-          "Sales User" ? ( */}
-            <li
-              className="sidemenu-ul-li shipmentli"
-              style={{ borderTop: "1px solid #265eb5" }}
-            >
-              <Accordion
-                defaultActiveKey={window.localStorage.getItem("defActKey")}
-              >
-                <Card>
-                  <Card.Header>
-                    {encryption(
-                      window.localStorage.getItem("usertype"),
-                      "desc"
-                    ) === "Sales User" ? (
-                      <Link to="/rate-search" style={{ display: "block" }}>
-                        <Accordion.Toggle
-                          as={Button}
-                          variant="link"
-                          eventKey="1"
-                        >
-                          <img
-                            src={RatesIcon}
-                            title={"Rates"}
-                            alt="green-counter-icon"
-                            className="header-greencounter-icon"
-                          />
-                          Rates
-                        </Accordion.Toggle>
-                      </Link>
-                    ) : (
-                      <Link to="/new-rate-search" style={{ display: "block" }}>
-                        <Accordion.Toggle
-                          as={Button}
-                          variant="link"
-                          eventKey="1"
-                        >
-                          <img
-                            src={RatesIcon}
-                            title={"Rates"}
-                            alt="green-counter-icon"
-                            className="header-greencounter-icon"
-                          />
 
-                          <span className="menuname">Rates</span>
-                        </Accordion.Toggle>
-                      </Link>
-                    )}
-                  </Card.Header>
-                  <Accordion.Collapse eventKey="1">
-                    <Card.Body>
-                      <ul className="shipment-ul sidemenu">
-                        <li>
-                          {encryption(
-                            window.localStorage.getItem("usertype"),
-                            "desc"
-                          ) === "Sales User" ? (
-                            <a
-                              href="rate-search"
-                              className={this.state.activeRateSearch}
-                            >
-                              Rate Search
-                            </a>
-                          ) : (
-                            <a
-                              href="new-rate-search"
-                              className={this.state.activeRateSearch}
-                            >
-                              Rate Search
-                            </a>
-                          )}
-                        </li>
-                        <li>
+          <li
+            className={
+              this.state.CustomerType === "New"
+                ? "sidemenu-ul-li shipmentli"
+                : this.state.CustomerType === "Hide_rates"
+                ? "lidisplay"
+                : "sidemenu-ul-li shipmentli"
+            }
+            style={{ borderTop: "1px solid #265eb5" }}
+          >
+            <Accordion
+              defaultActiveKey={window.localStorage.getItem("defActKey")}
+            >
+              <Card>
+                <Card.Header>
+                  {encryption(
+                    window.localStorage.getItem("usertype"),
+                    "desc"
+                  ) === "Sales User" ? (
+                    <Link to="/rate-search" style={{ display: "block" }}>
+                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                        <img
+                          src={RatesIcon}
+                          title={"Rates"}
+                          alt="green-counter-icon"
+                          className="header-greencounter-icon"
+                        />
+                        Rates
+                      </Accordion.Toggle>
+                    </Link>
+                  ) : (
+                    <Link to="/new-rate-search" style={{ display: "block" }}>
+                      <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                        <img
+                          src={RatesIcon}
+                          title={"Rates"}
+                          alt="green-counter-icon"
+                          className="header-greencounter-icon"
+                        />
+
+                        <span className="menuname">Rates</span>
+                      </Accordion.Toggle>
+                    </Link>
+                  )}
+                </Card.Header>
+                <Accordion.Collapse eventKey="1">
+                  <Card.Body>
+                    <ul className="shipment-ul sidemenu">
+                      <li>
+                        {encryption(
+                          window.localStorage.getItem("usertype"),
+                          "desc"
+                        ) === "Sales User" ? (
                           <a
-                            href="spot-rate-table"
-                            className={this.state.activeSpotList}
+                            href="rate-search"
+                            className={this.state.activeRateSearch}
                           >
-                            Spot Rate Listing
+                            Rate Search
                           </a>
-                        </li>
-                      </ul>
-                    </Card.Body>
-                  </Accordion.Collapse>
-                </Card>
-              </Accordion>
-            </li>
-          {/* ) : null} */}
+                        ) : (
+                          <a
+                            href="new-rate-search"
+                            className={this.state.activeRateSearch}
+                          >
+                            Rate Search
+                          </a>
+                        )}
+                      </li>
+                      <li>
+                        <a
+                          href="spot-rate-table"
+                          className={this.state.activeSpotList}
+                        >
+                          Spot Rate Listing
+                        </a>
+                      </li>
+                    </ul>
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            </Accordion>
+          </li>
           <li
             className="sidemenu-ul-li shipmentli"
             style={{ borderTop: "1px solid #265eb5" }}
@@ -651,7 +693,12 @@ class SideMenu extends Component {
             ) {
               return (
                 <li
-                  className="sidemenu-ul-li"
+                  className={
+                    this.state.CustomerType === "New"
+                      ? "sidemenu-ul-li shipmentli lidisabled"
+                      : "sidemenu-ul-li shipmentli"
+                  }
+                  // className="sidemenu-ul-li"
                   style={{ borderTop: "1px solid #265eb5" }}
                 >
                   <Link
@@ -670,8 +717,14 @@ class SideMenu extends Component {
               );
             }
           })()}
-
-          <li className="sidemenu-ul-li">
+          <li
+            className={
+              this.state.CustomerType === "New"
+                ? "sidemenu-ul-li shipmentli lidisabled"
+                : "sidemenu-ul-li shipmentli"
+            }
+            // className="sidemenu-ul-li"
+          >
             <Link
               to="/analytics"
               className="side-menus"
@@ -687,14 +740,20 @@ class SideMenu extends Component {
               <span className="menuname">Analytics</span>
             </Link>
           </li>
-
           {(() => {
             if (
               encryption(window.localStorage.getItem("usertype"), "desc") ===
               "Customer"
             ) {
               return (
-                <li className="sidemenu-ul-li">
+                <li
+                  className={
+                    this.state.CustomerType === "New"
+                      ? "sidemenu-ul-li shipmentli lidisabled"
+                      : "sidemenu-ul-li shipmentli"
+                  }
+                  // className="sidemenu-ul-li"
+                >
                   <Link to="/green-counter">
                     <img
                       src={GreenCounterIcon}
@@ -714,7 +773,14 @@ class SideMenu extends Component {
               encryption(window.localStorage.getItem("isAdmin"), "desc") === "Y"
             ) {
               return (
-                <li className="sidemenu-ul-li">
+                <li
+                  className={
+                    this.state.CustomerType === "New"
+                      ? "sidemenu-ul-li shipmentli lidisabled"
+                      : "sidemenu-ul-li shipmentli"
+                  }
+                  //  className="sidemenu-ul-li"
+                >
                   <Link to="/add-user">
                     <img
                       src={AdminIcon}
@@ -744,7 +810,13 @@ class SideMenu extends Component {
             </li>
             <div className="dropdown-menu">
               <ul className="profile-ul">
-                <li className="profile-setting-li">
+                <li
+                  className={
+                    this.state.CustomerType == "New"
+                      ? "profile-setting-li lidisabled"
+                      : "profile-setting-li"
+                  }
+                >
                   <Link to="mywayMessage">
                     <img
                       src={ChatIcon}
@@ -775,7 +847,7 @@ class SideMenu extends Component {
                 </li>
                 <li
                   className="profile-setting-li dropdown"
-                  onClick={this.toggleQRModal}
+                  onClick={this.toggleOpenQRModal}
                 >
                   {/* <a href=""> */}
                   <img
@@ -814,7 +886,7 @@ class SideMenu extends Component {
               style={{
                 background: "#fff",
                 padding: "15px",
-                borderRadius: "15px"
+                borderRadius: "15px",
               }}
             >
               <div className="d-flex align-items-center text-left">
@@ -889,7 +961,7 @@ class SideMenu extends Component {
         <Modal
           className="delete-popup pol-pod-popup"
           isOpen={this.state.QrModal}
-          toggle={this.toggleQRModal}
+          toggle={this.toggleCloseQRModal.bind(this)}
           centered={true}
         >
           <ModalBody>
@@ -897,7 +969,7 @@ class SideMenu extends Component {
               type="button"
               className="close"
               data-dismiss="modal"
-              onClick={this.toggleQRModal}
+              onClick={this.toggleCloseQRModal.bind(this)}
             >
               <span>&times;</span>
             </button>
@@ -905,11 +977,13 @@ class SideMenu extends Component {
               style={{
                 background: "#fff",
                 padding: "15px",
-                borderRadius: "15px"
+                borderRadius: "15px",
               }}
             >
               <h3>QR Code</h3>
-              <QRCode />
+              {this.state.QRCode !== "" ? (
+                <QRCode QRCode={this.state.QRCode} />
+              ) : null}
             </div>
           </ModalBody>
         </Modal>

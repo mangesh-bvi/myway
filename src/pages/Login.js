@@ -27,7 +27,7 @@ class Login extends React.Component {
       salesUserData: [],
       checked: ["/"],
       expanded: [],
-      nodes: []
+      nodes: [],
     };
 
     this.handlechange = this.handlechange.bind(this);
@@ -50,11 +50,11 @@ class Login extends React.Component {
 
     for (let i = 0; i < mydata.length; i++) {
       var checkparenttempData = finalNode.filter(
-        data => data.value == mydata[i].OfficeID
+        (data) => data.value == mydata[i].OfficeID
       );
       if (checkparenttempData.length == 0 || i == 0) {
         var OfficeIDData = mydata.filter(
-          x => x.OfficeID === mydata[i].OfficeID
+          (x) => x.OfficeID === mydata[i].OfficeID
         );
 
         var parentTempObj = {};
@@ -62,12 +62,12 @@ class Login extends React.Component {
 
         for (let j = 0; j < OfficeIDData.length; j++) {
           var checkchild1tempData = child1tempData.filter(
-            data => data.value == OfficeIDData[j].ContactID
+            (data) => data.value == OfficeIDData[j].ContactID
           );
           if (checkchild1tempData.length == 0 || j == 0) {
             var child1tempObj = {};
             var ContactIDData = OfficeIDData.filter(
-              x => x.ContactID === OfficeIDData[j].ContactID
+              (x) => x.ContactID === OfficeIDData[j].ContactID
             );
             var Company_IDTempData = [];
             for (let k = 0; k < ContactIDData.length; k++) {
@@ -113,19 +113,19 @@ class Login extends React.Component {
       url: `${appSettings.APIURL}/SaveSalesUserCompanyList`,
       dl̥ata: {
         UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        CompanyID: finalselectedData
+        CompanyID: finalselectedData,
       },
-      headers: authHeader()
+      headers: authHeader(),
     })
-      .then(function(response) {
+      .then(function (response) {
         self.props.history.push("/rate-search");
       })
-      .catch(error => {});
+      .catch((error) => {});
   }
 
   handlechange(e) {
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   }
 
@@ -145,13 +145,14 @@ class Login extends React.Component {
           UserName: username,
           Password: password,
           publicIPAddress: ipaddress,
-          PrivateIPAddress: ""
+          PrivateIPAddress: "",
         },
-        headers: authHeader("no")
+        headers: authHeader("no"),
       })
-        .then(function(response) {
+        .then(function (response) {
           
           var data = response.data;
+
           window.localStorage.setItem("st", new Date());
           window.localStorage.setItem(
             "username",
@@ -170,6 +171,14 @@ class Login extends React.Component {
             "lastlogindate",
             encryption(data.Table[0].LastLoginDate, "enc")
           );
+          var CustomerType = data.Table[0].CustomerType || "";
+          // var CustomerType = "New";
+
+          window.localStorage.setItem(
+            "CustomerType",
+            encryption(CustomerType, "enc")
+          );
+
           window.localStorage.setItem(
             "lastname",
             encryption(data.Table[0].LastName, "enc")
@@ -230,7 +239,6 @@ class Login extends React.Component {
           );
           window.localStorage.setItem("isCopy", true);
 
-          
           ////
           window.localStorage.setItem("IsEnabled", data.Table[0].IsEnabled);
           GenerateToken(username, password);
@@ -249,23 +257,29 @@ class Login extends React.Component {
               //
               self.HandleDisplaySalesPersonData(sData);
               self.setState({
-                modalSalesLogin: !self.state.modalSalesLogin
+                modalSalesLogin: !self.state.modalSalesLogin,
               });
             }
           } else if (
             userTypeName === "Sales User" &&
             SalesCompanyPopupFlag === 0
           ) {
-            setTimeout(function() {
+            setTimeout(function () {
               window.location.href = "./rate-search";
             }, 300);
           } else {
-            setTimeout(function() {
-              window.location.href = "./dashboard";
-            }, 300);
+            if (CustomerType === "New") {
+              setTimeout(function () {
+                window.location.href = "./new-rate-search";
+              }, 300);
+            } else {
+              setTimeout(function () {
+                window.location.href = "./dashboard";
+              }, 300);
+            }
           }
         })
-        .catch(error => {
+        .catch((error) => {
           this.setState({ loading: false });
           var temperror = "";
           if (error.response == undefined) {
@@ -277,26 +291,27 @@ class Login extends React.Component {
               type: "danger", // 'default', 'success', 'info', 'warning','danger'
               container: "top-right", // where to position the notifications
               dismiss: {
-                duration: appSettings.NotficationTime
-              }
+                duration: appSettings.NotficationTime,
+              },
             });
           } else {
             temperror = error.response.data;
-            var err = temperror.split(":");
-            store.addNotification({
-              // title: "Error",
-              message: err[1].replace("}", ""),
-              type: "danger", // 'default', 'success', 'info', 'warning','danger'
-              container: "top-right", // where to position the notifications
-              dismiss: {
-                duration: appSettings.NotficationTime
-              }
-            });
+            if (temperror) {
+              var err = temperror.split(":");
+              store.addNotification({
+                // title: "Error",
+                message: err[1].replace("}", ""),
+                type: "danger", // 'default', 'success', 'info', 'warning','danger'
+                container: "top-right", // where to position the notifications
+                dismiss: {
+                  duration: appSettings.NotficationTime,
+                },
+              });
+            }
           }
 
           // this.state.usernamee = '';
           this.setState({ username: "", password: "" });
-          setTimeout(5000);
         });
     } else {
       //
@@ -311,10 +326,10 @@ class Login extends React.Component {
         type: "danger", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
-      setTimeout(function() {
+      setTimeout(function () {
         window.location.href = "./";
       }, appSettings.NotficationTime);
     }
@@ -427,8 +442,8 @@ class Login extends React.Component {
                   nodes={self.state.nodes}
                   checked={self.state.checked}
                   expanded={this.state.expanded}
-                  onCheck={checked => this.setState({ checked })}
-                  onExpand={expanded => this.setState({ expanded })}
+                  onCheck={(checked) => this.setState({ checked })}
+                  onExpand={(expanded) => this.setState({ expanded })}
                 />
               </div>
             </ModalBody>
@@ -456,7 +471,7 @@ function GenerateToken(username, password) {
   var details = {
     username: username,
     password: password,
-    grant_type: "password"
+    grant_type: "password",
   };
   var formBody = [];
   for (var property in details) {
@@ -468,17 +483,17 @@ function GenerateToken(username, password) {
   const requestOptions = {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
     },
-    body: formBody
+    body: formBody,
   };
   return fetch(`${appSettings.APIURL}/token`, requestOptions)
     .then(TokenhandleResponse)
-    .catch(error => {});
+    .catch((error) => {});
 }
 ////Token Handle Response
 function TokenhandleResponse(response) {
-  return response.text().then(text => {
+  return response.text().then((text) => {
     const data = text && JSON.parse(text);
     if (!response.ok) {
     } else {

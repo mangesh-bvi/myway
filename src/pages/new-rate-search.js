@@ -16,6 +16,7 @@ import ReactAutocomplete from "react-autocomplete";
 import ReactNotification from "react-notifications-component";
 import { store } from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
+import { encryption } from "../helpers/encryption";
 var i = 0;
 const animatedComponents = makeAnimated();
 const { compose } = require("recompose");
@@ -207,6 +208,17 @@ class NewRateSearch extends Component {
   }
 
   componentDidMount() {
+
+    var CustomerType = encryption(
+      window.localStorage.getItem("CustomerType"),
+      "desc"
+    );
+    if(CustomerType==="Hide_rates")
+    {
+      this.props.history.push("/dashboard")
+      return false
+    }
+
     if (typeof this.props.history.location.state !== "undefined") {
       var state = this.props.history.location.state;
       if (state !== null) {
@@ -1374,7 +1386,7 @@ class NewRateSearch extends Component {
               <div>
                 <input
                   type="radio"
-                  name={"TemperatureType"}
+                  name={"TemperatureType"+i}
                   id={"exist-cust" + i}
                   value="C"
                   onChange={this.UISpecialChange.bind(this, i)}
@@ -1449,6 +1461,7 @@ class NewRateSearch extends Component {
   //// start flattack type and openTop type dynamic elememnt
 
   MultiCreateCBM() {
+    
     return this.state.flattack_openTop.map((el, i) => (
       <div className="row cbm-space" key={i}>
         {/* <div className="col-md">
@@ -1615,12 +1628,12 @@ class NewRateSearch extends Component {
 
     this.setState({ flattack_openTop });
   }
-  addClickMultiCBM() {
+  addClickMultiCBM(optionsVal) {
     this.setState(prevState => ({
       flattack_openTop: [
         ...prevState.flattack_openTop,
         {
-          // SpecialContainerCode: optionsVal[0].SpecialContainerCode,
+          ContainerName: optionsVal[0].ContainerName,
           PackageType: "",
           Quantity: 0,
           Lengths: 0,
@@ -2632,6 +2645,7 @@ class NewRateSearch extends Component {
     }
 
     if (option.option.IsVolumeRequired === 1) {
+      
       if (difference1 === false) {
         this.setState({
           specialEqtSelect: true,

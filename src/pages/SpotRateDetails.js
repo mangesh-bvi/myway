@@ -824,7 +824,7 @@ class SpotRateDetails extends Component {
                           ""
                         )}
 
-                        {this.state.IsRequestForChange === true ? (
+                        {/* {this.state.IsRequestForChange === true ? ( */}
                           <>
                             <div className="col-12 col-sm-4 col-md-3 col-lg-3 r-border">
                               <p className="details-title">MyWay Comments</p>
@@ -845,9 +845,9 @@ class SpotRateDetails extends Component {
                               </p>
                             </div>
                           </>
-                        ) : (
+                        {/* ) : (
                           ""
-                        )}
+                        )} */}
                       </div>
                     </div>
                   </div>

@@ -972,7 +972,7 @@ class BookingView extends Component {
                                       return (
                                         <React.Fragment>
                                           <p className="details-title">POL</p>
-                                          <p className="details-para">
+                                          <p className="details-para max2">
                                             {row.original.OriginName}
                                           </p>
                                         </React.Fragment>
@@ -981,7 +981,7 @@ class BookingView extends Component {
                                       return (
                                         <React.Fragment>
                                           <p className="details-title">POL</p>
-                                          <p className="details-para">
+                                          <p className="details-para max2">
                                             {row.original.POL}
                                           </p>
                                         </React.Fragment>
@@ -998,7 +998,7 @@ class BookingView extends Component {
                                       return (
                                         <React.Fragment>
                                           <p className="details-title">POD</p>
-                                          <p className="details-para">
+                                          <p className="details-para max2">
                                             {row.original.DestinationName}
                                           </p>
                                         </React.Fragment>
@@ -1007,7 +1007,7 @@ class BookingView extends Component {
                                       return (
                                         <React.Fragment>
                                           <p className="details-title">POD</p>
-                                          <p className="details-para">
+                                          <p className="details-para max2">
                                             {row.original.POD}
                                           </p>
                                         </React.Fragment>
@@ -1023,7 +1023,7 @@ class BookingView extends Component {
                                         <p className="details-title">
                                           Transit port
                                         </p>
-                                        <p className="details-para">
+                                        <p className="details-para max2">
                                           {row.original.TransshipmentPort}
                                         </p>
                                       </>
@@ -1039,7 +1039,7 @@ class BookingView extends Component {
                                         <p className="details-title">
                                           Free Time
                                         </p>
-                                        <p className="details-para"></p>
+                                        <p className="details-para max2"></p>
                                       </>
                                     );
                                   },
@@ -1086,7 +1086,7 @@ class BookingView extends Component {
                                         <p className="details-title">
                                           {header}
                                         </p>
-                                        <p className="details-para">{value}</p>
+                                        <p className="details-para max2">{value}</p>
                                       </>
                                     );
                                   },
@@ -1100,7 +1100,7 @@ class BookingView extends Component {
                                     return (
                                       <React.Fragment>
                                         <p className="details-title">Expiry</p>
-                                        <p className="details-para">
+                                        <p className="details-para max2">
                                           {new Date(
                                             row.original.ExpiryDate
                                           ).toLocaleDateString("en-US")}
@@ -1118,11 +1118,11 @@ class BookingView extends Component {
                                         </p>
                                         {this.state.ContainerLoad !==
                                         "INLAND" ? (
-                                          <p className="details-para">
+                                          <p className="details-para max2">
                                             {row.original.TransitTime}
                                           </p>
                                         ) : (
-                                          <p className="details-para">
+                                          <p className="details-para max2">
                                             {row.original.TransitTime}
                                           </p>
                                         )}
@@ -1144,7 +1144,7 @@ class BookingView extends Component {
                                     return (
                                       <React.Fragment>
                                         <p className="details-title">Price</p>
-                                        <p className="details-para">
+                                        <p className="details-para max2">
                                           {Totalamount.toFixed(2) +
                                             " " +
                                             curency}
@@ -1159,7 +1159,7 @@ class BookingView extends Component {
                           data={this.state.QuotationData}
                           minRows={0}
                           showPagination={false}
-                          className="-striped -highlight"
+                          className="-striped -highlight no-mid-align"
                           SubComponent={row => {
                             return (
                               <div style={{ padding: "20px 0" }}>
@@ -1167,7 +1167,9 @@ class BookingView extends Component {
                                   data={this.state.QuotationSubData.filter(
                                     x =>
                                       x.saleQuoteLineID ===
-                                      row.original.saleQuoteLineID
+                                      row.original.saleQuoteLineID ||
+                                      row.original.SaleQuoteIDLineID ||
+                                      row.original.SaleQuote_ID
                                   )}
                                   columns={[
                                     {
@@ -1187,6 +1189,14 @@ class BookingView extends Component {
                                         {
                                           Header: "Unit Price",
                                           accessor: "Amount"
+                                        },
+                                        {
+                                          Header: "Tax",
+                                          accessor: "Tax"
+                                        },
+                                        {
+                                          Header: "ExRate",
+                                          accessor: "ExRate"
                                         },
                                         {
                                           Header: "Final Payment",

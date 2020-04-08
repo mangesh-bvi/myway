@@ -47,6 +47,7 @@ class RateSearch extends Component {
   }
 
   componentDidMount() {
+    
     document.getElementById("SearchRate").classList.add("disableRates");
   }
   ////Handle TO redirect new rate search page

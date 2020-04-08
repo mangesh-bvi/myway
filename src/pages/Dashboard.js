@@ -27,7 +27,7 @@ class Dashboard extends Component {
       quotesLoading: true,
       invoicesLoading: true,
       IsWidgets: false,
-      iframeKey: 0
+      iframeKey: 0,
     };
     this.HandleActiveShipmentData = this.HandleActiveShipmentData.bind(this);
     this.HandleQuotesTablePage = this.HandleQuotesTablePage.bind(this);
@@ -35,6 +35,15 @@ class Dashboard extends Component {
     this.HandleWatchListData = this.HandleWatchListData.bind(this);
   }
   componentDidMount() {
+    var CustomerType = encryption(
+      window.localStorage.getItem("CustomerType"),
+      "desc"
+    );
+    if (CustomerType === "New") {
+      this.props.history.push("/new-rate-search");
+      return false;
+    }
+
     let self = this;
     this.HandleQuotesData();
     this.HandleActiveShipmentData();
@@ -67,15 +76,15 @@ class Dashboard extends Component {
       method: "post",
       url: `${appSettings.APIURL}/FetchNewbooking`,
       data: {
-        UserID: userid
+        UserID: userid,
       },
-      headers: authHeader()
-    }).then(function(response) {
-      // 
+      headers: authHeader(),
+    }).then(function (response) {
+      //
       var bookData = response.data.Table;
       self.setState({
         BookingData: bookData,
-        bookingLoading: false
+        bookingLoading: false,
       });
     });
   }
@@ -83,7 +92,7 @@ class Dashboard extends Component {
   HandleRediractPageShipmentDetails(hblno) {
     this.props.history.push({
       pathname: "shipment-details",
-      state: { detail: hblno, pageName: "ShipmentPage" }
+      state: { detail: hblno, pageName: "ShipmentPage" },
     });
   }
   //Invoice Card Data API
@@ -94,14 +103,14 @@ class Dashboard extends Component {
       method: "post",
       url: `${appSettings.APIURL}/ActiveShipementData`,
       data: {
-        UserID: userid
+        UserID: userid,
       },
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       var invoicesData = response.data.Table1;
       selt.setState({
         InvoicesData: invoicesData,
-        invoicesLoading: false
+        invoicesLoading: false,
       });
     });
   }
@@ -113,14 +122,14 @@ class Dashboard extends Component {
       method: "post",
       url: `${appSettings.APIURL}/FetchWatchListDashBoard`,
       data: {
-        UserID: userid
+        UserID: userid,
       },
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       var activeshipment = response.data.Table;
       selt.setState({
         ActiveShipmentData: activeshipment,
-        watchlistLoading: false
+        watchlistLoading: false,
       });
     });
   }
@@ -131,15 +140,15 @@ class Dashboard extends Component {
       method: "post",
       url: `${appSettings.APIURL}/DashboardQuotesData`,
       data: {
-        UserID: encryption(window.localStorage.getItem("userid"), "desc")
+        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
       },
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       //
       var quotesdata = response.data.Table;
       selt.setState({
         QuotesData: quotesdata,
-        quotesLoading: false
+        quotesLoading: false,
       });
     });
   }
@@ -150,7 +159,7 @@ class Dashboard extends Component {
     var BookingNostr = BookingNo;
     this.props.history.push({
       pathname: "booking-view",
-      state: { bookingNo: bookingNo, Mode: Mode, BookingNostr: BookingNostr }
+      state: { bookingNo: bookingNo, Mode: Mode, BookingNostr: BookingNostr },
     });
   }
   //quote number to click view quote page
@@ -161,7 +170,7 @@ class Dashboard extends Component {
     var detail = { Quotes: qnumber, Type: type, Status: Status };
     this.props.history.push({
       pathname: "rate-finalizing-still",
-      state: { detail: detail }
+      state: { detail: detail },
     });
   }
   render() {
@@ -178,11 +187,11 @@ class Dashboard extends Component {
       InvoicesData,
 
       BookingData,
-      QuotesData
+      QuotesData,
     } = this.state;
     let self = this;
 
-    const ActiveShipment = ActiveShipmentData.map(function(addkey, i) {
+    const ActiveShipment = ActiveShipmentData.map(function (addkey, i) {
       if (i < 4) {
         return (
           <div key={i}>
@@ -243,7 +252,7 @@ class Dashboard extends Component {
         );
       }
     });
-    const Booking = BookingData.map(function(book, i) {
+    const Booking = BookingData.map(function (book, i) {
       if (i < 4) {
         return (
           <div key={i}>
@@ -285,7 +294,7 @@ class Dashboard extends Component {
       }
     });
 
-    const Quotes = QuotesData.map(function(quotes, i) {
+    const Quotes = QuotesData.map(function (quotes, i) {
       if (i < 4) {
         return (
           <div key={i}>
@@ -295,7 +304,7 @@ class Dashboard extends Component {
                 style={{
                   color: "#000",
                   fontFamily: "Bold Font",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
                 onClick={() => {
                   self.handleQuote(
@@ -332,7 +341,7 @@ class Dashboard extends Component {
       }
     });
 
-    const Invoices = InvoicesData.map(function(invoice, i) {
+    const Invoices = InvoicesData.map(function (invoice, i) {
       if (i < 4) {
         return (
           <div key={i}>

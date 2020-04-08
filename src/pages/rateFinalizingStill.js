@@ -59,8 +59,8 @@ class RateFinalizingStill extends Component {
           TruckID: "",
           TruckName: "",
           Quantity: "",
-          TruckDesc: ""
-        }
+          TruckDesc: "",
+        },
       ],
       spacEqmtType: [],
       commodityData: [],
@@ -88,7 +88,7 @@ class RateFinalizingStill extends Component {
       SalesPersonName: "",
       SalesPersonEmail: "",
       SalesPersonPhone: "",
-      SalesPersonFax: ""
+      SalesPersonFax: "",
     };
 
     this.toggleProfit = this.toggleProfit.bind(this);
@@ -148,10 +148,10 @@ class RateFinalizingStill extends Component {
 
     var SalesQuoteViewdata = {
       Mode: type,
-      SalesQuoteNumber: SalesQuoteNumber
+      SalesQuoteNumber: SalesQuoteNumber,
     };
     this.setState({
-      QuoteNumber: SalesQuoteNumber
+      QuoteNumber: SalesQuoteNumber,
     });
     let self = this;
     axios({
@@ -159,10 +159,9 @@ class RateFinalizingStill extends Component {
       url: `${appSettings.APIURL}/SalesQuoteView`,
 
       data: SalesQuoteViewdata,
-      headers: authHeader()
+      headers: authHeader(),
     })
-      .then(function(response) {
-        
+      .then(function (response) {
         var RateDetails = response.data.Table1;
         var SubRateDetails = response.data.Table2;
         var multiCBM = response.data.Table3;
@@ -190,7 +189,7 @@ class RateFinalizingStill extends Component {
                 SalesPersonPhone =
                   response.data.Table[0].SalesPersonPhone || "";
                 SalesPersonFax = response.data.Table[0].SalesPersonFax || "";
-                
+
                 self.setState({
                   SalesPersonName,
                   SalesPersonEmail,
@@ -246,7 +245,7 @@ class RateFinalizingStill extends Component {
                         response.data.Table[0].DestState +
                         ", " +
                         response.data.Table[0].DestCountry
-                      : response.data.Table[0].deliveryAddress
+                      : response.data.Table[0].deliveryAddress,
                 });
               }
             }
@@ -266,12 +265,11 @@ class RateFinalizingStill extends Component {
                 ) {
                   IncoTerms = response.data.Table1[0].IncoTerm;
                 }
-
                 self.setState({
                   IncoTerms: IncoTerms,
                   EquipmentTypes: response.data.Table1[0].ContainerCode,
                   Commodity: response.data.Table1[0].Commodity,
-                  selectedCommodity: response.data.Table1[0].Commodity
+                  selectedCommodity: response.data.Table1[0].Commodity,
                 });
               }
             }
@@ -295,7 +293,7 @@ class RateFinalizingStill extends Component {
                         : table[i].CBM || 0,
                     Volume: table[i].Volume || 0,
                     VolumeWeight: table[i].VolumeWeight || 0,
-                    Editable: true
+                    Editable: true,
                   });
                 }
               } else {
@@ -305,7 +303,7 @@ class RateFinalizingStill extends Component {
               CargoDetailsArr.push({ Width: "No Data Found" });
             }
             self.setState({
-              CargoDetailsArr: CargoDetailsArr
+              CargoDetailsArr: CargoDetailsArr,
             });
           }
         }
@@ -313,17 +311,17 @@ class RateFinalizingStill extends Component {
           RateDetails: RateDetails,
           SubRateDetails: SubRateDetails,
           multiCBM: multiCBM,
-          DocumentDetails: DocumentDetails
+          DocumentDetails: DocumentDetails,
         });
         if (response.data.Table4.length === 0) {
           self.setState({
-            DocumentDetails: [{ FileName: "No File Found" }]
+            DocumentDetails: [{ FileName: "No File Found" }],
           });
         }
         self.forceUpdate();
         self.HandleSalesQuoteConditions();
       })
-      .catch(error => {
+      .catch((error) => {
         self.setState({ loding: false });
       });
   }
@@ -335,28 +333,28 @@ class RateFinalizingStill extends Component {
       pathname: "/booking-insert",
       state: {
         ContainerLoad: this.state.ContainerLoad,
-        salesQuotaNo: this.state.QuoteNumber
-      }
+        salesQuotaNo: this.state.QuoteNumber,
+      },
     });
   }
   toggleProfit() {
-    this.setState(prevState => ({
-      modalProfit: !prevState.modalProfit
+    this.setState((prevState) => ({
+      modalProfit: !prevState.modalProfit,
     }));
   }
   toggleRequest() {
-    this.setState(prevState => ({
-      modalRequest: !prevState.modalRequest
+    this.setState((prevState) => ({
+      modalRequest: !prevState.modalRequest,
     }));
   }
-  onDocumentChangeHandler = event => {
+  onDocumentChangeHandler = (event) => {
     setTimeout(() => {
       this.onDocumentSaleQuoteHandler();
     }, 200);
 
     this.setState({
       selectedFileName: event.target.files[0].name,
-      selectedFile: event.target.files[0]
+      selectedFile: event.target.files[0],
     });
   };
 
@@ -391,9 +389,9 @@ class RateFinalizingStill extends Component {
       method: "post",
       url: `${appSettings.APIURL}/SendEmailWithPDF`,
       data: inputParameter,
-      headers: authHeader()
+      headers: authHeader(),
     })
-      .then(function(response) {
+      .then(function (response) {
         if (response != null) {
           if (response.data != null) {
             if (response.data.length > 0) {
@@ -403,8 +401,8 @@ class RateFinalizingStill extends Component {
                 type: "success", // 'default', 'success', 'info', 'warning','danger'
                 container: "top-right", // where to position the notifications
                 dismiss: {
-                  duration: appSettings.NotficationTime
-                }
+                  duration: appSettings.NotficationTime,
+                },
               });
               self.setState({ btnloding: false });
               self.setState({ rbtnloding: false });
@@ -415,7 +413,7 @@ class RateFinalizingStill extends Component {
           }
         }
       })
-      .catch(error => {
+      .catch((error) => {
         var temperror = error.response.data;
         // var err = temperror.split(":");
         self.setState({ btnloding: false });
@@ -444,11 +442,11 @@ class RateFinalizingStill extends Component {
         Mode: QuoteType,
         SalesQuoteNumber: SalesQuoteNumber,
         isApprove: 1,
-        MyUserID: encryption(window.localStorage.getItem("userid"), "desc")
+        MyUserID: encryption(window.localStorage.getItem("userid"), "desc"),
       },
-      headers: authHeader()
+      headers: authHeader(),
     })
-      .then(function(response) {
+      .then(function (response) {
         if (response != null) {
           if (response.data != null) {
             if (response.data.Table != null) {
@@ -459,8 +457,8 @@ class RateFinalizingStill extends Component {
                   type: "success", // 'default', 'success', 'info', 'warning','danger'
                   container: "top-right", // where to position the notifications
                   dismiss: {
-                    duration: appSettings.NotficationTime
-                  }
+                    duration: appSettings.NotficationTime,
+                  },
                 });
                 self.toggleAcceptModal();
                 self.SendMail("Approve");
@@ -475,7 +473,7 @@ class RateFinalizingStill extends Component {
         var Messagebody =
           "<html><body><table><tr><td>Hello Sir/Madam,</td><tr><tr><tr><tr><td>The Quotation is sent by our Sales Person Name.Request you to check the Quotation and share your approval for same.</td></tr><tr><td>To check and approve the quotation please click here.</td></tr></table></body></html>";
       })
-      .catch(error => {});
+      .catch((error) => {});
   }
 
   RejectQuotes() {
@@ -500,11 +498,11 @@ class RateFinalizingStill extends Component {
           SalesQuoteNumber: SalesQuoteNumber,
           isReject: 1,
           RejectReason: RejectResontxt,
-          MyUserID: encryption(window.localStorage.getItem("userid"), "desc")
+          MyUserID: encryption(window.localStorage.getItem("userid"), "desc"),
         },
-        headers: authHeader()
+        headers: authHeader(),
       })
-        .then(function(response) {
+        .then(function (response) {
           if (response != null) {
             if (response.data != null) {
               if (response.data.Table != null) {
@@ -515,8 +513,8 @@ class RateFinalizingStill extends Component {
                     type: "success", // 'default', 'success', 'info', 'warning','danger'
                     container: "top-right", // where to position the notifications
                     dismiss: {
-                      duration: appSettings.NotficationTime
-                    }
+                      duration: appSettings.NotficationTime,
+                    },
                   });
                   self.toggleRejectModal();
                   var Messagebody =
@@ -531,14 +529,14 @@ class RateFinalizingStill extends Component {
             }
           }
         })
-        .catch(error => {
+        .catch((error) => {
           var temperror = error.response.data;
           var err = temperror.split(":");
         });
     } else {
       var errorRejReson = "Please enter rejection reason";
       self.setState({
-        errorRejReson: errorRejReson
+        errorRejReson: errorRejReson,
       });
     }
   }
@@ -660,19 +658,19 @@ class RateFinalizingStill extends Component {
     if ("PackageType" === name) {
       multiCBM[i] = {
         ...multiCBM[i],
-        [name]: value
+        [name]: value,
       };
     } else {
       multiCBM[i] = {
         ...multiCBM[i],
-        [name]: value !== "" ? Number(value) : ""
+        [name]: value !== "" ? Number(value) : "",
       };
     }
 
     this.setState({ multiCBM });
   }
   addMultiCBM() {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       multiCBM: [
         ...prevState.multiCBM,
         {
@@ -685,9 +683,9 @@ class RateFinalizingStill extends Component {
           SaleQuoteIDLineID: 0,
           Unit: "",
           Width: 0,
-          height: 0
-        }
-      ]
+          height: 0,
+        },
+      ],
     }));
   }
   removeMultiCBM(type, i) {
@@ -705,8 +703,8 @@ class RateFinalizingStill extends Component {
       method: "post",
       url: `${appSettings.APIURL}/CommodityDropdown`,
       data: {},
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       var commodityData = response.data.Table;
       self.setState({ commodityData }); ///problem not working setstat undefined
     });
@@ -717,8 +715,8 @@ class RateFinalizingStill extends Component {
       method: "post",
       url: `${appSettings.APIURL}/PackageTypeListDropdown`,
 
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       var data = response.data.Table;
       self.setState({ packageTypeData: data });
     });
@@ -726,20 +724,20 @@ class RateFinalizingStill extends Component {
   //// start  spacEqmtType dyamanic element
 
   addSpacEqmtType(optionVal) {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       spacEqmtType: [
         ...prevState.spacEqmtType,
         {
           TypeName: optionVal[0].SpecialContainerCode,
-          Quantity: 0
-        }
-      ]
+          Quantity: 0,
+        },
+      ],
     }));
   }
 
   toggleRejectPop() {
-    this.setState(prevState => ({
-      modalRejectPop: !prevState.modalRejectPop
+    this.setState((prevState) => ({
+      modalRejectPop: !prevState.modalRejectPop,
     }));
   }
 
@@ -775,7 +773,7 @@ class RateFinalizingStill extends Component {
     let spacEqmtType = [...this.state.spacEqmtType];
     spacEqmtType[i] = {
       ...spacEqmtType[i],
-      [name]: parseFloat(value)
+      [name]: parseFloat(value),
     };
     this.setState({ spacEqmtType });
   }
@@ -790,7 +788,7 @@ class RateFinalizingStill extends Component {
 
   //// start refer type  dynamic element
   addClickSpecial(optionVal) {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       referType: [
         ...prevState.referType,
         {
@@ -799,9 +797,9 @@ class RateFinalizingStill extends Component {
           ContainerCode: optionVal[0].SpecialContainerCode,
           ContainerQuantity: 0,
           Temperature: 0,
-          TemperatureType: ""
-        }
-      ]
+          TemperatureType: "",
+        },
+      ],
     }));
   }
 
@@ -816,8 +814,8 @@ class RateFinalizingStill extends Component {
         type: "success", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
 
       return false;
@@ -837,28 +835,28 @@ class RateFinalizingStill extends Component {
       method: "post",
       url: `${appSettings.APIURL}/SalesQuoteFileUpload`,
       data: docData,
-      headers: authHeader()
+      headers: authHeader(),
     })
-      .then(function(response) {
+      .then(function (response) {
         store.addNotification({
           // title: "Success",
           message: response.data.Table[0].Result,
           type: "success", // 'default', 'success', 'info', 'warning','danger'
           container: "top-right", // where to position the notifications
           dismiss: {
-            duration: appSettings.NotficationTime
-          }
+            duration: appSettings.NotficationTime,
+          },
         });
       })
-      .catch(error => {
+      .catch((error) => {
         store.addNotification({
           // title: "Success",
           message: error.response.data.split("'")[1],
           type: "danger", // 'default', 'success', 'info', 'warning','danger'
           container: "top-right", // where to position the notifications
           dismiss: {
-            duration: appSettings.NotficationTime
-          }
+            duration: appSettings.NotficationTime,
+          },
         });
       });
 
@@ -872,12 +870,12 @@ class RateFinalizingStill extends Component {
       url: `${appSettings.APIURL}/DownloadFTPFile`,
       data: {
         MywayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        FilePath: item.original.FilePath
+        FilePath: item.original.FilePath,
       },
       responseType: "blob",
-      headers: authHeader()
+      headers: authHeader(),
     })
-      .then(function(response) {
+      .then(function (response) {
         if (response.data) {
           var blob = new Blob([response.data], { type: "application/pdf" });
           var link = document.createElement("a");
@@ -886,15 +884,15 @@ class RateFinalizingStill extends Component {
           link.click();
         }
       })
-      .catch(error => {
+      .catch((error) => {
         store.addNotification({
           // title: "Success",
           message: error.response.data.split("'")[1],
           type: "danger", // 'default', 'success', 'info', 'warning','danger'
           container: "top-right", // where to position the notifications
           dismiss: {
-            duration: appSettings.NotficationTime
-          }
+            duration: appSettings.NotficationTime,
+          },
         });
       });
   };
@@ -981,7 +979,7 @@ class RateFinalizingStill extends Component {
     let referType = [...this.state.referType];
     referType[i] = {
       ...referType[i],
-      [name]: name === "TemperatureType" ? value : parseFloat(value)
+      [name]: name === "TemperatureType" ? value : parseFloat(value),
     };
     this.setState({ referType });
   }
@@ -1109,12 +1107,12 @@ class RateFinalizingStill extends Component {
     if (name === "PackageType") {
       flattack_openTop[i] = {
         ...flattack_openTop[i],
-        [name]: value
+        [name]: value,
       };
     } else {
       flattack_openTop[i] = {
         ...flattack_openTop[i],
-        [name]: parseFloat(value)
+        [name]: parseFloat(value),
       };
     }
 
@@ -1128,32 +1126,32 @@ class RateFinalizingStill extends Component {
     if (decVolumeWeight > parseFloat(flattack_openTop[i].GrossWeight)) {
       flattack_openTop[i] = {
         ...flattack_openTop[i],
-        ["total"]: parseFloat(decVolumeWeight)
+        ["total"]: parseFloat(decVolumeWeight),
       };
     } else {
       flattack_openTop[i] = {
         ...flattack_openTop[i],
-        ["total"]: parseFloat(flattack_openTop[i].GrossWeight)
+        ["total"]: parseFloat(flattack_openTop[i].GrossWeight),
       };
     }
 
     this.setState({ flattack_openTop });
   }
   addClickMultiCBM(optionsVal) {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       flattack_openTop: [
         ...prevState.flattack_openTop,
         {
-          SpecialContainerCode: optionsVal[0].SpecialContainerCode,
+          // SpecialContainerCode: optionsVal[0].SpecialContainerCode,
           PackageType: "",
           length: "",
           Width: "",
           height: "",
           Quantity: "",
           GrossWeight: "",
-          total: ""
-        }
-      ]
+          total: "",
+        },
+      ],
     }));
   }
   removeClickMultiCBM(i) {
@@ -1202,7 +1200,7 @@ class RateFinalizingStill extends Component {
     let eqmtType = [...this.state.eqmtType];
     eqmtType[i] = {
       ...eqmtType[i],
-      [name]: name === "ContainerCount" ? parseFloat(value) : 0
+      [name]: name === "ContainerCount" ? parseFloat(value) : 0,
     };
     this.setState({ eqmtType });
   }
@@ -1217,16 +1215,16 @@ class RateFinalizingStill extends Component {
   //// Create Trcuk Type dropdown dynamic element UI
 
   addClickTruckType() {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       TruckTypeData: [
         ...prevState.TruckTypeData,
         {
           TruckID: "",
           TruckName: "",
           Quantity: "",
-          TruckDesc: ""
-        }
-      ]
+          TruckDesc: "",
+        },
+      ],
     }));
   }
 
@@ -1291,7 +1289,7 @@ class RateFinalizingStill extends Component {
       ["TruckDesc"]:
         name === "TruckName"
           ? e.target.options[e.target.selectedIndex].text
-          : TruckTypeData[i].TruckDesc
+          : TruckTypeData[i].TruckDesc,
     };
     this.setState({ TruckTypeData });
   }
@@ -1313,15 +1311,15 @@ class RateFinalizingStill extends Component {
       data: {
         Mode: this.state.ContainerLoad,
         ShipmentType: this.state.ShipmentType,
-        MywayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+        MywayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
       },
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       if (response.data.Table.length > 0) {
         self.setState({
           ConditionDesc: response.data.Table[0].conditionDesc
             .split("\n")
-            .map((item, i) => <p key={i}>{item}</p>)
+            .map((item, i) => <p key={i}>{item}</p>),
         });
       }
     });
@@ -1334,7 +1332,7 @@ class RateFinalizingStill extends Component {
     var documentData = {
       QuoteID: row.original.QuoteID,
       DocumentID: row.original.DocumentID,
-      MyWayUserID: MywayUserID
+      MyWayUserID: MywayUserID,
     };
 
     let self = this;
@@ -1342,16 +1340,16 @@ class RateFinalizingStill extends Component {
       method: "post",
       url: `${appSettings.APIURL}/DeleteSalesQuotedocument`,
       data: documentData,
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       store.addNotification({
         // title: "Success",
         message: response.data.Table[0].Result,
         type: "success", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
 
       setTimeout(() => {
@@ -1373,7 +1371,7 @@ class RateFinalizingStill extends Component {
         "</body></html>"
     );
     newWin.document.close();
-    setTimeout(function() {
+    setTimeout(function () {
       newWin.close();
     }, 10);
   }
@@ -1385,10 +1383,13 @@ class RateFinalizingStill extends Component {
   render() {
     var final = 0;
     if (this.state.RateDetails.length > 0) {
-      final = this.state.RateDetails.reduce(function(prev, cur) {
-        return parseFloat(prev) + parseFloat(cur.Total.split(" ")[0]);
+      final = this.state.RateDetails.reduce(function (prev, cur) {
+        return (
+          parseFloat(prev) + (parseFloat(cur.Total.split(" ")[0]) + cur.Profit)
+        );
       }, 0);
     }
+
     
 
     var tDate = moment(this.state.todayDate).format("L");
@@ -1566,10 +1567,10 @@ class RateFinalizingStill extends Component {
                                         );
                                       }
                                     },
-                                    accessor: "lineName"
+                                    accessor: "lineName",
                                   },
                                   {
-                                    Cell: row => {
+                                    Cell: (row) => {
                                       return (
                                         <>
                                           <p className="details-title">POL</p>
@@ -1594,10 +1595,10 @@ class RateFinalizingStill extends Component {
                                     },
                                     accessor: "POLName",
 
-                                    filterable: true
+                                    filterable: true,
                                   },
                                   {
-                                    Cell: row => {
+                                    Cell: (row) => {
                                       return (
                                         <>
                                           <p className="details-title">POD</p>
@@ -1623,10 +1624,10 @@ class RateFinalizingStill extends Component {
                                       );
                                     },
                                     accessor: "PODName",
-                                    filterable: true
+                                    filterable: true,
                                   },
                                   {
-                                    Cell: row => {
+                                    Cell: (row) => {
                                       return (
                                         <>
                                           <p className="details-title">
@@ -1645,10 +1646,10 @@ class RateFinalizingStill extends Component {
                                     },
                                     accessor: "TransshipmentPort",
                                     filterable: true,
-                                    minWidth: 160
+                                    minWidth: 160,
                                   },
                                   {
-                                    Cell: row => {
+                                    Cell: (row) => {
                                       return (
                                         <>
                                           <p className="details-title">
@@ -1660,11 +1661,11 @@ class RateFinalizingStill extends Component {
                                     },
                                     accessor: "freeTime",
                                     filterable: true,
-                                    minWidth: 90
+                                    minWidth: 90,
                                   },
 
                                   {
-                                    Cell: row => {
+                                    Cell: (row) => {
                                       var header = "";
                                       var value = "";
                                       if (this.state.ContainerLoad == "FCL") {
@@ -1711,10 +1712,10 @@ class RateFinalizingStill extends Component {
                                       );
                                     },
                                     accessor: "ContainerType",
-                                    filterable: true
+                                    filterable: true,
                                   },
                                   {
-                                    Cell: row => {
+                                    Cell: (row) => {
                                       return (
                                         <>
                                           <p className="details-title">
@@ -1731,10 +1732,10 @@ class RateFinalizingStill extends Component {
                                     },
                                     accessor: "expiryDate" || "ExpiryDate",
                                     filterable: true,
-                                    minWidth: 90
+                                    minWidth: 90,
                                   },
                                   {
-                                    Cell: row => {
+                                    Cell: (row) => {
                                       return (
                                         <>
                                           <p className="details-title">
@@ -1751,10 +1752,10 @@ class RateFinalizingStill extends Component {
                                         </>
                                       );
                                     },
-                                    accessor: "TransitTime"
+                                    accessor: "TransitTime",
                                   },
                                   {
-                                    Cell: row => {
+                                    Cell: (row) => {
                                       if (
                                         row.original.Total !== "" &&
                                         row.original.Total !== null &&
@@ -1774,7 +1775,11 @@ class RateFinalizingStill extends Component {
                                       var total =
                                         parseFloat(
                                           row.original.Total.split(" ")[0]
-                                        ) + (row.original.Profit || 0);
+                                        );
+                                      // var total =
+                                      //   parseFloat(
+                                      //     row.original.Total.split(" ")[0]
+                                      //   ) + (row.original.Profit || 0);
                                       var base = row.original.Total.split(
                                         " "
                                       )[1];
@@ -1794,10 +1799,10 @@ class RateFinalizingStill extends Component {
                                     },
                                     accessor: "baseFreightFee",
                                     filterable: true,
-                                    minWidth: 80
-                                  }
-                                ]
-                              }
+                                    minWidth: 80,
+                                  },
+                                ],
+                              },
                             ]}
                             filterable
                             data={this.state.RateDetails}
@@ -1805,7 +1810,7 @@ class RateFinalizingStill extends Component {
                             className="-striped -highlight no-mid-align"
                             minRows={1}
                             showPagination={false}
-                            SubComponent={row => {
+                            SubComponent={(row) => {
                               return (
                                 <div style={{ padding: "20px 0" }}>
                                   <ReactTable
@@ -1813,13 +1818,13 @@ class RateFinalizingStill extends Component {
                                     data={this.state.SubRateDetails.filter(
                                       this.state.ContainerLoad !== "INLAND"
                                         ? this.state.ContainerLoad === "LCL"
-                                          ? d =>
+                                          ? (d) =>
                                               d.SaleQuoteIDLineID ===
                                               row.original.saleQuoteLineID
-                                          : d =>
+                                          : (d) =>
                                               d.saleQuoteLineID ===
                                               row.original.saleQuoteLineID
-                                        : d =>
+                                        : (d) =>
                                             d.SaleQuoteIDLineID ===
                                             row.original.SaleQuoteIDLineID
                                     )}
@@ -1828,25 +1833,25 @@ class RateFinalizingStill extends Component {
                                         columns: [
                                           {
                                             Header: "C. Description",
-                                            accessor: "ChargeDesc"
+                                            accessor: "ChargeDesc",
                                           },
                                           {
                                             Header: "C. Name",
-                                            accessor: "ChargeCode"
+                                            accessor: "ChargeCode",
                                           },
                                           {
                                             Header: "Units",
                                             accessor: "ChargeItem",
-                                            Cell: row => (
+                                            Cell: (row) => (
                                               <React.Fragment>
                                                 {row.original.Amount}
                                               </React.Fragment>
-                                            )
+                                            ),
                                           },
                                           {
                                             Header: "Unit Price",
                                             accessor: "Amount",
-                                            Cell: row => {
+                                            Cell: (row) => {
                                               if (
                                                 row.original.Chargeitem !== null
                                               ) {
@@ -1856,35 +1861,35 @@ class RateFinalizingStill extends Component {
                                               } else {
                                                 return <>0</>;
                                               }
-                                            }
+                                            },
                                           },
                                           {
                                             Header: "Tax",
                                             accessor: "Tax",
-                                            Cell: row => (
+                                            Cell: (row) => (
                                               <React.Fragment>
                                                 {row.original.Tax !== 0
                                                   ? row.original.Tax
                                                   : row.original.Tax}
                                               </React.Fragment>
-                                            )
+                                            ),
                                           },
 
                                           {
                                             Header: "Exrate",
                                             accessor: "Exrate" || "ExRate",
-                                            Cell: row => {
+                                            Cell: (row) => {
                                               return (
                                                 <>
                                                   {row.original.Exrate ||
                                                     row.original.ExRate}
                                                 </>
                                               );
-                                            }
+                                            },
                                           },
 
                                           {
-                                            Cell: row => {
+                                            Cell: (row) => {
                                               if (
                                                 row.original.Total !== "" &&
                                                 row.original.Total !== null &&
@@ -1911,10 +1916,10 @@ class RateFinalizingStill extends Component {
                                               );
                                             },
                                             Header: "Final Payment",
-                                            accessor: "Total"
-                                          }
-                                        ]
-                                      }
+                                            accessor: "Total",
+                                          },
+                                        ],
+                                      },
                                     ]}
                                     showPagination={false}
                                     defaultPageSize={1000}
@@ -2049,7 +2054,7 @@ class RateFinalizingStill extends Component {
                             id="toggler"
                             onClick={() =>
                               this.setState({
-                                showContent: !this.state.showContent
+                                showContent: !this.state.showContent,
                               })
                             }
                           >
@@ -2119,27 +2124,27 @@ class RateFinalizingStill extends Component {
                                 columns={[
                                   {
                                     Header: "Pack.Type",
-                                    accessor: "PackageType"
+                                    accessor: "PackageType",
                                   },
                                   {
                                     Header: "Quantity",
-                                    accessor: "Quantity"
+                                    accessor: "Quantity",
                                   },
                                   {
                                     Header: "Length",
-                                    accessor: "Lengths"
+                                    accessor: "Lengths",
                                   },
                                   {
                                     Header: "Width",
-                                    accessor: "Width"
+                                    accessor: "Width",
                                   },
                                   {
                                     Header: "Height",
-                                    accessor: "Height"
+                                    accessor: "Height",
                                   },
                                   {
                                     Header: "Gross Weight",
-                                    accessor: "GrossWt"
+                                    accessor: "GrossWt",
                                   },
                                   {
                                     Header:
@@ -2148,7 +2153,7 @@ class RateFinalizingStill extends Component {
                                         ? "CW"
                                         : "CBM",
                                     accessor: "ChgWeight",
-                                    Cell: row => {
+                                    Cell: (row) => {
                                       if (
                                         this.state.ContainerLoad === "AIR" ||
                                         this.state.ContainerLoad === "LTL"
@@ -2165,7 +2170,7 @@ class RateFinalizingStill extends Component {
                                       this.state.ContainerLoad == "LTL" ||
                                       this.state.ContainerLoad == "LCL"
                                         ? true
-                                        : false
+                                        : false,
                                   },
 
                                   {
@@ -2175,8 +2180,8 @@ class RateFinalizingStill extends Component {
                                       this.state.ContainerLoad == "FCL" ||
                                       this.state.ContainerLoad == "FTL"
                                         ? true
-                                        : false
-                                  }
+                                        : false,
+                                  },
                                 ]}
                                 className="-striped -highlight"
                                 defaultPageSize={2000}
@@ -2219,7 +2224,7 @@ class RateFinalizingStill extends Component {
                                   {
                                     Header: "File Name",
                                     accessor: "FileName",
-                                    Cell: row => {
+                                    Cell: (row) => {
                                       if (
                                         row.original.FileName !==
                                         "No File Found"
@@ -2237,12 +2242,12 @@ class RateFinalizingStill extends Component {
                                       } else {
                                         return <>{row.original.FileName}</>;
                                       }
-                                    }
+                                    },
                                   },
                                   {
                                     Header: "Action",
                                     sortable: false,
-                                    Cell: row => {
+                                    Cell: (row) => {
                                       if (
                                         row.original.FileName !==
                                         "No File Found"
@@ -2251,7 +2256,7 @@ class RateFinalizingStill extends Component {
                                           <div className="action-cntr">
                                             <a
                                               title="Download"
-                                              onClick={e =>
+                                              onClick={(e) =>
                                                 this.HandleDowloadFile(e, row)
                                               }
                                             >
@@ -2264,7 +2269,7 @@ class RateFinalizingStill extends Component {
                                             </a>
                                             <a
                                               title="Delete"
-                                              onClick={e =>
+                                              onClick={(e) =>
                                                 this.HandleDocumentDelete(
                                                   e,
                                                   row
@@ -2283,8 +2288,8 @@ class RateFinalizingStill extends Component {
                                       } else {
                                         return <></>;
                                       }
-                                    }
-                                  }
+                                    },
+                                  },
                                 ]}
                                 className="-striped -highlight"
                                 defaultPageSize={2000}
@@ -2559,7 +2564,7 @@ class RateFinalizingStill extends Component {
                             </thead>
                             <tbody>
                               {this.state.CargoDetailsArr.length > 0
-                                ? this.state.CargoDetailsArr.map(item1 => (
+                                ? this.state.CargoDetailsArr.map((item1) => (
                                     <tr>
                                       <td>{item1.PackageType}</td>
                                       <td>{item1.Quantity}</td>
@@ -2592,7 +2597,7 @@ class RateFinalizingStill extends Component {
                 </div>
               </div>
 
-              {this.state.RateDetails.map(item => (
+              {this.state.RateDetails.map((item) => (
                 <>
                   <div className="row">
                     <div className="col-12">
@@ -2607,9 +2612,7 @@ class RateFinalizingStill extends Component {
                             <label>
                               POL : <span>{item.POL}</span>
                             </label>
-                            <label>
-                              POD : <span>{item.POD}</span>
-                            </label>
+                            
                           </div>
                           <div className="col-12 col-sm-4">
                             <label>
@@ -2621,12 +2624,16 @@ class RateFinalizingStill extends Component {
                               </span>
                             </label>
                             <label>
-                              Inco Terms : <span>{this.state.IncoTerms}</span>
+                              POD : <span>{item.POD}</span>
                             </label>
+                            
                           </div>
                           <div className="col-12 col-sm-4">
                             <label>
                               Liner : <span>{item.Linename}</span>
+                            </label>
+                            <label>
+                              Inco Terms : <span>{this.state.IncoTerms}</span>
                             </label>
                           </div>
                         </div>
@@ -2685,22 +2692,24 @@ class RateFinalizingStill extends Component {
                                 </thead>
                                 <tbody>
                                   {this.state.CargoDetailsArr.length > 0
-                                    ? this.state.CargoDetailsArr.map(item1 => (
-                                        <tr>
-                                          <td>{item1.PackageType}</td>
-                                          <td>{item1.Quantity}</td>
-                                          <td>{item1.Lengths}</td>
-                                          <td>{item1.Width}</td>
-                                          <td>{item1.Height}</td>
-                                          <td>{item1.GrossWt}</td>
-                                          <td>
-                                            {this.state.ContainerLoad.toUpperCase() ===
-                                            "AIR"
-                                              ? item1.VolumeWeight
-                                              : item1.Volume}
-                                          </td>
-                                        </tr>
-                                      ))
+                                    ? this.state.CargoDetailsArr.map(
+                                        (item1) => (
+                                          <tr>
+                                            <td>{item1.PackageType}</td>
+                                            <td>{item1.Quantity}</td>
+                                            <td>{item1.Lengths}</td>
+                                            <td>{item1.Width}</td>
+                                            <td>{item1.Height}</td>
+                                            <td>{item1.GrossWt}</td>
+                                            <td>
+                                              {this.state.ContainerLoad.toUpperCase() ===
+                                              "AIR"
+                                                ? item1.VolumeWeight
+                                                : item1.Volume}
+                                            </td>
+                                          </tr>
+                                        )
+                                      )
                                     : ""}
                                 </tbody>
                               </table>
@@ -2715,7 +2724,10 @@ class RateFinalizingStill extends Component {
                       <div className="thirdbox">
                         <h3>
                           {this.state.ContainerLoad.toUpperCase() === "FCL"
-                            ? item.ContainerType
+                            ? item.ContainerType +
+                              " (" +
+                              item.ContainerQuantity +
+                              ")"
                             : null}
                         </h3>
 
@@ -2727,17 +2739,17 @@ class RateFinalizingStill extends Component {
                                 this.state.ContainerLoad !== "AIR"
                                   ? this.state.ContainerLoad !== "INLAND"
                                     ? this.state.SubRateDetails.filter(
-                                        d =>
+                                        (d) =>
                                           d.saleQuoteLineID ===
                                           item.SaleQuoteIDLineID
                                       )
                                     : this.state.SubRateDetails.filter(
-                                        d =>
+                                        (d) =>
                                           d.SaleQuoteIDLineID ===
                                           item.SaleQuoteIDLineID
                                       )
                                   : this.state.SubRateDetails.filter(
-                                      d =>
+                                      (d) =>
                                         d.saleQuoteLineID ===
                                         item.saleQuoteLineID
                                     );
@@ -2745,7 +2757,7 @@ class RateFinalizingStill extends Component {
 
                             {(() => {
                               DocumentCharges = this.state.filterrateSubDetails.filter(
-                                d =>
+                                (d) =>
                                   (d.ChargeItem || d.Chargeitem) ===
                                     "Per HBL" ||
                                   (d.ChargeItem || d.Chargeitem) === "Per BL" ||
@@ -2757,7 +2769,7 @@ class RateFinalizingStill extends Component {
 
                             {(() => {
                               this.state.filterrateSubDetails = this.state.filterrateSubDetails.filter(
-                                d =>
+                                (d) =>
                                   (d.ChargeItem || d.Chargeitem) !==
                                     "Per HBL" &&
                                   (d.ChargeItem || d.Chargeitem) !== "Per BL" &&
@@ -2779,15 +2791,17 @@ class RateFinalizingStill extends Component {
                             <tbody>
                               {this.state.filterrateSubDetails.length > 0 &&
                               this.state.filterrateSubDetails !== undefined
-                                ? this.state.filterrateSubDetails.map(item1 => (
-                                    <tr>
-                                      <td>{item1.ChargeDesc}</td>
-                                      <td>{item1.Amount}</td>
-                                      <td>{item1.Chargeitem}</td>
-                                      <td>{item1.Tax}</td>
-                                      <td>{item1.Total}</td>
-                                    </tr>
-                                  ))
+                                ? this.state.filterrateSubDetails.map(
+                                    (item1) => (
+                                      <tr>
+                                        <td>{item1.ChargeDesc}</td>
+                                        <td>{item1.Amount}</td>
+                                        <td>{item1.Chargeitem}</td>
+                                        <td>{item1.Tax}</td>
+                                        <td>{item1.Total}</td>
+                                      </tr>
+                                    )
+                                  )
                                 : ""}
                             </tbody>
                           </table>
@@ -2812,16 +2826,12 @@ class RateFinalizingStill extends Component {
                                   {this.state.filterrateSubDetails.length > 0 &&
                                   this.state.filterrateSubDetails !== undefined
                                     ? this.state.filterrateSubDetails
-                                        .reduce(
-                                          (sum, filterrateSubDetails) =>
-                                            sum +
-                                            parseFloat(
-                                              filterrateSubDetails.Total.split(
-                                                " "
-                                              )[0]
-                                            ),
-                                          0
-                                        )
+                                        .reduce(function (prev, cur) {
+                                          return (
+                                            prev +
+                                            parseFloat(cur.Total.split(" ")[0])
+                                          );
+                                        }, 0)
                                         .toFixed(2) +
                                       " " +
                                       this.state.filterrateSubDetails[0]
@@ -2853,7 +2863,7 @@ class RateFinalizingStill extends Component {
                                 </tr>
                               </thead>
                               <tbody>
-                                {DocumentCharges.map(item => (
+                                {DocumentCharges.map((item) => (
                                   <tr>
                                     <td>{item.Type}</td>
                                     <td>
@@ -2899,7 +2909,7 @@ class RateFinalizingStill extends Component {
                                 );
                               },
                               0)} */}
-                              {final}
+                              {final.toFixed(2)}
                               {" " + this.state.RateDetails.length > 0
                                 ? this.state.RateDetails[0].Total.split(" ")[1]
                                 : null}
@@ -2983,7 +2993,7 @@ class RateFinalizingStill extends Component {
                 paddingTop: "0",
                 paddingRight: "20px",
                 paddingLeft: "20px",
-                background: "#fff"
+                background: "#fff",
               }}
             >
               <table className="table firstbox bordernone">
@@ -3097,7 +3107,7 @@ class RateFinalizingStill extends Component {
                           </thead>
                           <tbody>
                             {this.state.CargoDetailsArr.length > 0
-                              ? this.state.CargoDetailsArr.map(item1 => (
+                              ? this.state.CargoDetailsArr.map((item1) => (
                                   <tr>
                                     <td>{item1.PackageType}</td>
                                     <td>{item1.Quantity}</td>
@@ -3130,7 +3140,7 @@ class RateFinalizingStill extends Component {
               </div>
             </div>
 
-            {this.state.RateDetails.map(item => (
+            {this.state.RateDetails.map((item) => (
               <>
                 <div className="row">
                   <div className="">
@@ -3143,7 +3153,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "46%",
                               minWidth: "46%",
-                              maxWidth: "46%"
+                              maxWidth: "46%",
                             }}
                           >
                             <label>
@@ -3154,7 +3164,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "27%",
                               minWidth: "27%",
-                              maxWidth: "27%"
+                              maxWidth: "27%",
                             }}
                           >
                             <label>
@@ -3170,7 +3180,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "27%",
                               minWidth: "27%",
-                              maxWidth: "27%"
+                              maxWidth: "27%",
                             }}
                           >
                             <label>
@@ -3183,7 +3193,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "46%",
                               minWidth: "46%",
-                              maxWidth: "46%"
+                              maxWidth: "46%",
                             }}
                           >
                             <label>
@@ -3194,7 +3204,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "27%",
                               minWidth: "27%",
-                              maxWidth: "27%"
+                              maxWidth: "27%",
                             }}
                           >
                             <label>
@@ -3205,7 +3215,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "27%",
                               minWidth: "27%",
-                              maxWidth: "27%"
+                              maxWidth: "27%",
                             }}
                           >
                             <label>
@@ -3218,7 +3228,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "46%",
                               minWidth: "46%",
-                              maxWidth: "46%"
+                              maxWidth: "46%",
                             }}
                           >
                             <label>
@@ -3229,7 +3239,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "27%",
                               minWidth: "27%",
-                              maxWidth: "27%"
+                              maxWidth: "27%",
                             }}
                           >
                             <label>
@@ -3240,7 +3250,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "27%",
                               minWidth: "27%",
-                              maxWidth: "27%"
+                              maxWidth: "27%",
                             }}
                           >
                             <label>
@@ -3257,7 +3267,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "46%",
                               minWidth: "46%",
-                              maxWidth: "46%"
+                              maxWidth: "46%",
                             }}
                           >
                             <label>
@@ -3269,7 +3279,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "27%",
                               minWidth: "27%",
-                              maxWidth: "27%"
+                              maxWidth: "27%",
                             }}
                           >
                             <label>
@@ -3280,7 +3290,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "27%",
                               minWidth: "27%",
-                              maxWidth: "27%"
+                              maxWidth: "27%",
                             }}
                           >
                             <label>
@@ -3296,7 +3306,7 @@ class RateFinalizingStill extends Component {
                             style={{
                               width: "100%",
                               minWidth: "100%",
-                              maxWidth: "100%"
+                              maxWidth: "100%",
                             }}
                           >
                             <label>
@@ -3338,7 +3348,7 @@ class RateFinalizingStill extends Component {
                               </thead>
                               <tbody>
                                 {this.state.CargoDetailsArr.length > 0
-                                  ? this.state.CargoDetailsArr.map(item1 => (
+                                  ? this.state.CargoDetailsArr.map((item1) => (
                                       <tr>
                                         <td>{item1.ContainerType}</td>
                                         <td>{item1.Quantity}</td>
@@ -3368,7 +3378,10 @@ class RateFinalizingStill extends Component {
                     <div className="thirdbox">
                       <h3>
                         {this.state.ContainerLoad.toUpperCase() === "FCL"
-                          ? item.ContainerType
+                          ? item.ContainerType +
+                            " (" +
+                            item.ContainerQuantity +
+                            ")"
                           : null}
                       </h3>
 
@@ -3380,24 +3393,24 @@ class RateFinalizingStill extends Component {
                               this.state.ContainerLoad !== "AIR"
                                 ? this.state.ContainerLoad !== "INLAND"
                                   ? this.state.SubRateDetails.filter(
-                                      d =>
+                                      (d) =>
                                         d.saleQuoteLineID ===
                                         item.SaleQuoteIDLineID
                                     )
                                   : this.state.SubRateDetails.filter(
-                                      d =>
+                                      (d) =>
                                         d.SaleQuoteIDLineID ===
                                         item.SaleQuoteIDLineID
                                     )
                                 : this.state.SubRateDetails.filter(
-                                    d =>
+                                    (d) =>
                                       d.saleQuoteLineID === item.saleQuoteLineID
                                   );
                           })()}
 
                           {(() => {
                             DocumentCharges = this.state.filterrateSubDetails.filter(
-                              d =>
+                              (d) =>
                                 (d.ChargeItem || d.Chargeitem) === "Per HBL" ||
                                 (d.ChargeItem || d.Chargeitem) === "Per BL" ||
                                 (d.ChargeItem || d.Chargeitem) ===
@@ -3408,7 +3421,7 @@ class RateFinalizingStill extends Component {
 
                           {(() => {
                             this.state.filterrateSubDetails = this.state.filterrateSubDetails.filter(
-                              d =>
+                              (d) =>
                                 (d.ChargeItem || d.Chargeitem) !== "Per HBL" &&
                                 (d.ChargeItem || d.Chargeitem) !== "Per BL" &&
                                 (d.ChargeItem || d.Chargeitem) !==
@@ -3429,7 +3442,7 @@ class RateFinalizingStill extends Component {
                           <tbody>
                             {this.state.filterrateSubDetails.length > 0 &&
                             this.state.filterrateSubDetails !== undefined
-                              ? this.state.filterrateSubDetails.map(item1 => (
+                              ? this.state.filterrateSubDetails.map((item1) => (
                                   <tr>
                                     <td>{item1.ChargeDesc}</td>
                                     <td>{item1.Amount}</td>
@@ -3461,22 +3474,18 @@ class RateFinalizingStill extends Component {
                               <th
                                 style={{
                                   textAlign: "right",
-                                  paddingRight: "105px"
+                                  paddingRight: "105px",
                                 }}
                               >
                                 {this.state.filterrateSubDetails.length > 0 &&
                                 this.state.filterrateSubDetails !== undefined
                                   ? this.state.filterrateSubDetails
-                                      .reduce(
-                                        (sum, filterrateSubDetails) =>
-                                          sum +
-                                          parseFloat(
-                                            filterrateSubDetails.Total.split(
-                                              " "
-                                            )[0]
-                                          ),
-                                        0
-                                      )
+                                      .reduce(function (prev, cur) {
+                                        return (
+                                          prev +
+                                          parseFloat(cur.Total.split(" ")[0])
+                                        );
+                                      }, 0)
                                       .toFixed(2) +
                                     " " +
                                     this.state.filterrateSubDetails[0]
@@ -3508,7 +3517,7 @@ class RateFinalizingStill extends Component {
                               </tr>
                             </thead>
                             <tbody>
-                              {DocumentCharges.map(item => (
+                              {DocumentCharges.map((item) => (
                                 <tr>
                                   <td>{item.Type}</td>
                                   <td>

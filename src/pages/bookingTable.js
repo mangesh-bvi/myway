@@ -28,7 +28,8 @@ class BookingTable extends Component {
       bookingData: [],
       startDate: someDate.setMonth(someDate.getMonth() - 1),
       endDate: new Date().setHours(0, 0, 0, 0),
-      status: ""
+      status: "",
+      isload: false,
     };
     this.BindBookingListData = this.BindBookingListData.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
@@ -37,8 +38,8 @@ class BookingTable extends Component {
   }
 
   toggleDel() {
-    this.setState(prevState => ({
-      modalDel: !prevState.modalDel
+    this.setState((prevState) => ({
+      modalDel: !prevState.modalDel,
     }));
   }
   componentDidUpdate() {
@@ -74,62 +75,53 @@ class BookingTable extends Component {
       method: "post",
       url: `${appSettings.APIURL}/BookingGridAPI`,
       data: {
-        UserId: userid
+        UserId: userid,
       },
-      headers: authHeader()
-    }).then(function(response) {
-      var data = [];
-      var pending = 0,
-        approved = 0,
-        rejected = 0;
-      data = response.data;
-      if (data.length > 0) {
-        if (self.state.status === "Approved") {
-          var filterData = data.filter(x => x.Status === self.state.status);
-          if (filterData.length > 0) {
-            self.setState({ bookingData: filterData });
-          } else {
-            self.setState({ bookingData: filterData });
+      headers: authHeader(),
+    })
+      .then(function (response) {
+        var data = [];
+        var pending = 0,
+          approved = 0,
+          rejected = 0;
+        data = response.data;
+        
+        var resData = [];
+
+        var pending = data.filter((x) => x.Status == "Pending").length;
+        var rejected = data.filter((x) => x.Status == "Rejected").length;
+        var approved = data.filter((x) => x.Status == "Approved").length;
+
+        if (self.state.status != "") {
+          data = data.filter((item) => item.Status === self.state.status);
+          if (data.length === 0) {
+            data = [{ type: "No record found" }];
           }
-        } else if (self.state.status === "Pending") {
-          var filterData = data.filter(x => x.Status === self.state.status);
-          if (filterData.length > 0) {
-            self.setState({ bookingData: filterData });
-          } else {
-            self.setState({ bookingData: filterData });
-          }
-        } else if (self.state.status === "Rejected") {
-          var filterData = data.filter(x => x.Status === self.state.status);
-          if (filterData.length > 0) {
-            self.setState({ bookingData: filterData });
-          } else {
-            self.setState({ bookingData: filterData });
-          }
+        }
+
+        self.setState({ bookingData: data });
+        if (data.length > 0) {
+          self.setState({ isload: false });
         } else {
-          self.setState({ bookingData: data }); ///problem not working setstat undefined
+          self.setState({ isload: true });
         }
-      }
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].Status === "Approved") {
-          approved = approved + 1;
-        } else if (data[i].Status === "Pending") {
-          pending = pending + 1;
-        } else if (data[i].Status === "Rejected") {
-          rejected = rejected + 1;
-        }
-      }
-      window.localStorage.setItem("bookpending", pending);
-      window.localStorage.setItem("bookapproved", approved);
-      window.localStorage.setItem("bookrejected", rejected);
-    });
+
+        window.localStorage.setItem("bookpending", pending);
+        window.localStorage.setItem("bookapproved", approved);
+        window.localStorage.setItem("bookrejected", rejected);
+      })
+      .catch((response) => {
+        
+        self.setState({ isload: true });
+      });
   }
 
   onFilteredChange(filtered) {
     if (filtered.length > 1 && this.state.filterAll.length) {
       const filterAll = "";
       this.setState({
-        filtered: filtered.filter(item => item.id != "all"),
-        filterAll
+        filtered: filtered.filter((item) => item.id != "all"),
+        filterAll,
       });
     } else this.setState({ filtered });
   }
@@ -148,7 +140,7 @@ class BookingTable extends Component {
     var Mode = row.original["Mode"];
     this.props.history.push({
       pathname: "rate-finalizing-still-booking",
-      state: { BookingNo: BookingNo, Copy: true, Mode: Mode }
+      state: { BookingNo: BookingNo, Copy: true, Mode: Mode },
     });
   }
   //// Handle View click icon
@@ -165,17 +157,17 @@ class BookingTable extends Component {
         isView: true,
         Mode: Mode,
         BookingNostr: BookingNostr,
-        Status: Status
-      }
+        Status: Status,
+      },
     });
   }
 
   ////Handle Change Start Date
-  HandleChangeStartDate = e => {
+  HandleChangeStartDate = (e) => {
     var strt = this.state.startDate;
     var thisE = e;
     this.setState({
-      startDate: e
+      startDate: e,
     });
     if (
       thisE.setHours(0, 0, 0, 0) >
@@ -187,20 +179,20 @@ class BookingTable extends Component {
         type: "danger", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
       this.setState({
-        startDate: strt
+        startDate: strt,
       });
     }
   };
   ////Handle Change End Date
-  HandleChangeEndDate = e => {
+  HandleChangeEndDate = (e) => {
     var ennd = this.state.endDate;
     var thisE = e;
     this.setState({
-      endDate: e
+      endDate: e,
     });
     if (
       new Date(this.state.startDate).setHours(0, 0, 0, 0) >
@@ -212,11 +204,11 @@ class BookingTable extends Component {
         type: "danger", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
       this.setState({
-        endDate: ennd
+        endDate: ennd,
       });
     }
   };
@@ -234,15 +226,21 @@ class BookingTable extends Component {
     );
 
     if (dataQuote.length > 0) {
-      finalFilterData = dataQuote.filter(
-        d =>
-          new Date(d.CreatedDate) >=
-            new Date(this.state.startDate).setHours(0, 0, 0, 0) &&
-          new Date(d.CreatedDate) <=
-            new Date(this.state.endDate).setHours(0, 0, 0, 0)
+      
+      finalFilterData = dataQuote.filter((d) => (d) =>
+        new Date(d.CreatedDate) >=
+          new Date(this.state.startDate).setHours(0, 0, 0, 0) &&
+        new Date(d.CreatedDate) <=
+          new Date(this.state.endDate).setHours(0, 0, 0, 0)
       );
     } else {
-      finalFilterData = [{ POL: "No Record Found" }];
+      if (this.state.isload) {
+        if (finalFilterData.length == 0) {
+          finalFilterData = [{ POL: "No Record Found" }];
+        } else {
+          finalFilterData = [{ POL: "No Record Found" }];
+        }
+      }
     }
 
     var colClassName = "";
@@ -312,37 +310,37 @@ class BookingTable extends Component {
                     columns: [
                       {
                         Header: "Booking No.",
-                        accessor: "BookingNo"
+                        accessor: "BookingNo",
                       },
                       {
                         Header: "Consignee",
-                        accessor: "Consignee_Name"
+                        accessor: "Consignee_Name",
                       },
                       {
                         Header: "Shipper",
                         accessor: "Shipper_Name",
-                        filterable: true
+                        filterable: true,
                       },
                       {
                         Header: "POL",
-                        accessor: "POL"
+                        accessor: "POL",
                       },
                       {
                         Header: "POD",
-                        accessor: "POD"
+                        accessor: "POD",
                       },
                       {
                         Header: "Commodity",
-                        accessor: "Commodity"
+                        accessor: "Commodity",
                       },
                       {
                         Header: "Status",
-                        accessor: "Status"
+                        accessor: "Status",
                       },
                       {
                         Header: "Action",
                         sortable: false,
-                        Cell: row => {
+                        Cell: (row) => {
                           if (row.row.POL !== "No Record Found") {
                             return (
                               <div className="action-cntr">
@@ -352,7 +350,7 @@ class BookingTable extends Component {
                                   src={Eye}
                                   alt="view-icon"
                                   title={"View"}
-                                  onClick={e =>
+                                  onClick={(e) =>
                                     this.HandleViewClickIcon(e, row)
                                   }
                                 />
@@ -362,16 +360,16 @@ class BookingTable extends Component {
                                   src={Copy}
                                   title={Copy}
                                   alt="view-icon"
-                                  onClick={e => this.HandleCopyClick(e, row)}
+                                  onClick={(e) => this.HandleCopyClick(e, row)}
                                 />
                               </div>
                             );
                           } else {
                             return <></>;
                           }
-                        }
-                      }
-                    ]
+                        },
+                      },
+                    ],
                   },
                   {
                     show: false,
@@ -395,23 +393,23 @@ class BookingTable extends Component {
                           "POL",
                           "POD",
                           "Commodity",
-                          "Status"
+                          "Status",
                         ],
-                        threshold: matchSorter.rankings.WORD_STARTS_WITH
+                        threshold: matchSorter.rankings.WORD_STARTS_WITH,
                       });
                       if (result.length > 0) {
                         return result;
                       } else {
                         result = [
                           {
-                            POL: "No Record Found"
-                          }
+                            POL: "No Record Found",
+                          },
                         ];
                         return result;
                       }
                     },
-                    filterAll: true
-                  }
+                    filterAll: true,
+                  },
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={5}

@@ -13,7 +13,7 @@ import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
-  Marker
+  Marker,
 } from "react-google-maps";
 import ReactAutocomplete from "react-autocomplete";
 import matchSorter from "match-sorter";
@@ -27,7 +27,7 @@ const { compose } = require("recompose");
 const POLMaps = compose(
   withScriptjs,
   withGoogleMap
-)(props => (
+)((props) => (
   <GoogleMap
     defaultZoom={2}
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
@@ -50,7 +50,7 @@ const POLMaps = compose(
 const PODMaps = compose(
   withScriptjs,
   withGoogleMap
-)(props => (
+)((props) => (
   <GoogleMap
     defaultCenter={{ lat: 32.24165126, lng: 77.78319374 }}
     defaultZoom={2}
@@ -199,7 +199,8 @@ class RateTable extends Component {
       fields: {},
       isNotData: "",
       sloding: false,
-      commodityname: ""
+      commodityname: "",
+      mywaycomment: "",
     };
 
     this.togglePODModal = this.togglePODModal.bind(this);
@@ -227,8 +228,8 @@ class RateTable extends Component {
       method: "post",
       url: `${appSettings.APIURL}/TruckTypeListDropdown`,
 
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       var data = response.data.Table;
       self.setState({ TruckType: data });
     });
@@ -265,7 +266,7 @@ class RateTable extends Component {
                   : "",
               POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
               Address: paramData.fields.pol,
-              IsFilter: true
+              IsFilter: true,
             });
             this.state.podArray.push({
               POD:
@@ -280,7 +281,7 @@ class RateTable extends Component {
                   : "",
               PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
               Address: paramData.fields.pod,
-              IsFilter: true
+              IsFilter: true,
             });
             this.state.polFilterArray.push({
               POL:
@@ -298,7 +299,7 @@ class RateTable extends Component {
                 paramData.fields.pol == ""
                   ? paramData.polfullAddData.OceanPortLongName
                   : paramData.fields.pol,
-              IsFilter: true
+              IsFilter: true,
             });
             this.state.podFilterArray.push({
               POD:
@@ -316,7 +317,7 @@ class RateTable extends Component {
                 paramData.fields.pod == ""
                   ? paramData.podfullAddData.OceanPortLongName
                   : paramData.fields.pod,
-              IsFilter: true
+              IsFilter: true,
             });
           }
           if (paramData.typesofMove === "d2p") {
@@ -324,7 +325,7 @@ class RateTable extends Component {
               POL: "",
               POLGeoCordinate: paramData.OriginGeoCordinates,
               Address: paramData.puAdd,
-              IsFilter: true
+              IsFilter: true,
             });
             this.state.podArray.push({
               POD:
@@ -339,13 +340,13 @@ class RateTable extends Component {
                   : "",
               PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
               Address: paramData.fields.pod,
-              IsFilter: true
+              IsFilter: true,
             });
             this.state.polFilterArray.push({
               POL: "",
               POLGeoCordinate: paramData.OriginGeoCordinates,
               Address: paramData.puAdd,
-              IsFilter: true
+              IsFilter: true,
             });
             this.state.podFilterArray.push({
               POD:
@@ -360,7 +361,7 @@ class RateTable extends Component {
                   : "",
               PODGeoCordinate: paramData.podfullAddData.GeoCoordinate,
               Address: paramData.fields.pod,
-              IsFilter: true
+              IsFilter: true,
             });
           }
           if (paramData.typesofMove === "d2d") {
@@ -368,25 +369,25 @@ class RateTable extends Component {
               POL: "",
               POLGeoCordinate: paramData.OriginGeoCordinates,
               Address: paramData.puAdd,
-              IsFilter: true
+              IsFilter: true,
             });
             this.state.podArray.push({
               POD: "",
               PODGeoCordinate: paramData.DestGeoCordinate,
               Address: paramData.DeliveryCity,
-              IsFilter: true
+              IsFilter: true,
             });
             this.state.polFilterArray.push({
               POL: "",
               POLGeoCordinate: paramData.OriginGeoCordinates,
               Address: paramData.puAdd,
-              IsFilter: true
+              IsFilter: true,
             });
             this.state.podFilterArray.push({
               POD: "",
               PODGeoCordinate: paramData.DestGeoCordinate,
               Address: paramData.DeliveryCity,
-              IsFilter: true
+              IsFilter: true,
             });
           }
           if (paramData.typesofMove === "p2d") {
@@ -403,13 +404,13 @@ class RateTable extends Component {
                   : "",
               POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
               Address: paramData.fields.pol,
-              IsFilter: true
+              IsFilter: true,
             });
             this.state.podArray.push({
               POD: "",
               PODGeoCordinate: paramData.DestGeoCordinate,
               Address: paramData.DeliveryCity,
-              IsFilter: true
+              IsFilter: true,
             });
             this.state.polFilterArray.push({
               POL:
@@ -424,13 +425,13 @@ class RateTable extends Component {
                   : "",
               POLGeoCordinate: paramData.polfullAddData.GeoCoordinate,
               Address: paramData.fields.pol,
-              IsFilter: true
+              IsFilter: true,
             });
             this.state.podFilterArray.push({
               POD: "",
               PODGeoCordinate: paramData.DestGeoCordinate,
               Address: paramData.DeliveryCity,
-              IsFilter: true
+              IsFilter: true,
             });
           }
 
@@ -479,7 +480,7 @@ class RateTable extends Component {
                 ? false
                 : paramData.Custom_Clearance,
             containerLoadType: paramData.containerLoadType,
-            users: paramData.users
+            users: paramData.users,
           });
           if (this.props.location.state.PageName) {
             var polAddress = paramData.polfullAddData;
@@ -539,7 +540,7 @@ class RateTable extends Component {
               mapPositionPOL: polmarkerData,
               markerPositionPOD: podmarkerData,
               polfullAddData: paramData.polfullAddData,
-              podfullAddData: paramData.podfullAddData
+              podfullAddData: paramData.podfullAddData,
             });
             this.HandleMultiPOLPODFilter();
           } else {
@@ -564,7 +565,7 @@ class RateTable extends Component {
       modalPOD: !this.state.modalPOD,
       multiFields: {},
       errorPOD: "",
-      polpodDataAdd: []
+      polpodDataAdd: [],
     });
   }
   togglePOLModal() {
@@ -572,18 +573,18 @@ class RateTable extends Component {
       modalPOL: !this.state.modalPOL,
       multiFields: {},
       errorPOL: "",
-      polpodDataAdd: []
+      polpodDataAdd: [],
     });
   }
   toggleQuant() {
-    this.setState(prevState => ({
-      modalQuant: !prevState.modalQuant
+    this.setState((prevState) => ({
+      modalQuant: !prevState.modalQuant,
     }));
   }
 
   toggleQuantQuantity(paramData) {
-    this.setState(prevState => ({
-      modalQuant: !prevState.modalQuant
+    this.setState((prevState) => ({
+      modalQuant: !prevState.modalQuant,
     }));
     this.HandleRateDetailsFCL(paramData);
   }
@@ -593,7 +594,7 @@ class RateTable extends Component {
     this.setState(() => ({
       loading: true,
       polFilterArray: this.state.polFilterArray,
-      modalPOL: !this.state.modalPOL
+      modalPOL: !this.state.modalPOL,
       //modalQuant: !prevState.modalQuant
     }));
     // }
@@ -606,7 +607,7 @@ class RateTable extends Component {
     this.setState(() => ({
       loading: true,
       podFilterArray: this.state.podFilterArray,
-      modalPOD: !this.state.modalPOD
+      modalPOD: !this.state.modalPOD,
       //modalQuant: !prevState.modalQuant
     }));
     // }
@@ -635,7 +636,7 @@ class RateTable extends Component {
         if (this.state.polFilterArray[i].IsFilter == true) {
           multiPOL.push({
             POL: this.state.polFilterArray[i].POL,
-            POLGeoCordinate: this.state.polFilterArray[i].POLGeoCordinate
+            POLGeoCordinate: this.state.polFilterArray[i].POLGeoCordinate,
           });
         }
       }
@@ -643,7 +644,7 @@ class RateTable extends Component {
         if (this.state.podFilterArray[i].IsFilter == true) {
           multiPOD.push({
             POD: this.state.podFilterArray[i].POD,
-            PODGeoCordinate: this.state.podFilterArray[i].PODGeoCordinate
+            PODGeoCordinate: this.state.podFilterArray[i].PODGeoCordinate,
           });
         }
       }
@@ -654,7 +655,7 @@ class RateTable extends Component {
           polArray += sdata[i].OriginPort_ID + ",";
           multiPOL.push({
             POL: sdata[i].OriginPort_ID,
-            POLGeoCordinate: sdata[i].POLGeoCordinate
+            POLGeoCordinate: sdata[i].POLGeoCordinate,
           });
         }
       }
@@ -663,7 +664,7 @@ class RateTable extends Component {
           podArray += sdata[i].DestinationPort_ID + ",";
           multiPOD.push({
             POD: sdata[i].DestinationPort_ID,
-            PODGeoCordinate: sdata[i].PODGeoCordinate
+            PODGeoCordinate: sdata[i].PODGeoCordinate,
           });
         }
       }
@@ -679,7 +680,7 @@ class RateTable extends Component {
             Type: this.state.users[i].ContainerName,
             ContainerQuantity: this.state.users[i].ContainerQuantity,
             Temperature: this.state.users[i].Temperature,
-            TemperatureType: ""
+            TemperatureType: "",
           });
         }
       }
@@ -728,7 +729,7 @@ class RateTable extends Component {
       baseCurrency = this.props.location.state.currencyCode;
       this.setState({ currencyCode: baseCurrency });
     }
-
+    
     var newcurrencyCode = window.localStorage.getItem("currencyCode");
     var NewselectedCurrency = "";
 
@@ -742,6 +743,7 @@ class RateTable extends Component {
       NewselectedCurrency = this.state.currencyCode;
     }
 
+    this.setState({ currencyCode: NewselectedCurrency });
     axios({
       method: "post",
       url: `${appSettings.APIURL}/RateSearchQueryMutiplePOD`,
@@ -766,25 +768,25 @@ class RateTable extends Component {
           Country: "",
           State: "",
           City: "",
-          ZipCode: 0
+          ZipCode: 0,
         },
         DestinationAddressDetails: {
           Street: "",
           Country: "",
           State: "",
           City: "",
-          ZipCode: 0
+          ZipCode: 0,
         },
 
         HazMat: this.state.HazMat == true ? 1 : 0,
         CustomClearance: this.state.Custom_Clearance == true ? 1 : 0,
         NonStackable: this.state.NonStackable == true ? 1 : 0,
         IsSearchFromSpotRate: this.state.IsSearchFromSpotRate,
-        RatequeryID: this.state.RatequeryID
+        RatequeryID: this.state.RatequeryID,
       },
-      headers: authHeader()
+      headers: authHeader(),
     })
-      .then(function(response) {
+      .then(function (response) {
         var ratetable = response.data.Table;
         var ratetable1 = response.data.Table1;
         var commodityData = response.data.Table2;
@@ -815,23 +817,23 @@ class RateTable extends Component {
               MinAmt: Math.min(...AmtArray),
               MaxAmt: Math.max(...AmtArray),
               value: Math.max(...MaxTTArray),
-              valueAmt: Math.max(...AmtArray)
+              valueAmt: Math.max(...AmtArray),
             });
           }
           if (ratetable1 != null) {
             self.setState({
-              RateSubDetails: ratetable1
+              RateSubDetails: ratetable1,
             });
           }
         } else {
           self.setState({
             // RateDetails:[],
             // RateSubDetails:[],
-            loading: false
+            loading: false,
           });
         }
       })
-      .catch(response => {
+      .catch((response) => {
         // self.setState({ loading: false, RateDetails: [], RateSubDetails: [] });
         self.setState({ loading: false });
       });
@@ -839,11 +841,68 @@ class RateTable extends Component {
   }
 
   handleCheck() {
+    
     if (this.state.selectedDataRow.length != 0) {
-      this.props.history.push({
-        pathname: "rate-finalizing",
-        state: this.state
-      });
+      
+      if (this.state.isNotData !== "") {
+        var data = this.state.isNotData.split(",");
+
+        if (data.length > 0) {
+          for (let j = 0; j < data.length; j++) {
+            for (let k = 0; k < this.state.Containerdetails.length; k++) {
+              if (
+                this.state.Containerdetails[k].ContainerName === data[j].trim()
+              ) {
+                this.state.Containerdetails.splice(k, 1);
+                break;
+              }
+            }
+            if (this.state.referType.length > 0) {
+              for (let k = 0; k < this.state.referType.length; k++) {
+                if (this.state.referType[k].ContainerName === data[j].trim()) {
+                  this.state.referType.splice(k, 1);
+                  break;
+                }
+              }
+            }
+            // if (this.state.flattack_openTop.length > 0) {
+            //   for (let k = 0; k < this.state.Containerdetails.length; k++) {
+            //     for (let j = 0; j < this.state.flattack_openTop.length; j++) {
+            //       if (
+            //         this.state.flattack_openTop[j].ContainerName ===
+            //         this.state.Containerdetails[k].ContainerName
+            //       ) {
+            //         this.setState({
+            //           flattack_openTop: this.state.flattack_openTop,
+            //         });
+            //       } else {
+            //         this.setState({
+            //           // flattack_openTop: [],
+            //         });
+            //       }
+            //     }
+            //   }
+            // }
+          }
+        }
+
+        this.setState({
+          Containerdetails: this.state.Containerdetails,
+          referType: this.state.referType,
+          // flattack_openTop: this.state.flattack_openTop,
+        });
+        setTimeout(() => {
+          this.props.history.push({
+            pathname: "rate-finalizing",
+            state: this.state,
+          });
+        }, 1000);
+      } else {
+        this.props.history.push({
+          pathname: "rate-finalizing",
+          state: this.state,
+        });
+      }
     } else {
       store.addNotification({
         // title: "Error",
@@ -851,8 +910,8 @@ class RateTable extends Component {
         type: "danger", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
     }
   }
@@ -862,11 +921,11 @@ class RateTable extends Component {
     newSelected[RateLineID] = !this.state.cSelectedRow[RateLineID];
     var BuyRate = 0;
     this.setState({
-      cSelectedRow: RateLineID ? newSelected : false
+      cSelectedRow: RateLineID ? newSelected : false,
     });
     var selectedRow = [];
     var rateSubDetails = this.state.RateSubDetails.filter(
-      d => d.RateLineID === RateLineID
+      (d) => d.RateLineID === RateLineID
     );
     var profitLossAmt = 0;
     var profitLossAmt1 = this.state.profitLossAmt;
@@ -894,7 +953,7 @@ class RateTable extends Component {
       this.setState({
         selectedDataRow: selectedRow,
         profitLossAmt: finalprofitLossAmt,
-        profitLossPer: finalprofitLossPer
+        profitLossPer: finalprofitLossPer,
       });
     } else {
       if (newSelected[RateLineID] === true) {
@@ -924,7 +983,7 @@ class RateTable extends Component {
         }
 
         if (selectedRow.length > 0) {
-          aTotalAmount = selectedRow.reduce(function(prev, cur) {
+          aTotalAmount = selectedRow.reduce(function (prev, cur) {
             return prev + cur.TotalAmount;
           }, 0);
         } else {
@@ -937,7 +996,7 @@ class RateTable extends Component {
         var finalprofitLossPer = profitLossPer;
         this.setState({
           profitLossAmt: finalprofitLossAmt,
-          profitLossPer: finalprofitLossPer
+          profitLossPer: finalprofitLossPer,
         });
       } else {
         var RateLineID = 0;
@@ -961,7 +1020,7 @@ class RateTable extends Component {
           }
         }
         if (selectedRow.length > 0) {
-          aTotalAmount = selectedRow.reduce(function(prev, cur) {
+          aTotalAmount = selectedRow.reduce(function (prev, cur) {
             return prev + cur.TotalAmount;
           }, 0);
         } else {
@@ -978,12 +1037,12 @@ class RateTable extends Component {
         var finalprofitLossPer = profitLossPer;
         this.setState({
           profitLossAmt: finalprofitLossAmt,
-          profitLossPer: finalprofitLossPer
+          profitLossPer: finalprofitLossPer,
         });
       }
     }
     this.setState({
-      selectedDataRow: selectedRow
+      selectedDataRow: selectedRow,
     });
   }
 
@@ -1000,14 +1059,14 @@ class RateTable extends Component {
       Country: "",
       State: "",
       City: "",
-      ZipCode: ""
+      ZipCode: "",
     };
     var destUpAddress = {
       Street: "",
       Country: "",
       State: "",
       City: "",
-      ZipCode: ""
+      ZipCode: "",
     };
     if (paramData.isSearch) {
       var rTypeofMove =
@@ -1103,7 +1162,7 @@ class RateTable extends Component {
         mapPositionPOL: polmarkerData,
         markerPositionPOD: podmarkerData,
         users: paramData.users,
-        selected: paramData.selected
+        selected: paramData.selected,
       });
 
       var selectedPOL =
@@ -1187,7 +1246,7 @@ class RateTable extends Component {
             : paramData.fullAddressPOD[0].City,
         Currency: NewselectedCurrency,
 
-        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+        MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc"),
       };
 
       if (
@@ -1312,7 +1371,7 @@ class RateTable extends Component {
         companyAddress: paramData.companyAddress,
         contactName: paramData.contactName,
         contactEmail: paramData.contactEmail,
-        loading: true
+        loading: true,
       });
     }
 
@@ -1321,9 +1380,9 @@ class RateTable extends Component {
       method: "post",
       url: `${appSettings.APIURL}/RateSearchQuery`,
       data: dataParameter,
-      headers: authHeader()
+      headers: authHeader(),
     })
-      .then(function(response) {
+      .then(function (response) {
         var ratetable = response.data.Table;
         var ratetable1 = response.data.Table1;
         var ratetable2 = response.data.Table2;
@@ -1331,6 +1390,17 @@ class RateTable extends Component {
         if (response.data.Table3) {
           var isNotData = response.data.Table3[0].Message;
           self.setState({ isNotData });
+          if (isNotData !== "") {
+            store.addNotification({
+              // title: "Error",
+              message: "Record Not Found " + isNotData,
+              type: "warning", // 'default', 'success', 'info', 'warning','danger'
+              container: "top-right", // where to position the notifications
+              dismiss: {
+                duration: appSettings.NotficationTime,
+              },
+            });
+          }
         }
 
         if (ratetable.length > 0) {
@@ -1355,12 +1425,12 @@ class RateTable extends Component {
               MinAmt: Math.min(...AmtArray),
               MaxAmt: Math.max(...AmtArray),
               value: Math.max(...MaxTTArray),
-              valueAmt: Math.max(...AmtArray)
+              valueAmt: Math.max(...AmtArray),
             });
           }
           if (ratetable1 != null) {
             self.setState({
-              RateSubDetails: ratetable1
+              RateSubDetails: ratetable1,
             });
           }
         } else {
@@ -1373,13 +1443,13 @@ class RateTable extends Component {
             MinAmt: 0,
             MaxAmt: 0,
             value: 0,
-            valueAmt: 0
+            valueAmt: 0,
           });
         }
 
         self.setState({ loading: false });
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.response) {
           var temperror = error.response.data;
           var err = temperror.split(":");
@@ -1389,8 +1459,8 @@ class RateTable extends Component {
             type: "danger", // 'default', 'success', 'info', 'warning','danger'
             container: "top-right", // where to position the notifications
             dismiss: {
-              duration: appSettings.NotficationTime
-            }
+              duration: appSettings.NotficationTime,
+            },
           });
         }
 
@@ -1405,7 +1475,7 @@ class RateTable extends Component {
       if (this.state.polFilterArray[i].IsFilter == true) {
         this.state.mapPositionPOL.push({
           lat: Number(geoCoordinate.split(",")[0]),
-          lng: Number(geoCoordinate.split(",")[1])
+          lng: Number(geoCoordinate.split(",")[1]),
         });
       } else {
         for (var j = 0; j < this.state.mapPositionPOL.length; j++) {
@@ -1425,7 +1495,7 @@ class RateTable extends Component {
       this.setState({
         polFilterArray: this.state.polFilterArray,
         enablePOL: !this.state.enablePOL,
-        mapPositionPOL: this.state.mapPositionPOL
+        mapPositionPOL: this.state.mapPositionPOL,
       });
     } else {
       this.state.podFilterArray[i].IsFilter = !this.state.podFilterArray[i]
@@ -1433,7 +1503,7 @@ class RateTable extends Component {
       if (this.state.podFilterArray[i].IsFilter == true) {
         this.state.markerPositionPOD.push({
           lat: Number(geoCoordinate.split(",")[0]),
-          lng: Number(geoCoordinate.split(",")[1])
+          lng: Number(geoCoordinate.split(",")[1]),
         });
       } else {
         for (var j = 0; j < this.state.markerPositionPOD.length; j++) {
@@ -1453,7 +1523,7 @@ class RateTable extends Component {
       this.setState({
         podFilterArray: this.state.podFilterArray,
         enablePOD: !this.state.enablePOD,
-        markerPositionPOD: this.state.markerPositionPOD
+        markerPositionPOD: this.state.markerPositionPOD,
       });
     }
 
@@ -1469,23 +1539,23 @@ class RateTable extends Component {
   }
 
   addClickPOL() {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       valuesPOL: [
         ...prevState.valuesPOL,
         {
-          POL: ""
-        }
-      ]
+          POL: "",
+        },
+      ],
     }));
   }
   addClickPOD() {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       valuesPOD: [
         ...prevState.valuesPOD,
         {
-          POD: ""
-        }
-      ]
+          POD: "",
+        },
+      ],
     }));
   }
 
@@ -1504,19 +1574,19 @@ class RateTable extends Component {
               <ReactAutocomplete
                 key={index}
                 name={"POL" + (index + 1)}
-                getItemValue={item => item.AirportLongName}
+                getItemValue={(item) => item.AirportLongName}
                 items={this.state.polpodData}
                 renderItem={(item, isHighlighted) => (
                   <div
                     style={{
-                      background: isHighlighted ? "lightgray" : "white"
+                      background: isHighlighted ? "lightgray" : "white",
                     }}
                     value={item.AirPortID}
                   >
                     {item.AirportLongName}
                   </div>
                 )}
-                renderInput={function(props) {
+                renderInput={function (props) {
                   return (
                     <input
                       id={"POLid" + (index + 1)}
@@ -1534,7 +1604,7 @@ class RateTable extends Component {
                 )}
                 onSelect={this.HandleAddressDropdownPolSelect.bind(
                   this,
-                  item => item.NameWoDiacritics,
+                  (item) => item.NameWoDiacritics,
                   "pol" + (index + 1),
                   index + 1
                 )}
@@ -1542,19 +1612,19 @@ class RateTable extends Component {
               />
             ) : (
               <ReactAutocomplete
-                getItemValue={item => item.Address}
+                getItemValue={(item) => item.Address}
                 items={this.state.polpodData}
                 renderItem={(item, isHighlighted) => (
                   <div
                     style={{
-                      background: isHighlighted ? "lightgray" : "white"
+                      background: isHighlighted ? "lightgray" : "white",
                     }}
                     value={item.Address}
                   >
                     {item.Address}
                   </div>
                 )}
-                renderInput={function(props) {
+                renderInput={function (props) {
                   return (
                     <input
                       placeholder="Enter PU Address"
@@ -1567,7 +1637,7 @@ class RateTable extends Component {
                 onChange={this.HandlePUPDAddress.bind(this, "MultiPUAddress")}
                 onSelect={this.HandleAddressDropdownSelect.bind(
                   this,
-                  item => item.NameWoDiacritics,
+                  (item) => item.NameWoDiacritics,
                   "MultiPUAddress"
                 )}
                 value={this.state.fields["MultiPUAddress"]}
@@ -1602,19 +1672,19 @@ class RateTable extends Component {
               <ReactAutocomplete
                 key={index}
                 name={"POL" + (index + 1)}
-                getItemValue={item => item.OceanPortLongName}
+                getItemValue={(item) => item.OceanPortLongName}
                 items={this.state.polpodData}
                 renderItem={(item, isHighlighted) => (
                   <div
                     style={{
-                      background: isHighlighted ? "lightgray" : "white"
+                      background: isHighlighted ? "lightgray" : "white",
                     }}
                     value={item.AirPortID}
                   >
                     {item.OceanPortLongName}
                   </div>
                 )}
-                renderInput={function(props) {
+                renderInput={function (props) {
                   return (
                     <input
                       id={"POLid" + (index + 1)}
@@ -1634,7 +1704,7 @@ class RateTable extends Component {
                 //menuStyle={this.state.menuStyle}
                 onSelect={this.HandleAddressDropdownPolSelect.bind(
                   this,
-                  item => item.NameWoDiacritics,
+                  (item) => item.NameWoDiacritics,
                   "pol" + (index + 1),
                   index + 1
                 )}
@@ -1642,19 +1712,19 @@ class RateTable extends Component {
               />
             ) : (
               <ReactAutocomplete
-                getItemValue={item => item.Address}
+                getItemValue={(item) => item.Address}
                 items={this.state.polpodData}
                 renderItem={(item, isHighlighted) => (
                   <div
                     style={{
-                      background: isHighlighted ? "lightgray" : "white"
+                      background: isHighlighted ? "lightgray" : "white",
                     }}
                     value={item.Address}
                   >
                     {item.Address}
                   </div>
                 )}
-                renderInput={function(props) {
+                renderInput={function (props) {
                   return (
                     <input
                       placeholder="Enter PU Address"
@@ -1668,7 +1738,7 @@ class RateTable extends Component {
                 //menuStyle={this.state.menuStyle}
                 onSelect={this.HandleAddressDropdownSelect.bind(
                   this,
-                  item => item.NameWoDiacritics,
+                  (item) => item.NameWoDiacritics,
                   "MultiPUAddress"
                 )}
                 value={this.state.fields["MultiPUAddress"]}
@@ -1709,19 +1779,19 @@ class RateTable extends Component {
               <ReactAutocomplete
                 key={index + 1}
                 name={"POD" + (index + 1)}
-                getItemValue={item => item.AirportLongName}
+                getItemValue={(item) => item.AirportLongName}
                 items={this.state.polpodDataAdd}
                 renderItem={(item, isHighlighted) => (
                   <div
                     style={{
-                      background: isHighlighted ? "lightgray" : "white"
+                      background: isHighlighted ? "lightgray" : "white",
                     }}
                     value={item.AirPortID}
                   >
                     {item.AirportLongName}
                   </div>
                 )}
-                renderInput={function(props) {
+                renderInput={function (props) {
                   return (
                     <input
                       placeholder="Enter POD"
@@ -1739,7 +1809,7 @@ class RateTable extends Component {
                 //menuStyle={this.state.menuStyle}
                 onSelect={this.HandleAddressDropdownPolSelect.bind(
                   this,
-                  item => item.NameWoDiacritics,
+                  (item) => item.NameWoDiacritics,
                   "pod" + (index + 1),
                   index + 1
                 )}
@@ -1747,19 +1817,19 @@ class RateTable extends Component {
               />
             ) : (
               <ReactAutocomplete
-                getItemValue={item => item.Address}
+                getItemValue={(item) => item.Address}
                 items={this.state.polpodDataAdd}
                 renderItem={(item, isHighlighted) => (
                   <div
                     style={{
-                      background: isHighlighted ? "lightgray" : "white"
+                      background: isHighlighted ? "lightgray" : "white",
                     }}
                     value={item.Address}
                   >
                     {item.Address}
                   </div>
                 )}
-                renderInput={function(props) {
+                renderInput={function (props) {
                   return (
                     <input
                       placeholder="Enter PD Address"
@@ -1773,7 +1843,7 @@ class RateTable extends Component {
                 //menuStyle={this.state.menuStyle}
                 onSelect={this.HandleAddressDropdownSelect.bind(
                   this,
-                  item => item.NameWoDiacritics,
+                  (item) => item.NameWoDiacritics,
                   "MultiPDAddress"
                 )}
                 value={this.state.fields["MultiPDAddress"]}
@@ -1808,19 +1878,19 @@ class RateTable extends Component {
               <ReactAutocomplete
                 key={index + 1}
                 name={"POD" + (index + 1)}
-                getItemValue={item => item.OceanPortLongName}
+                getItemValue={(item) => item.OceanPortLongName}
                 items={this.state.polpodDataAdd}
                 renderItem={(item, isHighlighted) => (
                   <div
                     style={{
-                      background: isHighlighted ? "lightgray" : "white"
+                      background: isHighlighted ? "lightgray" : "white",
                     }}
                     value={item.AirPortID}
                   >
                     {item.OceanPortLongName}
                   </div>
                 )}
-                renderInput={function(props) {
+                renderInput={function (props) {
                   return (
                     <input
                       placeholder="Enter POD"
@@ -1838,7 +1908,7 @@ class RateTable extends Component {
                 //menuStyle={this.state.menuStyle}
                 onSelect={this.HandleAddressDropdownPolSelect.bind(
                   this,
-                  item => item.NameWoDiacritics,
+                  (item) => item.NameWoDiacritics,
                   "pod" + (index + 1),
                   index + 1
                 )}
@@ -1846,19 +1916,19 @@ class RateTable extends Component {
               />
             ) : (
               <ReactAutocomplete
-                getItemValue={item => item.Address}
+                getItemValue={(item) => item.Address}
                 items={this.state.polpodDataAdd}
                 renderItem={(item, isHighlighted) => (
                   <div
                     style={{
-                      background: isHighlighted ? "lightgray" : "white"
+                      background: isHighlighted ? "lightgray" : "white",
                     }}
                     value={item.Address}
                   >
                     {item.Address}
                   </div>
                 )}
-                renderInput={function(props) {
+                renderInput={function (props) {
                   return (
                     <input
                       placeholder="Enter PD Address"
@@ -1872,7 +1942,7 @@ class RateTable extends Component {
                 //menuStyle={this.state.menuStyle}
                 onSelect={this.HandleAddressDropdownSelect.bind(
                   this,
-                  item => item.NameWoDiacritics,
+                  (item) => item.NameWoDiacritics,
                   "MultiPDAddress"
                 )}
                 value={this.state.fields["MultiPDAddress"]}
@@ -1911,7 +1981,7 @@ class RateTable extends Component {
 
   //// start refer type  dynamic element
   addClickSpecial(optionVal) {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       referType: [
         ...prevState.referType,
         {
@@ -1920,9 +1990,9 @@ class RateTable extends Component {
           StandardContainerCode: optionVal.SpecialContainerCode,
           ContainerQuantity: 0,
           Temperature: 0,
-          TemperatureType: ""
-        }
-      ]
+          TemperatureType: "",
+        },
+      ],
     }));
   }
 
@@ -2020,24 +2090,24 @@ class RateTable extends Component {
         } else {
           referType[i] = {
             ...referType[i],
-            [name]: value
+            [name]: value,
           };
         }
       }
     } else if (name === "TemperatureTypeC") {
       referType[i] = {
         ...referType[i],
-        ["TemperatureType"]: "C"
+        ["TemperatureType"]: "C",
       };
     } else if (name === "TemperatureTypeF") {
       referType[i] = {
         ...referType[i],
-        ["TemperatureType"]: "F"
+        ["TemperatureType"]: "F",
       };
     } else {
       referType[i] = {
         ...referType[i],
-        [name]: parseFloat(value)
+        [name]: parseFloat(value),
       };
     }
     this.setState({ referType });
@@ -2156,7 +2226,7 @@ class RateTable extends Component {
     let flattack_openTop = [...this.state.flattack_openTop];
     flattack_openTop[i] = {
       ...flattack_openTop[i],
-      [name]: parseFloat(value)
+      [name]: parseFloat(value),
     };
 
     this.setState({ flattack_openTop });
@@ -2169,19 +2239,19 @@ class RateTable extends Component {
     if (decVolumeWeight > parseFloat(flattack_openTop[i].Gross_Weight)) {
       flattack_openTop[i] = {
         ...flattack_openTop[i],
-        ["total"]: parseFloat(decVolumeWeight)
+        ["total"]: parseFloat(decVolumeWeight),
       };
     } else {
       flattack_openTop[i] = {
         ...flattack_openTop[i],
-        ["total"]: parseFloat(flattack_openTop[i].Gross_Weight)
+        ["total"]: parseFloat(flattack_openTop[i].Gross_Weight),
       };
     }
 
     this.setState({ flattack_openTop });
   }
   addClickMultiCBM(optionsVal) {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       flattack_openTop: [
         ...prevState.flattack_openTop,
         {
@@ -2191,11 +2261,11 @@ class RateTable extends Component {
           height: "",
           Quantity: "",
           Gross_Weight: "",
-          total: ""
-        }
-      ]
+          total: "",
+        },
+      ],
     }));
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       multiCBM: [
         ...prevState.multiCBM,
         {
@@ -2206,9 +2276,9 @@ class RateTable extends Component {
           Height: "",
           GrossWt: "",
           VolumeWeight: "",
-          Volume: ""
-        }
-      ]
+          Volume: "",
+        },
+      ],
     }));
   }
   removeClickMultiCBM(i) {
@@ -2255,40 +2325,40 @@ class RateTable extends Component {
           this.setState({ specialEquipment: true, isSpacialEqt: false });
         } else {
           this.setState({ selected: e });
-          this.setState(prevState => ({
+          this.setState((prevState) => ({
             users: [
               ...prevState.users,
               {
                 ContainerName: option.option.ContainerName,
                 ProfileCodeID: option.option.ProfileCodeID,
                 StandardContainerCode: option.option.StandardContainerCode,
-                ContainerQuantity: 0,
+                ContainerQuantity: 1,
                 Temperature: 0,
-                TemperatureType: ""
-              }
-            ]
+                TemperatureType: "",
+              },
+            ],
           }));
         }
       } else {
-        let difference = this.state.selected.filter(x => !e.includes(x));
+        let difference = this.state.selected.filter((x) => !e.includes(x));
         if (difference.length === 0) {
           if (option.option.ContainerName === "Special Equipment") {
             this.setState({
               specialEquipment: true,
-              isSpacialEqt: false
+              isSpacialEqt: false,
             });
           } else {
             this.setState({ selected: e });
-            this.setState(prevState => ({
+            this.setState((prevState) => ({
               users: [
                 ...prevState.users,
                 {
                   ContainerName: option.option.ContainerName,
                   ProfileCodeID: option.option.ProfileCodeID,
                   StandardContainerCode: option.option.StandardContainerCode,
-                  ContainerQuantity: 0
-                }
-              ]
+                  ContainerQuantity: 1,
+                },
+              ],
             }));
           }
         } else {
@@ -2297,7 +2367,7 @@ class RateTable extends Component {
     } else {
       this.setState({
         selected: [],
-        users: []
+        users: [],
       });
     }
   }
@@ -2307,7 +2377,7 @@ class RateTable extends Component {
     let users = [...this.state.users];
     users[i] = {
       ...users[i],
-      [name]: name === "ContainerQuantity" ? parseFloat(value) : 0
+      [name]: name === "ContainerQuantity" ? parseFloat(value) : 0,
     };
     this.setState({ users });
   }
@@ -2325,7 +2395,7 @@ class RateTable extends Component {
     this.setState({ users, selected });
   }
   //// end For Equipment to create element
-  specEquipChange = value => {
+  specEquipChange = (value) => {
     var difference = false;
     for (var i = 0; i < this.state.referType.length; i++) {
       if (
@@ -2358,7 +2428,7 @@ class RateTable extends Component {
     if (value.IsVolumeRequired === 1) {
       if (difference1 === false) {
         this.setState({
-          specialEqtSelect: true
+          specialEqtSelect: true,
         });
         this.addClickMultiCBM(value);
 
@@ -2368,7 +2438,7 @@ class RateTable extends Component {
     if (value.IsTemperatureRequired === 1) {
       if (difference === false) {
         this.setState({
-          refertypeSelect: true
+          refertypeSelect: true,
         });
         this.addClickSpecial(value);
       }
@@ -2377,7 +2447,7 @@ class RateTable extends Component {
     if (value.IsTemperatureRequired === 0 && value.IsVolumeRequired === 0) {
       if (difference2 === false) {
         this.setState({
-          spacEqmtTypeSelect: true
+          spacEqmtTypeSelect: true,
         });
 
         this.addSpacEqmtType(value);
@@ -2388,7 +2458,7 @@ class RateTable extends Component {
   //// start  spacEqmtType dyamanic element
 
   addSpacEqmtType(optionVal) {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       spacEqmtType: [
         ...prevState.spacEqmtType,
         {
@@ -2397,9 +2467,9 @@ class RateTable extends Component {
           StandardContainerCode: optionVal.SpecialContainerCode,
           Quantity: 1,
           Temperature: 0,
-          TemperatureType: ""
-        }
-      ]
+          TemperatureType: "",
+        },
+      ],
     }));
   }
 
@@ -2438,7 +2508,7 @@ class RateTable extends Component {
     let spacEqmtType = [...this.state.spacEqmtType];
     spacEqmtType[i] = {
       ...spacEqmtType[i],
-      [name]: parseFloat(value)
+      [name]: parseFloat(value),
     };
     this.setState({ spacEqmtType });
   }
@@ -2469,8 +2539,8 @@ class RateTable extends Component {
       method: "post",
       url: `${appSettings.APIURL}/CommodityDropdown`,
 
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       var data = response.data.Table;
       self.setState({ commodityData: data });
     });
@@ -2500,8 +2570,8 @@ class RateTable extends Component {
       usertype = "Sales User";
       this.setState({ usertype });
     }
-    this.setState(prevState => ({
-      modalSpot: !prevState.modalSpot
+    this.setState((prevState) => ({
+      modalSpot: !prevState.modalSpot,
     }));
   }
   toggleSpotCloseModal() {
@@ -2529,24 +2599,24 @@ class RateTable extends Component {
               ? "I"
               : "",
           Search: multiFields[field],
-          CountryCode: ""
+          CountryCode: "",
         },
-        headers: authHeader()
+        headers: authHeader(),
       })
-        .then(function(response) {
+        .then(function (response) {
           if (field === "pol" + i) {
             self.setState({
               polpodData: response.data.Table,
-              multiFields
+              multiFields,
             });
           } else {
             self.setState({
               polpodDataAdd: response.data.Table,
-              multiFields
+              multiFields,
             });
           }
         })
-        .catch(error => {
+        .catch((error) => {
           multiFields[field] = "";
           var errorData = error.response.data;
           var err = errorData.split(":");
@@ -2556,7 +2626,7 @@ class RateTable extends Component {
     } else {
       self.setState({
         multiFields,
-        polpodData: []
+        polpodData: [],
       });
     }
   }
@@ -2583,7 +2653,7 @@ class RateTable extends Component {
           PositionPOL.lng = parseFloat(geoCoordinate[1]);
           this.state.mapPositionPOL.push({
             lat: PositionPOL.lat,
-            lng: PositionPOL.lng
+            lng: PositionPOL.lng,
           });
 
           if (this.state.isViewRate == true) {
@@ -2596,7 +2666,7 @@ class RateTable extends Component {
                   : id.UNECECode !== "" && id.UNECECode !== undefined
                   ? id.UNECECode
                   : "",
-              POLGeoCordinate: id.GeoCoordinate
+              POLGeoCordinate: id.GeoCoordinate,
             });
           }
           this.state.polArray.push({
@@ -2610,14 +2680,14 @@ class RateTable extends Component {
                 : "",
             POLGeoCordinate: id.GeoCoordinate,
             Address: value,
-            IsFilter: true
+            IsFilter: true,
           });
           this.setState({
             polfullAddData: id,
             multiFields,
             errorPOL: "",
             mapPositionPOL: this.state.mapPositionPOL,
-            polArray: this.state.polArray
+            polArray: this.state.polArray,
           });
         }
       } else {
@@ -2625,7 +2695,7 @@ class RateTable extends Component {
         this.state.errorPOL = value + " already exist";
         this.setState({
           multiFields,
-          errorPOL: this.state.errorPOL
+          errorPOL: this.state.errorPOL,
         });
       }
     } else {
@@ -2645,7 +2715,7 @@ class RateTable extends Component {
           mapPositionPOD.lng = parseFloat(geoCoordinate[1]);
           this.state.markerPositionPOD.push({
             lat: mapPositionPOD.lat,
-            lng: mapPositionPOD.lng
+            lng: mapPositionPOD.lng,
           });
           if (this.state.isViewRate == true) {
             this.props.location.state.spotrateresponseTbl1.push({
@@ -2657,7 +2727,7 @@ class RateTable extends Component {
                   : id.UNECECode !== "" && id.UNECECode !== undefined
                   ? id.UNECECode
                   : "",
-              PODGeoCordinate: id.GeoCoordinate
+              PODGeoCordinate: id.GeoCoordinate,
             });
           }
           this.state.podArray.push({
@@ -2671,7 +2741,7 @@ class RateTable extends Component {
                 : "",
             PODGeoCordinate: id.GeoCoordinate,
             Address: value,
-            IsFilter: true
+            IsFilter: true,
           });
 
           this.setState({
@@ -2679,7 +2749,7 @@ class RateTable extends Component {
             multiFields,
             errorPOD: "",
             markerPositionPOD: this.state.markerPositionPOD,
-            podArray: this.state.podArray
+            podArray: this.state.podArray,
           });
         }
       } else {
@@ -2687,13 +2757,13 @@ class RateTable extends Component {
         this.state.errorPOD = value + " already exist";
         this.setState({
           multiFields,
-          errorPOD: this.state.errorPOD
+          errorPOD: this.state.errorPOD,
         });
       }
     }
   }
 
-  onPlaceSelected = place => {
+  onPlaceSelected = (place) => {
     var arrPOL = "";
     var arrPOD = "";
     for (let i = 0; i < this.state.polArray.length; i++) {
@@ -2721,31 +2791,31 @@ class RateTable extends Component {
         POL: "",
         POLGeoCordinate: originGeoCordinates,
         Address: address,
-        IsFilter: true
+        IsFilter: true,
       });
       this.setState({
-        polArray: this.state.polArray
+        polArray: this.state.polArray,
       });
       this.state.mapPositionPOL.push({
         lat: Number(latValue),
-        lng: Number(lngValue)
+        lng: Number(lngValue),
       });
       this.setState({
         markerPositionPOL: {
           lat: Number(latValue),
-          lng: Number(lngValue)
-        }
+          lng: Number(lngValue),
+        },
       });
     } else {
       //multiFields[field] = "";
       this.state.errorPOL = place.formatted_address + " already exist";
       this.setState({
-        errorPOL: this.state.errorPOL
+        errorPOL: this.state.errorPOL,
       });
     }
   };
 
-  onPlaceSelectedPOD = place => {
+  onPlaceSelectedPOD = (place) => {
     var arrPOD = "";
     var arrPOL = "";
     for (let i = 0; i < this.state.podArray.length; i++) {
@@ -2775,20 +2845,20 @@ class RateTable extends Component {
         POD: "",
         PODGeoCordinate: destGeoCordinate,
         Address: address,
-        IsFilter: true
+        IsFilter: true,
       });
 
       this.state.markerPositionPOD.push({
         lat: Number(latValue),
-        lng: Number(lngValue)
+        lng: Number(lngValue),
       });
       this.setState({
-        podArray: this.state.podArray
+        podArray: this.state.podArray,
       });
     } else {
       this.state.errorPOD = place.formatted_address + " already exist";
       this.setState({
-        errorPOD: this.state.errorPOD
+        errorPOD: this.state.errorPOD,
       });
     }
     //this.addressChange("", address);
@@ -2799,8 +2869,8 @@ class RateTable extends Component {
       // NOTE: this removes any FILTER ALL filter
       const filterAll = "";
       this.setState({
-        filtered: filtered.filter(item => item.id != "all"),
-        filterAll
+        filtered: filtered.filter((item) => item.id != "all"),
+        filterAll,
       });
     } else this.setState({ filtered });
   }
@@ -2808,7 +2878,7 @@ class RateTable extends Component {
     var CommodityID = parseInt(e.target.value);
     this.setState({
       loading: true,
-      CommodityID: CommodityID
+      CommodityID: CommodityID,
     });
     if (
       this.state.polFilterArray.length > 1 ||
@@ -2824,14 +2894,14 @@ class RateTable extends Component {
 
   custClearToggle() {
     this.setState({
-      Custom_Clearance: !this.state.Custom_Clearance
+      Custom_Clearance: !this.state.Custom_Clearance,
     });
   }
 
   HandleRangeSlider(event) {
     this.setState({
       value: parseInt(event.target.value),
-      valueAmt: this.state.MaxAmt
+      valueAmt: this.state.MaxAmt,
     });
 
     var filteredData = [];
@@ -2863,12 +2933,12 @@ class RateTable extends Component {
 
       this.setState({
         tempRateDetails: filteredData,
-        MinTT
+        MinTT,
       });
     } else {
       this.setState({
         tempRateDetails: [{ lineName: "No Record Found" }],
-        RateSubDetails: [{ ChargeDesc: "No Record Found" }]
+        RateSubDetails: [{ ChargeDesc: "No Record Found" }],
       });
     }
   }
@@ -2876,7 +2946,7 @@ class RateTable extends Component {
   HandleRangeAmtSlider(event) {
     this.setState({
       valueAmt: parseFloat(event.target.value),
-      value: this.state.MaxTT
+      value: this.state.MaxTT,
     });
 
     var filteredData = [];
@@ -2896,19 +2966,19 @@ class RateTable extends Component {
     if (filteredData.length > 0) {
       var MinAmt = Math.min.apply(
         null,
-        filteredData.map(function(item) {
+        filteredData.map(function (item) {
           return item.TotalAmount;
         })
       );
 
       this.setState({
         tempRateDetails: filteredData,
-        MinAmt
+        MinAmt,
       });
     } else {
       this.setState({
         tempRateDetails: [{ lineName: "No Record Found" }],
-        RateSubDetails: [{ ChargeDesc: "No Record Found" }]
+        RateSubDetails: [{ ChargeDesc: "No Record Found" }],
       });
     }
   }
@@ -2962,8 +3032,8 @@ class RateTable extends Component {
           type: "danger", // 'default', 'success', 'info', 'warning','danger'
           container: "top-right", // where to position the notifications
           dismiss: {
-            duration: appSettings.NotficationTime
-          }
+            duration: appSettings.NotficationTime,
+          },
         });
         return false;
       } else {
@@ -2980,7 +3050,7 @@ class RateTable extends Component {
             ? 0
             : parseInt(param.TruckTypeData[i].TruckID),
         TruckQty: param.TruckTypeData[i].Quantity,
-        TruckTypeDesc: param.TruckTypeData[i].TruckDesc
+        TruckTypeDesc: param.TruckTypeData[i].TruckDesc,
       });
     }
     if (param.multiCBM.length != 0) {
@@ -2993,7 +3063,7 @@ class RateTable extends Component {
           Height: param.multiCBM[i].Height || 0,
           GrossWt: param.multiCBM[i].GrossWt || 0,
           VolumeWeight: param.multiCBM[i].VolumeWeight || 0,
-          Volume: param.multiCBM[i].Volume || 0
+          Volume: param.multiCBM[i].Volume || 0,
         });
       }
     }
@@ -3006,7 +3076,7 @@ class RateTable extends Component {
           Type: param.users[i].ContainerName,
           ContainerQuantity: param.users[i].ContainerQuantity,
           Temperature: param.users[i].Temperature,
-          TempratureType: param.users[i].TemperatureType
+          TempratureType: param.users[i].TemperatureType,
         });
       }
     }
@@ -3019,7 +3089,7 @@ class RateTable extends Component {
           Type: param.spacEqmtType[i].ContainerName,
           ContainerQuantity: param.spacEqmtType[i].ContainerQuantity,
           Temperature: param.spacEqmtType[i].Temperature,
-          TempratureType: param.spacEqmtType[i].TemperatureType
+          TempratureType: param.spacEqmtType[i].TemperatureType,
         });
       }
     }
@@ -3031,7 +3101,7 @@ class RateTable extends Component {
           Type: param.referType[i].ContainerName,
           ContainerQuantity: param.referType[i].ContainerQuantity,
           Temperature: param.referType[i].Temperature,
-          TempratureType: param.referType[i].TemperatureType
+          TempratureType: param.referType[i].TemperatureType,
         });
       }
     }
@@ -3044,14 +3114,14 @@ class RateTable extends Component {
         Country: "",
         State: "",
         City: "",
-        ZipCode: ""
+        ZipCode: "",
       });
       destUpAddressDetails.push({
         Street: "",
         Country: "",
         State: "",
         City: "",
-        ZipCode: ""
+        ZipCode: "",
       });
       pickUpAddress = param.fields.pol;
       destinationAddress = param.fields.pod;
@@ -3064,14 +3134,14 @@ class RateTable extends Component {
         Country: param.pickUpAddress[0].Country,
         State: param.pickUpAddress[0].State,
         City: param.pickUpAddress[0].City,
-        ZipCode: param.pickUpAddress[0].ZipCode
+        ZipCode: param.pickUpAddress[0].ZipCode,
       });
       destUpAddressDetails.push({
         Street: param.destAddress[0].Area,
         Country: param.destAddress[0].Country,
         State: param.destAddress[0].State,
         City: param.destAddress[0].City,
-        ZipCode: param.destAddress[0].ZipCode
+        ZipCode: param.destAddress[0].ZipCode,
       });
       pickUpAddress = param.puAdd;
       destinationAddress = param.DeliveryCity;
@@ -3083,14 +3153,14 @@ class RateTable extends Component {
         Country: param.pickUpAddress[0].Country,
         State: param.pickUpAddress[0].State,
         City: param.pickUpAddress[0].City,
-        ZipCode: param.pickUpAddress[0].ZipCode
+        ZipCode: param.pickUpAddress[0].ZipCode,
       });
       destUpAddressDetails.push({
         Street: "",
         Country: "",
         State: "",
         City: "",
-        ZipCode: ""
+        ZipCode: "",
       });
       pickUpAddress = param.puAdd;
       destinationAddress = param.fields.pod;
@@ -3103,14 +3173,14 @@ class RateTable extends Component {
         Country: "",
         State: "",
         City: "",
-        ZipCode: ""
+        ZipCode: "",
       });
       destUpAddressDetails.push({
         Street: param.destAddress[0].Area,
         Country: param.destAddress[0].Country,
         State: param.destAddress[0].State,
         City: param.destAddress[0].City,
-        ZipCode: param.destAddress[0].ZipCode
+        ZipCode: param.destAddress[0].ZipCode,
       });
       pickUpAddress = param.fields.pol;
       destinationAddress = param.DeliveryCity;
@@ -3128,7 +3198,7 @@ class RateTable extends Component {
           Height: 0,
           GrossWt: 0,
           VolumeWeight: 0,
-          Volume: parseFloat(this.state.cbmVal)
+          Volume: parseFloat(this.state.cbmVal),
         });
       } else {
         multiCBMData = this.state.multiCBM;
@@ -3157,7 +3227,8 @@ class RateTable extends Component {
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
         BaseCurrency: param.currencyCode,
-        NonStackable: param.NonStackable == true ? 1 : 0
+        NonStackable: param.NonStackable == true ? 1 : 0,
+        MyWayComments: this.state.mywaycomment,
       };
     }
     if (param.containerLoadType == "LTL" || param.containerLoadType == "LCL") {
@@ -3171,7 +3242,7 @@ class RateTable extends Component {
           Height: 0,
           GrossWt: 0,
           VolumeWeight: 0,
-          Volume: parseFloat(this.state.cbmVal)
+          Volume: parseFloat(this.state.cbmVal),
         });
       } else {
         multiCBMData = this.state.multiCBM;
@@ -3198,7 +3269,8 @@ class RateTable extends Component {
         OriginGeoCordinates: param.OriginGeoCordinates,
         DestGeoCordinate: param.DestGeoCordinate,
         BaseCurrency: param.currencyCode,
-        NonStackable: param.NonStackable == true ? 1 : 0
+        NonStackable: param.NonStackable == true ? 1 : 0,
+        MyWayComments: this.state.mywaycomment,
       };
     }
     if (param.containerLoadType == "FTL") {
@@ -3225,7 +3297,8 @@ class RateTable extends Component {
         DestGeoCordinate: param.DestGeoCordinate,
         FTLTruckDetails: truckTypeData,
         BaseCurrency: param.currencyCode,
-        NonStackable: param.NonStackable == true ? 1 : 0
+        NonStackable: param.NonStackable == true ? 1 : 0,
+        MyWayComments: this.state.mywaycomment,
       };
     }
 
@@ -3234,9 +3307,9 @@ class RateTable extends Component {
       url: `${appSettings.APIURL}/SpotRateInsertion`,
       data: dataParameter,
 
-      headers: authHeader()
+      headers: authHeader(),
     })
-      .then(function(response) {
+      .then(function (response) {
         self.toggleSpot();
         store.addNotification({
           // title: "Success",
@@ -3244,15 +3317,15 @@ class RateTable extends Component {
           type: "success", // 'default', 'success', 'info', 'warning','danger'
           container: "top-right", // where to position the notifications
           dismiss: {
-            duration: appSettings.NotficationTime
-          }
+            duration: appSettings.NotficationTime,
+          },
         });
         self.setState({ sloding: false });
         setTimeout(() => {
           self.props.history.push("./spot-rate-table");
         }, 3000);
       })
-      .catch(error => {
+      .catch((error) => {
         self.setState({ sloding: false });
       });
   }
@@ -3265,7 +3338,7 @@ class RateTable extends Component {
     var polpodDataAdd = [];
 
     self.setState({
-      fields
+      fields,
     });
     if (fields[field].length > 2) {
       const proxyurl = "https://cors-anywhere.herokuapp.com/";
@@ -3274,28 +3347,28 @@ class RateTable extends Component {
         e.target.value +
         "&key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI&sessiontoken=2333"; // site that doesn’t send Access-Control-*
       fetch(proxyurl + url)
-        .then(res => res.json())
-        .then(response => {
+        .then((res) => res.json())
+        .then((response) => {
           for (let i = 0; i < response.predictions.length; i++) {
             if (field == "MultiPUAddress") {
               polpodData.push({
-                Address: response.predictions[i].description
+                Address: response.predictions[i].description,
               });
             } else if (field == "MultiPDAddress") {
               polpodDataAdd.push({
-                Address: response.predictions[i].description
+                Address: response.predictions[i].description,
               });
             }
           }
           self.setState({
             polpodData: polpodData,
-            polpodDataAdd: polpodDataAdd
+            polpodDataAdd: polpodDataAdd,
           });
         })
-        .catch(error => console.error("Error:", error));
+        .catch((error) => console.error("Error:", error));
     } else {
       self.setState({
-        fields
+        fields,
       });
     }
   }
@@ -3304,7 +3377,7 @@ class RateTable extends Component {
     let fields = this.state.multiFields;
     fields[field] = value;
     this.setState({
-      fields
+      fields,
     });
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
     const url =
@@ -3312,8 +3385,8 @@ class RateTable extends Component {
       value +
       "&key=AIzaSyAdUg5RYhac4wW-xnx-p0PrmKogycWz9pI"; // site that doesn’t send Access-Control-*
     fetch(proxyurl + url)
-      .then(res => res.json())
-      .then(response => {
+      .then((res) => res.json())
+      .then((response) => {
         const address = response.results[0].formatted_address,
           addressArray = response.results[0].address_components,
           city = this.getCity(addressArray),
@@ -3347,27 +3420,27 @@ class RateTable extends Component {
               POL: "",
               POLGeoCordinate: originGeoCordinates,
               Address: address,
-              IsFilter: true
+              IsFilter: true,
             });
 
             this.setState({
-              polArray: this.state.polArray
+              polArray: this.state.polArray,
             });
             this.state.mapPositionPOL.push({
               lat: Number(latValue),
-              lng: Number(lngValue)
+              lng: Number(lngValue),
             });
             this.setState({
               markerPositionPOL: {
                 lat: Number(latValue),
-                lng: Number(lngValue)
-              }
+                lng: Number(lngValue),
+              },
             });
           } else {
             var error = address + " already exist";
             this.setState({
               errorPOL: error,
-              fields: {}
+              fields: {},
             });
           }
         } else if (field == "MultiPDAddress") {
@@ -3386,29 +3459,29 @@ class RateTable extends Component {
               POD: "",
               PODGeoCordinate: destGeoCordinate,
               Address: address,
-              IsFilter: true
+              IsFilter: true,
             });
 
             this.state.markerPositionPOD.push({
               lat: Number(latValue),
-              lng: Number(lngValue)
+              lng: Number(lngValue),
             });
             this.setState({
-              podArray: this.state.podArray
+              podArray: this.state.podArray,
             });
           } else {
             var error = address + " already exist";
             this.setState({
               errorPOD: error,
-              fields: {}
+              fields: {},
             });
           }
         }
       })
-      .catch(error => console.error("Error:", error));
+      .catch((error) => console.error("Error:", error));
   }
 
-  getCity = addressArray => {
+  getCity = (addressArray) => {
     let city = "";
     for (let i = 0; i < addressArray.length; i++) {
       if (
@@ -3421,7 +3494,7 @@ class RateTable extends Component {
     return city;
   };
 
-  getArea = addressArray => {
+  getArea = (addressArray) => {
     let area = "";
     for (let i = 0; i < addressArray.length; i++) {
       if (addressArray[i].types[0]) {
@@ -3439,7 +3512,7 @@ class RateTable extends Component {
     return area;
   };
 
-  getState = addressArray => {
+  getState = (addressArray) => {
     let state = "";
     for (let i = 0; i < addressArray.length; i++) {
       for (let i = 0; i < addressArray.length; i++) {
@@ -3454,7 +3527,7 @@ class RateTable extends Component {
     return state;
   };
 
-  getZipCode = addressArray => {
+  getZipCode = (addressArray) => {
     let zipcode = "";
     for (let i = 0; i < addressArray.length; i++) {
       if (addressArray[i].types[0]) {
@@ -3468,7 +3541,7 @@ class RateTable extends Component {
     return zipcode;
   };
 
-  getCountry = addressArray => {
+  getCountry = (addressArray) => {
     let country = "";
     for (let i = 0; i < addressArray.length; i++) {
       if (addressArray[i].types[0]) {
@@ -3494,8 +3567,8 @@ class RateTable extends Component {
       method: "post",
       url: `${appSettings.APIURL}/PackageTypeListDropdown`,
 
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       var data = response.data.Table;
       self.setState({ packageTypeData: data });
     });
@@ -3517,7 +3590,7 @@ class RateTable extends Component {
       companyId: compId,
       companyName: compName,
       companyAddress: companyAddress,
-      contactName: contactName
+      contactName: contactName,
     });
     //document.getElementById("SearchRate").classList.remove("disableRates");
   }
@@ -3541,33 +3614,36 @@ class RateTable extends Component {
         data: {
           CustomerName: e.target.value,
           CustomerType: "Existing",
-          MyWayUserID: encryption(window.localStorage.getItem("userid"), "desc")
+          MyWayUserID: encryption(
+            window.localStorage.getItem("userid"),
+            "desc"
+          ),
         },
-        headers: authHeader()
-      }).then(function(response) {
+        headers: authHeader(),
+      }).then(function (response) {
         if (response.data.Table.length != 0) {
           if (field == "CustomerList") {
             self.setState({
               customerData: response.data.Table,
-              fields
+              fields,
             });
           } else {
             self.setState({
               customerData: response.data.Table,
-              fields
+              fields,
             });
           }
         } else {
           self.state.error = "Please enter valid Consignee";
         }
         self.setState({
-          error: self.state.error
+          error: self.state.error,
         });
       });
     } else {
       self.setState({
         customerData: [],
-        fields
+        fields,
       });
     }
   }
@@ -3595,8 +3671,8 @@ class RateTable extends Component {
           companyName: this.state.companyName,
           companyAddress: this.state.companyAddress,
           contactName: this.state.contactName,
-          contactEmail: this.state.contactEmail
-        }
+          contactEmail: this.state.contactEmail,
+        },
       });
     }
     if (stageType == "modeoftransport") {
@@ -3609,27 +3685,27 @@ class RateTable extends Component {
           companyName: this.state.companyName,
           companyAddress: this.state.companyAddress,
           contactName: this.state.contactName,
-          contactEmail: this.state.contactEmail
-        }
+          contactEmail: this.state.contactEmail,
+        },
       });
     }
 
     if (stageType == "containerLoadType") {
       this.props.history.push({
         pathname: "new-rate-search",
-        state: this.state
+        state: this.state,
       });
     }
 
     if (stageType == "typeofMove") {
       this.props.history.push({
         pathname: "new-rate-search",
-        state: this.state
+        state: this.state,
       });
     }
   }
 
-  callbackFunction = callBackObj => {
+  callbackFunction = (callBackObj) => {
     if (
       this.state.containerLoadType === "LCL" ||
       this.state.containerLoadType === "AIR" ||
@@ -3648,7 +3724,7 @@ class RateTable extends Component {
     }
   };
 
-  callbackCurrencyFunction = code => {
+  callbackCurrencyFunction = (code) => {
     this.setState({
       currencyCode: code,
       modalSpot: false,
@@ -3711,8 +3787,8 @@ class RateTable extends Component {
           TruckID: "",
           TruckName: "",
           Quantity: 1,
-          TruckDesc: ""
-        }
+          TruckDesc: "",
+        },
       ],
       CommodityID: 49,
       OriginGeoCordinates: "",
@@ -3775,7 +3851,7 @@ class RateTable extends Component {
       customerData: [],
       error: "",
       fields: {},
-      isNotData: ""
+      isNotData: "",
     });
     setTimeout(() => {
       this.componentDidMount();
@@ -3847,16 +3923,16 @@ class RateTable extends Component {
   }
 
   addClickTruckType() {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       TruckTypeData: [
         ...prevState.TruckTypeData,
         {
           TruckID: "",
           TruckName: "",
           Quantity: 1,
-          TruckDesc: ""
-        }
-      ]
+          TruckDesc: "",
+        },
+      ],
     }));
   }
 
@@ -3874,14 +3950,14 @@ class RateTable extends Component {
     if (name === "Quantity") {
       TruckTypeData[i] = {
         ...TruckTypeData[i],
-        [name]: parseInt(value)
+        [name]: parseInt(value),
       };
     }
 
     if (name === "TruckDesc") {
       TruckTypeData[i] = {
         ...TruckTypeData[i],
-        [name]: value
+        [name]: value,
       };
     }
 
@@ -3889,20 +3965,20 @@ class RateTable extends Component {
       if (value !== "others") {
         TruckTypeData[i] = {
           ...TruckTypeData[i],
-          [name]: e.target.selectedOptions[0].innerText
+          [name]: e.target.selectedOptions[0].innerText,
         };
         TruckTypeData[i] = {
           ...TruckTypeData[i],
-          ["TruckID"]: value
+          ["TruckID"]: value,
         };
       } else {
         TruckTypeData[i] = {
           ...TruckTypeData[i],
-          [name]: value
+          [name]: value,
         };
         TruckTypeData[i] = {
           ...TruckTypeData[i],
-          ["TruckID"]: "others"
+          ["TruckID"]: "others",
         };
       }
     }
@@ -3929,6 +4005,9 @@ class RateTable extends Component {
     }
   }
 
+  handlechangemywaycomment(e) {
+    this.setState({ mywaycomment: e.target.value });
+  }
   render() {
     var i = 0;
     var classname = "";
@@ -3939,7 +4018,7 @@ class RateTable extends Component {
         this.state.commodityname !== ""
       ) {
         this.state.CommodityID = this.state.commodityData.filter(
-          x => x.Commodity == this.state.commodityname
+          (x) => x.Commodity == this.state.commodityname
         )[0].id;
       }
     }
@@ -4549,11 +4628,11 @@ class RateTable extends Component {
                                     );
                                   }
                                 },
-                                accessor: "lineName"
+                                accessor: "lineName",
                                 // minWidth: 200
                               },
                               {
-                                Cell: row => {
+                                Cell: (row) => {
                                   return (
                                     <>
                                       <p className="details-title">POL</p>
@@ -4568,10 +4647,10 @@ class RateTable extends Component {
                                 },
                                 accessor: "POLName",
                                 //  minWidth: 175
-                                filterable: true
+                                filterable: true,
                               },
                               {
-                                Cell: row => {
+                                Cell: (row) => {
                                   return (
                                     <>
                                       <p className="details-title">POD</p>
@@ -4584,10 +4663,10 @@ class RateTable extends Component {
                                     </>
                                   );
                                 },
-                                minWidth: 90
+                                minWidth: 90,
                               },
                               {
-                                Cell: row => {
+                                Cell: (row) => {
                                   return (
                                     <>
                                       <p className="details-title">
@@ -4601,10 +4680,10 @@ class RateTable extends Component {
                                 },
                                 accessor: "Transit Port",
                                 filterable: true,
-                                minWidth: 100
+                                minWidth: 100,
                               },
                               {
-                                Cell: row => {
+                                Cell: (row) => {
                                   return (
                                     <>
                                       <p className="details-title">Free Time</p>
@@ -4616,10 +4695,10 @@ class RateTable extends Component {
                                 },
                                 accessor: "freeTime",
                                 filterable: true,
-                                minWidth: 90
+                                minWidth: 90,
                               },
                               {
-                                Cell: row => {
+                                Cell: (row) => {
                                   var value = "";
 
                                   var header = "";
@@ -4663,12 +4742,12 @@ class RateTable extends Component {
                                   );
                                 },
                                 accessor: "ContainerType",
-                                filterable: true
+                                filterable: true,
                                 //minWidth: 175
                               },
 
                               {
-                                Cell: row => {
+                                Cell: (row) => {
                                   if (
                                     row.original.lineName !== "No Record Found"
                                   ) {
@@ -4689,10 +4768,10 @@ class RateTable extends Component {
                                 },
                                 accessor: "expiryDate" || "ExpiryDate",
                                 filterable: true,
-                                minWidth: 90
+                                minWidth: 90,
                               },
                               {
-                                Cell: row => {
+                                Cell: (row) => {
                                   return (
                                     <>
                                       <p className="details-title">TT (Days)</p>
@@ -4703,10 +4782,10 @@ class RateTable extends Component {
                                   );
                                 },
                                 accessor: "TransitTime",
-                                minWidth: 90
+                                minWidth: 90,
                               },
                               {
-                                Cell: row => {
+                                Cell: (row) => {
                                   if (row.original.TotalAmount) {
                                     return (
                                       <>
@@ -4732,9 +4811,9 @@ class RateTable extends Component {
                                 },
                                 accessor: "baseFreightFee",
                                 filterable: true,
-                                minWidth: 80
-                              }
-                            ]
+                                minWidth: 80,
+                              },
+                            ],
                           },
                           {
                             show: false,
@@ -4753,12 +4832,13 @@ class RateTable extends Component {
                             filterMethod: (filter, rows) => {
                               const result = matchSorter(rows, filter.value, {
                                 keys: ["commodities", "TransitTime"],
-                                threshold: matchSorter.rankings.WORD_STARTS_WITH
+                                threshold:
+                                  matchSorter.rankings.WORD_STARTS_WITH,
                               });
 
                               return result;
-                            }
-                          }
+                            },
+                          },
                         ]}
                         onFilteredChange={this.onFilteredChange.bind(this)}
                         filtered={this.state.filtered}
@@ -4771,21 +4851,21 @@ class RateTable extends Component {
                           if (newExpanded[index[0]] === false) {
                             newExpanded = {};
                           } else {
-                            Object.keys(newExpanded).map(k => {
+                            Object.keys(newExpanded).map((k) => {
                               newExpanded[k] =
                                 parseInt(k) === index[0] ? {} : false;
                             });
                           }
                           this.setState({
                             ...this.state,
-                            expanded: newExpanded
+                            expanded: newExpanded,
                           });
                         }}
                         data={this.state.tempRateDetails}
                         defaultPageSize={10}
                         className="-striped -highlight no-mid-align"
                         minRows={1}
-                        SubComponent={row => {
+                        SubComponent={(row) => {
                           return (
                             <div style={{ padding: "20px 0" }}>
                               <ReactTable
@@ -4794,12 +4874,12 @@ class RateTable extends Component {
                                   row.original.lineName !== "No Record Found"
                                     ? row.original.RateLineId === undefined
                                       ? this.state.RateSubDetails.filter(
-                                          d =>
+                                          (d) =>
                                             d.RateLineID ===
                                             row.original.RateLineID
                                         )
                                       : this.state.RateSubDetails.filter(
-                                          d =>
+                                          (d) =>
                                             d.RateLineID ===
                                             row.original.RateLineId
                                         )
@@ -4810,48 +4890,48 @@ class RateTable extends Component {
                                     columns: [
                                       {
                                         Header: "C. Description",
-                                        accessor: "ChargeDesc"
+                                        accessor: "ChargeDesc",
                                       },
                                       {
                                         Header: "C. Name",
-                                        accessor: "ChargeCode"
+                                        accessor: "ChargeCode",
                                       },
                                       {
                                         Header: "Unit Price",
                                         accessor: "Rate",
                                         minWidth: 70,
-                                        Cell: props => (
+                                        Cell: (props) => (
                                           <React.Fragment>
                                             {props.original.Rate}
                                             &nbsp;
                                             {props.original.Currency}
                                           </React.Fragment>
-                                        )
+                                        ),
                                       },
                                       {
                                         Header: "Units",
-                                        accessor: "ChargeItem"
+                                        accessor: "ChargeItem",
                                       },
                                       {
                                         Header: "Tax",
                                         accessor: "Tax",
                                         minWidth: 55,
-                                        Cell: props => (
+                                        Cell: (props) => (
                                           <React.Fragment>
                                             {props.original.Tax !== 0
                                               ? props.original.Tax
                                               : ""}
                                           </React.Fragment>
-                                        )
+                                        ),
                                       },
 
                                       {
                                         Header: "Exrate",
-                                        accessor: "Exrate"
+                                        accessor: "Exrate",
                                       },
 
                                       {
-                                        Cell: row => {
+                                        Cell: (row) => {
                                           if (
                                             row.original.ChargeDesc !==
                                             "No Record Found"
@@ -4875,10 +4955,10 @@ class RateTable extends Component {
                                           }
                                         },
                                         Header: "Final Payment",
-                                        accessor: "TotalAmount"
-                                      }
-                                    ]
-                                  }
+                                        accessor: "TotalAmount",
+                                      },
+                                    ],
+                                  },
                                 ]}
                                 showPagination={false}
                                 defaultPageSize={20}
@@ -4928,7 +5008,7 @@ class RateTable extends Component {
                   style={{
                     background: "#fff",
                     padding: "15px",
-                    borderRadius: "15px"
+                    borderRadius: "15px",
                   }}
                 >
                   <h3 className="mb-4 text-center">
@@ -4951,10 +5031,10 @@ class RateTable extends Component {
                       <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
                         <Select
                           className="rate-dropdown"
-                          getOptionLabel={option =>
+                          getOptionLabel={(option) =>
                             option.StandardContainerCode
                           }
-                          getOptionValue={option =>
+                          getOptionValue={(option) =>
                             option.StandardContainerCode
                           }
                           isMulti
@@ -4984,10 +5064,10 @@ class RateTable extends Component {
                           <div className="equip-plus-cntr w-100">
                             <Select
                               className="rate-dropdown"
-                              getOptionLabel={option =>
+                              getOptionLabel={(option) =>
                                 option.SpecialContainerCode
                               }
-                              getOptionValue={option =>
+                              getOptionValue={(option) =>
                                 option.SpecialContainerCode
                               }
                               options={this.state.SpacialEqmt}
@@ -5159,7 +5239,7 @@ class RateTable extends Component {
                   style={{
                     backgroundColor: "#fff",
                     padding: "15px",
-                    borderRadius: "15px"
+                    borderRadius: "15px",
                   }}
                 >
                   <div className="pol-mar">
@@ -5204,7 +5284,7 @@ class RateTable extends Component {
                   style={{
                     backgroundColor: "#fff",
                     padding: "15px",
-                    borderRadius: "15px"
+                    borderRadius: "15px",
                   }}
                 >
                   <div className="pol-mar">
@@ -5249,11 +5329,11 @@ class RateTable extends Component {
                   style={{
                     background: "#fff",
                     borderRadius: "15px",
-                    padding: "15px"
+                    padding: "15px",
                   }}
                 >
                   <div>
-                    <div style={{ paddingBottom: "15px" }}>
+                    <div style={{ paddingBottom: "10px" }}>
                       <h3 className="spotcustomer">Commodity</h3>
                     </div>
 
@@ -5278,7 +5358,7 @@ class RateTable extends Component {
 
                   <div className="">
                     {/* <label>Cargo</label> */}
-                    <div style={{ paddingBottom: "15px" }}>
+                    <div style={{ paddingBottom: "10px" }}>
                       <h3 className="spotcustomer">Cargo Details</h3>
                     </div>
 
@@ -5297,10 +5377,10 @@ class RateTable extends Component {
                           <div className="equip-plus-cntr w-100 mt-0 modelselecteqt">
                             <Select
                               className="rate-dropdown"
-                              getOptionLabel={option =>
+                              getOptionLabel={(option) =>
                                 option.StandardContainerCode
                               }
-                              getOptionValue={option =>
+                              getOptionValue={(option) =>
                                 option.StandardContainerCode
                               }
                               isMulti
@@ -5330,10 +5410,10 @@ class RateTable extends Component {
                               <div className="equip-plus-cntr w-100">
                                 <Select
                                   className="rate-dropdown"
-                                  getOptionLabel={option =>
+                                  getOptionLabel={(option) =>
                                     option.SpecialContainerCode
                                   }
-                                  getOptionValue={option =>
+                                  getOptionValue={(option) =>
                                     option.SpecialContainerCode
                                   }
                                   options={this.state.SpacialEqmt}
@@ -5425,9 +5505,25 @@ class RateTable extends Component {
                       )}
                     </div>
                   </div>
+
+                  <div>
+                    <h3
+                      className="spotcustomer"
+                      style={{ marginBottom: "10px" }}
+                    >
+                      Comments
+                    </h3>
+                    <textarea
+                      onChange={this.handlechangemywaycomment.bind(this)}
+                      values={this.state.mywaycomment}
+                      className="txt-add-spot"
+                      placeholder="Enter Comments"
+                      id="txtRequestComments"
+                    ></textarea>
+                  </div>
                   <div>
                     <div style={{ paddingBottom: "15px" }}>
-                      <h3 className="spotcustomer">Customer Details</h3>
+                      <h3 className="spotcustomer-cust">Customer Details</h3>
                       {this.state.usertype == "Sales User" ? (
                         this.state.companyName == "" ? (
                           <button
@@ -5456,7 +5552,7 @@ class RateTable extends Component {
                                 <ReactAutocomplete
                                   id="searchtxt"
                                   className="title-sect p-0 pt-2"
-                                  getItemValue={item => item.Company_Name}
+                                  getItemValue={(item) => item.Company_Name}
                                   items={this.state.customerData}
                                   renderItem={(item, isHighlighted) => (
                                     <div
@@ -5464,7 +5560,7 @@ class RateTable extends Component {
                                         background: isHighlighted
                                           ? "lightgray"
                                           : "white",
-                                        padding: "5px"
+                                        padding: "5px",
                                       }}
                                     >
                                       {item.Company_Name}
@@ -5480,7 +5576,7 @@ class RateTable extends Component {
                                     "Company_Name"
                                   )}
                                   inputProps={{
-                                    placeholder: "Search Account/Customer"
+                                    placeholder: "Search Account/Customer",
                                   }}
                                 />
                               </div>

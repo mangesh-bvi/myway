@@ -25,7 +25,7 @@ class ViewUser extends Component {
       modalEdit: false,
       value: 50,
       viewData: [],
-      deactivateId: ""
+      deactivateId: "",
     };
     this.toggleDel = this.toggleDel.bind(this);
     this.toggleDeactivate = this.toggleDeactivate.bind(this);
@@ -35,13 +35,13 @@ class ViewUser extends Component {
     this.toggleEdit = this.toggleEdit.bind(this);
   }
   toggleEdit() {
-    this.setState(prevState => ({
-      modalEdit: !prevState.modalEdit
+    this.setState((prevState) => ({
+      modalEdit: !prevState.modalEdit,
     }));
   }
   toggleDel() {
-    this.setState(prevState => ({
-      modalDel: !prevState.modalDel
+    this.setState((prevState) => ({
+      modalDel: !prevState.modalDel,
     }));
   }
   ////toggle Details User
@@ -53,10 +53,10 @@ class ViewUser extends Component {
       url: `${appSettings.APIURL}/DeactivateUser`,
       data: {
         Modifiedby: userid,
-        UserID: self.state.deactivateId
+        UserID: self.state.deactivateId,
       },
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       self.BindViewUserData();
 
       store.addNotification({
@@ -65,13 +65,13 @@ class ViewUser extends Component {
         type: "success", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
     });
 
-    this.setState(prevState => ({
-      modalDel: !prevState.modalDel
+    this.setState((prevState) => ({
+      modalDel: !prevState.modalDel,
     }));
   }
   ////Handle Detactive User
@@ -81,6 +81,14 @@ class ViewUser extends Component {
   }
 
   componentDidMount() {
+    var CustomerType = encryption(
+      window.localStorage.getItem("CustomerType"),
+      "desc"
+    );
+    if (CustomerType === "New") {
+      this.props.history.push("/new-rate-search");
+      return false;
+    }
     this.BindViewUserData();
   }
   ////Bind User Data List
@@ -92,10 +100,10 @@ class ViewUser extends Component {
       data: {
         IsAdmin: 1,
         Search: "",
-        UserID: encryption(window.localStorage.getItem("userid"), "desc")
+        UserID: encryption(window.localStorage.getItem("userid"), "desc"),
       },
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       self.setState({ viewData: response.data });
     });
   }
@@ -105,12 +113,12 @@ class ViewUser extends Component {
     if (row.original["UserType"] === "Sales User") {
       this.props.history.push({
         pathname: "Add-sales-user",
-        state: { detail: userId, page: "Edit" }
+        state: { detail: userId, page: "Edit" },
       });
     } else {
       this.props.history.push({
         pathname: "Add-user",
-        state: { detail: userId, page: "Edit" }
+        state: { detail: userId, page: "Edit" },
       });
     }
   }
@@ -119,8 +127,8 @@ class ViewUser extends Component {
     if (filtered.length > 1 && this.state.filterAll.length) {
       const filterAll = "";
       this.setState({
-        filtered: filtered.filter(item => item.id !== "all"),
-        filterAll
+        filtered: filtered.filter((item) => item.id !== "all"),
+        filterAll,
       });
     } else this.setState({ filtered });
   }
@@ -174,16 +182,16 @@ class ViewUser extends Component {
                     columns: [
                       {
                         Header: "Sr. No.",
-                        accessor: "srno"
+                        accessor: "srno",
                       },
                       {
                         Header: "User Name",
-                        accessor: "Username"
+                        accessor: "Username",
                       },
                       {
                         Header: "Is Enabled",
                         accessor: "IsEnabled",
-                        Cell: row => {
+                        Cell: (row) => {
                           if (row.row.IsEnabled !== "No Record Found") {
                             return (
                               <>{row.original.IsEnabled ? "True" : "False"}</>
@@ -191,16 +199,16 @@ class ViewUser extends Component {
                           } else {
                             return <>{row.row.IsEnabled}</>;
                           }
-                        }
+                        },
                       },
                       {
                         Header: "User Type",
-                        accessor: "UserType"
+                        accessor: "UserType",
                       },
                       {
                         Header: "Action",
                         sortable: false,
-                        Cell: row => {
+                        Cell: (row) => {
                           if (row.row.IsEnabled !== "No Record Found") {
                             return (
                               <div>
@@ -209,7 +217,7 @@ class ViewUser extends Component {
                                     className="actionicon"
                                     src={Pencil}
                                     alt="view-icon"
-                                    onClick={e =>
+                                    onClick={(e) =>
                                       this.HandleEditUserDetails(e, row)
                                     }
                                   />
@@ -225,7 +233,7 @@ class ViewUser extends Component {
                                     style={{
                                       pointerEvents: row.original.IsEnabled
                                         ? "initial"
-                                        : "none"
+                                        : "none",
                                     }}
                                     className="actionicon"
                                     src={
@@ -234,7 +242,7 @@ class ViewUser extends Component {
                                         : DeactivateGray
                                     }
                                     alt="deactivate-icon"
-                                    onClick={e =>
+                                    onClick={(e) =>
                                       this.HandleDeactiveUser(e, row)
                                     }
                                   />
@@ -244,7 +252,7 @@ class ViewUser extends Component {
                           } else {
                             return <></>;
                           }
-                        }
+                        },
                       },
                       {
                         show: false,
@@ -262,28 +270,28 @@ class ViewUser extends Component {
                         filterMethod: (filter, rows) => {
                           var result = matchSorter(rows, filter.value, {
                             keys: ["UserType", "IsEnabled", "Username", "srno"],
-                            threshold: matchSorter.rankings.WORD_STARTS_WITH
+                            threshold: matchSorter.rankings.WORD_STARTS_WITH,
                           });
                           if (result.length > 0) {
                             return result;
                           } else {
                             result = [
                               {
-                                IsEnabled: "No Record Found"
-                              }
+                                IsEnabled: "No Record Found",
+                              },
                             ];
                             return result;
                           }
                         },
-                        filterAll: true
-                      }
-                    ]
-                  }
+                        filterAll: true,
+                      },
+                    ],
+                  },
                 ]}
                 data={this.state.viewData}
                 defaultPageSize={10}
                 className="-striped -highlight"
-                SubComponent={row => {
+                SubComponent={(row) => {
                   if (row.row.IsEnabled !== "No Record Found") {
                     return (
                       <div style={{ padding: "20px 0" }}>
@@ -362,7 +370,7 @@ class ViewUser extends Component {
                 style={{
                   background: "#fff",
                   padding: "15px",
-                  borderRadius: "15px"
+                  borderRadius: "15px",
                 }}
               >
                 <p>Are you sure ?</p>

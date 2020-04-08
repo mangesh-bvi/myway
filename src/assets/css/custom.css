@@ -2262,7 +2262,7 @@ input[type="range"]::-moz-range-track {
   position: absolute;
   top: 0;
   right: 0;
-  left: 0;  
+  left: 0;
   bottom: 0;
   background: transparent url("../img/loader.gif") no-repeat center center;
   background-size: 60px;
@@ -4454,6 +4454,7 @@ progress::-webkit-progress-bar {
 .spotcustomer {
   text-align: left !important;
   display: inline-block;
+  margin-top: 15px !important;
 }
 .spotcustdrop div:first-child,
 .spotcustdrop div:first-child input {
@@ -4506,37 +4507,63 @@ progress::-webkit-progress-bar {
 }
 .mainTrackTypediv {
   position: relative;
- 
+
   display: flex;
   margin-top: 15px;
 }
 
-.clearSearch{
+.clearSearch {
   display: flex;
   align-items: center;
 }
 
 .clearSearch h2 {
-  margin-right: 20px;  
+  margin-right: 20px;
 }
- 
+
 .clearSearch span {
-  color:#265EB5 ;
+  color: #265eb5;
   cursor: pointer;
 }
 .details-para input {
   width: 100%;
-    border-radius: 0;
-    border: 0;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    background-color: #ededed;
-    padding: 10px 7px;
-    font-family: "Medium Font";
-} 
+  border-radius: 0;
+  border: 0;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  background-color: #ededed;
+  padding: 10px 7px;
+  font-family: "Medium Font";
+}
 .spmodwi {
   width: 45%;
   max-width: inherit !important;
 }
- 
 
+.lidisabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.lidisplay {
+  display: none;
+}
+
+.txt-add-spot {
+  width: 100%;
+  border: 0;
+  letter-spacing: 0.5px;
+  background-color: #ededed;
+  padding: 10px 20px;
+  font-family: "Medium Font";
+  
+}
+.txt-add-spot::placeholder {
+  font-family: "Italic Font";
+  color: #77787b;
+}
+.spotcustomer-cust {
+  text-align: left !important;
+  display: inline-block;
+  margin-top: 30px !important;
+}

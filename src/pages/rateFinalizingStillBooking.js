@@ -1084,7 +1084,6 @@ class RateFinalizingStillBooking extends Component {
         },
         headers: authHeader()
       }).then(function(response) {
-        
         var QuotationData = response.data.Table4;
         var QuotationSubData = response.data.Table5;
         var Booking = response.data.Table;
@@ -2139,6 +2138,14 @@ class RateFinalizingStillBooking extends Component {
                                         {
                                           Header: "Unit Price",
                                           accessor: "Amount"
+                                        },
+                                        {
+                                          Header: "Tax",
+                                          accessor: "Amount"
+                                        },
+                                        {
+                                          Header: "Unit Price",
+                                          accessor: "ExRate"
                                         },
                                         {
                                           Header: "Final Payment",

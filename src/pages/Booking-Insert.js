@@ -61,7 +61,7 @@ class BookingInsert extends Component {
       Buyer_Displayas: "",
       BuyerName: "",
       ConsineeID: 0,
-      Consinee_AddressID: 0,
+      Consignee_AddressID: 0,
       Consinee_Displayas: "",
       ConsineeName: "",
       ShipperID: 0,
@@ -337,7 +337,6 @@ class BookingInsert extends Component {
       data: { Mode: ContainerLoad, SalesQuoteNumber: salesQuotaNo },
       headers: authHeader()
     }).then(function(response) {
-      
       var QuotationData = response.data.Table1;
       var QuotationSubData = response.data.Table2;
       var Booking = response.data.Table;
@@ -355,7 +354,7 @@ class BookingInsert extends Component {
           objcargo.Height = CargoDetails[i].Height || 0;
           objcargo.GrossWt = CargoDetails[i].GrossWt || 0;
           objcargo.VolumeWeight = CargoDetails[i].VolumeWeight || 0;
-          objcargo.Volume = CargoDetails[i].Volume ||CargoDetails[i].CBM|| 0;
+          objcargo.Volume = CargoDetails[i].Volume || CargoDetails[i].CBM || 0;
           objcargo.CBM = CargoDetails[i].CBM || 0;
           objcargo.TotalGrossWeight = CargoDetails[i].NetWeight || 0;
           multiCargo.push(objcargo);
@@ -691,6 +690,7 @@ class BookingInsert extends Component {
 
   ////booking insert
   HandleBookingInsert() {
+    
     let self = this;
     if (this.state.selectedDataRow.length === 1) {
       if (
@@ -708,15 +708,26 @@ class BookingInsert extends Component {
         var Consignee_AddressID = 0;
         var Consignee_Displayas = "";
         if (this.state.isConshinee === true) {
-          var ConsigneeID = DefaultEntityTypeID;
-          var ConsigneeName = this.state.company_name;
-          var Consignee_AddressID = this.state.Company_AddressID;
-          var Consignee_Displayas = this.state.Company_Address;
+          ConsigneeID = DefaultEntityTypeID;
+          ConsigneeName = this.state.company_name;
+          Consignee_AddressID = this.state.Company_AddressID;
+          Consignee_Displayas = this.state.Company_Address;
         } else {
-          var ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
-          var ConsigneeName = this.state.consineeData.Company_Name || "";
-          var Consignee_AddressID = Number(this.state.Consignee_AddressID || 0);
-          var Consignee_Displayas = this.state.Consinee_Displayas;
+          if (this.state.consineeData) {
+            ConsigneeID = Number(this.state.consineeData.Company_ID || 0);
+            ConsigneeName = this.state.consineeData.Company_Name || "";
+          } else {
+            ConsigneeID = 0;
+            ConsigneeName = this.state.ConsineeName;
+          }
+          Consignee_AddressID = Number(
+            this.state.Consignee_AddressID == "Other"
+              ? 0
+              : this.state.Consignee_AddressID == "Select"
+              ? 0
+              : this.state.Consignee_AddressID || 0
+          );
+          Consignee_Displayas = this.state.Consinee_Displayas;
         }
         var ShipperID = 0;
         var ShipperName = "";
@@ -728,9 +739,20 @@ class BookingInsert extends Component {
           Shipper_AddressID = this.state.Company_AddressID;
           Shipper_Displayas = this.state.Company_Address;
         } else {
-          ShipperID = Number(this.state.shipperData.Company_ID || 0);
-          ShipperName = this.state.shipperData.Company_Name || "";
-          Shipper_AddressID = Number(this.state.Shipper_AddressID || 0);
+          if (this.state.shipperData) {
+            ShipperID = Number(this.state.shipperData.Company_ID || 0);
+            ShipperName = this.state.shipperData.Company_Name || "";
+          } else {
+            ShipperID = 0;
+            ShipperName = this.state.ShipperName;
+          }
+          Shipper_AddressID = Number(
+            this.state.Shipper_AddressID == "Other"
+              ? 0
+              : this.state.Shipper_AddressID == "Select"
+              ? 0
+              : this.state.Shipper_AddressID || 0
+          );
           Shipper_Displayas = this.state.Shipper_Displayas || "";
         }
         var BuyerID = 0;
@@ -743,10 +765,21 @@ class BookingInsert extends Component {
           Buyer_Displayas = this.state.Company_Address;
           BuyerName = this.state.company_name;
         } else {
-          BuyerID = Number(this.state.buyerData.Company_ID || 0);
-          Buyer_AddressID = this.state.Buyer_AddressID;
-          Buyer_Displayas = this.state.Buyer_Displayas;
-          BuyerName = this.state.buyerData.Company_Name;
+          if (this.state.buyerData) {
+            BuyerID = Number(this.state.buyerData.Company_ID || 0);
+            BuyerName = this.state.buyerData.Company_Name;
+          } else {
+            BuyerID = 0;
+            BuyerName = this.state.BuyerName;
+          }
+
+          Buyer_AddressID =
+            this.state.Buyer_AddressID == "Other"
+              ? 0
+              : this.state.Buyer_AddressID == "Select"
+              ? 0
+              : this.state.Buyer_AddressID || 0;
+          Buyer_Displayas = this.state.Buyer_Displayas || "";
         }
         var NotifyID = 0;
         var Notify_AddressID = 0;
@@ -758,10 +791,22 @@ class BookingInsert extends Component {
           Notify_Displayas = this.state.Company_Address;
           NotifyName = this.state.notifyData.company_name;
         } else {
-          NotifyID = Number(this.state.notifyData.Company_ID || 0);
-          Notify_AddressID = Number(this.state.Notify_AddressID || 0);
+          if (this.state.notifyData) {
+            NotifyID = Number(this.state.notifyData.Company_ID || 0);
+            NotifyName = this.state.notifyData.Company_Name || "";
+          } else {
+            NotifyID = 0;
+            NotifyName = this.state.NotifyName;
+          }
+
+          Notify_AddressID = Number(
+            this.state.Notify_AddressID == "Other"
+              ? 0
+              : this.state.Notify_AddressID == "Select"
+              ? 0
+              : this.state.Notify_AddressID || 0
+          );
           Notify_Displayas = this.state.Notify_Displayas || "";
-          NotifyName = this.state.notifyData.Company_Name || "";
         }
         var Mode = this.state.ContainerLoad;
         var Commodity = 0;
@@ -805,7 +850,8 @@ class BookingInsert extends Component {
             cargoData.Height = this.state.multiCBM[i].Height || 0;
             cargoData.GrossWt = this.state.multiCBM[i].GrossWt || 0;
             cargoData.VolumeWeight = this.state.multiCBM[i].VolumeWeight || 0;
-            cargoData.Volume = this.state.multiCBM[i].Volume ||this.state.multiCBM[i].CBM|| 0;
+            cargoData.Volume =
+              this.state.multiCBM[i].Volume || this.state.multiCBM[i].CBM || 0;
             BookingDim.push(cargoData);
           }
         }
@@ -977,6 +1023,7 @@ class BookingInsert extends Component {
   }
   //// Bind Non Customer List
   BindChangeNonCustomer(field, e) {
+    
     let self = this;
     var customerName = "";
     let fields = this.state.fields;
@@ -1189,32 +1236,62 @@ class BookingInsert extends Component {
   }
 
   AddressChange(type, e) {
+    
     var companyID = e.target.value;
     if (e.target.selectedOptions[0].label === "Other") {
       if (type == "Consignee") {
         this.setState({
-          Consignee_AddressID: 0,
+          Consignee_AddressID: "Other",
           conshineeother: true,
           Consinee_Displayas: ""
         });
       }
       if (type == "Shipper") {
         this.setState({
-          Shipper_AddressID: 0,
+          Shipper_AddressID: "Other",
           shipperother: true,
           Shipper_Displayas: ""
         });
       }
       if (type == "Notify") {
         this.setState({
-          Notify_AddressID: 0,
+          Notify_AddressID: "Other",
           notiother: true,
           Notify_Displayas: ""
         });
       }
       if (type == "Buyer") {
         this.setState({
-          Buyer_AddressID: 0,
+          Buyer_AddressID: "Other",
+          buyerother: true,
+          Buyer_Displayas: ""
+        });
+      }
+    } else if (e.target.selectedOptions[0].label === "Select") {
+      if (type == "Consignee") {
+        this.setState({
+          Consignee_AddressID: "Select",
+          conshineeother: true,
+          Consinee_Displayas: ""
+        });
+      }
+      if (type == "Shipper") {
+        this.setState({
+          Shipper_AddressID: "Select",
+          shipperother: true,
+          Shipper_Displayas: ""
+        });
+      }
+      if (type == "Notify") {
+        this.setState({
+          Notify_AddressID: "Select",
+          notiother: true,
+          Notify_Displayas: ""
+        });
+      }
+      if (type == "Buyer") {
+        this.setState({
+          Buyer_AddressID: "Select",
           buyerother: true,
           Buyer_Displayas: ""
         });
@@ -1977,12 +2054,10 @@ class BookingInsert extends Component {
   }
 
   callbackFunction = callBackObj => {
-    
     var multiCBM = callBackObj;
     this.setState({ multiCBM });
   };
   render() {
-    
     let i = 0;
     let className = "butn m-0";
     if (this.state.showContent == true) {
@@ -2356,14 +2431,19 @@ class BookingInsert extends Component {
                                   minWidth: 80,
                                   accessor: "Total",
                                   Cell: row => {
-                                    
-                                    var Totalamount=parseFloat(row.original.Total.split(" ")[0])
-                                    var curency=row.original.Total.split(" ")[1]
+                                    var Totalamount = parseFloat(
+                                      row.original.Total.split(" ")[0]
+                                    );
+                                    var curency = row.original.Total.split(
+                                      " "
+                                    )[1];
                                     return (
                                       <React.Fragment>
                                         <p className="details-title">Price</p>
                                         <p className="details-para">
-                                          {Totalamount.toFixed(2)+" "+curency}
+                                          {Totalamount.toFixed(2) +
+                                            " " +
+                                            curency}
                                         </p>
                                       </React.Fragment>
                                     );
@@ -2375,12 +2455,18 @@ class BookingInsert extends Component {
                           data={this.state.QuotationData}
                           minRows={0}
                           showPagination={false}
-                          className="-striped -highlight"
+                          className="-striped -highlight no-mid-align"
                           SubComponent={row => {
                             return (
                               <div style={{ padding: "20px 0" }}>
                                 <ReactTable
-                                  data={this.state.QuotationSubData}
+                                  data={this.state.QuotationSubData.filter(
+                                    x =>
+                                      x.saleQuoteLineID ===
+                                        row.original.saleQuoteLineID ||
+                                      row.original.SaleQuoteIDLineID ||
+                                      row.original.SaleQuote_ID
+                                  )}
                                   columns={[
                                     {
                                       columns: [
@@ -2634,9 +2720,9 @@ class BookingInsert extends Component {
                                     this,
                                     "Consignee"
                                   )}
-                                  value={this.state.Consinee_AddressID}
+                                  value={this.state.Consignee_AddressID}
                                 >
-                                  <option>Select</option>
+                                  <option value="Select">Select</option>
 
                                   {this.state.conshineeAddData.length > 0
                                     ? this.state.conshineeAddData.map(
@@ -2650,7 +2736,7 @@ class BookingInsert extends Component {
                                         )
                                       )
                                     : ""}
-                                  <option>Other</option>
+                                  <option value={"Other"}>Other</option>
                                 </select>
                               </div>
                               <div className="col-12 col-sm-6 col-md-4 login-fields">
@@ -2756,7 +2842,7 @@ class BookingInsert extends Component {
                                   )}
                                   value={this.state.Shipper_AddressID}
                                 >
-                                  <option>Select</option>
+                                  <option value="Select">Select</option>
 
                                   {this.state.shipperAddData.length > 0
                                     ? this.state.shipperAddData.map(
@@ -2770,7 +2856,7 @@ class BookingInsert extends Component {
                                         )
                                       )
                                     : ""}
-                                  <option>Other</option>
+                                  <option value="Other">Other</option>
                                 </select>
                               </div>
                               <div className="col-12 col-sm-6 col-md-4 login-fields">
@@ -2871,7 +2957,7 @@ class BookingInsert extends Component {
                                   )}
                                   value={this.state.Buyer_AddressID}
                                 >
-                                  <option>Select</option>
+                                  <option value="Select">Select</option>
 
                                   {this.state.buyerAddData.length > 0
                                     ? this.state.buyerAddData.map((item, i) => (
@@ -2882,7 +2968,7 @@ class BookingInsert extends Component {
                                     : ""
                                   //<option>Other</option>
                                   }
-                                  <option>Other</option>
+                                  <option value="Other">Other</option>
                                 </select>
                               </div>
                               <div className="col-12 col-sm-6 col-md-4 login-fields">
@@ -2981,7 +3067,7 @@ class BookingInsert extends Component {
                                   )}
                                   value={this.state.Notify_AddressID}
                                 >
-                                  <option>Select</option>
+                                  <option value="Select">Select</option>
 
                                   {this.state.notifyAddData.length > 0
                                     ? this.state.notifyAddData.map(
@@ -2994,10 +3080,8 @@ class BookingInsert extends Component {
                                           </option>
                                         )
                                       )
-                                    : ""
-                                  //<option>Other</option>
-                                  }
-                                  <option>Other</option>
+                                    : ""}
+                                  <option value="Other">Other</option>
                                 </select>
                               </div>
                               <div className="col-12 col-sm-6 col-md-4 login-fields">

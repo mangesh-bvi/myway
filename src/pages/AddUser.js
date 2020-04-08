@@ -1111,6 +1111,14 @@ class AddUser extends React.Component {
   }
 
   componentDidMount() {
+    var CustomerType = encryption(
+      window.localStorage.getItem("CustomerType"),
+      "desc"
+    );
+    if (CustomerType === "New") {
+      this.props.history.push("/new-rate-search");
+      return false;
+    }
     if (this.props.location.state != undefined) {
       var userId = this.props.location.state.detail;
       let fields = this.state.fields;

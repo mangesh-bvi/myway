@@ -4,13 +4,15 @@ class QRCode extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      qrcode: ""
+      qrcode: "",
     };
   }
   componentDidMount() {
-    this.setState({
-      qrcode: window.localStorage.getItem("qrcode")
-    });
+    if (this.props.QRCode) {
+      this.setState({
+        qrcode: this.props.QRCode,
+      });
+    }
   }
   render() {
     var QRCode = require("qrcode.react");

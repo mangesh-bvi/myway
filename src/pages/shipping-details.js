@@ -94,6 +94,15 @@ class ShippingDetails extends Component {
   }
 
   componentDidMount() {
+
+    var CustomerType = encryption(
+      window.localStorage.getItem("CustomerType"),
+      "desc"
+    );
+    if (CustomerType === "New") {
+      this.props.history.push("/new-rate-search");
+      return false;
+    }
     var url = window.location.href
       .slice(window.location.href.indexOf("?") + 1)
       .split("=")[1];

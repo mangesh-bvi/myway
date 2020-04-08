@@ -28,7 +28,8 @@ class QuoteTable extends Component {
       filterAll: "",
       quotesData: [],
       startDate: someDate.setMonth(someDate.getMonth() - 1),
-      endDate: new Date().setHours(0, 0, 0, 0)
+      endDate: new Date().setHours(0, 0, 0, 0),
+      isload: false,
     };
     this.HandleListShipmentSummey = this.HandleListShipmentSummey.bind(this);
     this.toggleDel = this.toggleDel.bind(this);
@@ -38,14 +39,14 @@ class QuoteTable extends Component {
   }
 
   toggleDel() {
-    this.setState(prevState => ({
-      modalDel: !prevState.modalDel
+    this.setState((prevState) => ({
+      modalDel: !prevState.modalDel,
     }));
   }
   toggleBook(e) {
     e.stopPropagation();
-    this.setState(prevState => ({
-      modalBook: !prevState.modalBook
+    this.setState((prevState) => ({
+      modalBook: !prevState.modalBook,
     }));
   }
 
@@ -71,27 +72,32 @@ class QuoteTable extends Component {
       data: {
         UserId: userid,
         fromDate: "2010-01-01",
-        Todate: "2021-12-26"
+        Todate: "2021-12-26",
       },
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       var data = [];
 
       var resData = response.data.Table;
-      var pending = resData.filter(x => x.Status == "Pending").length;
-      var current = resData.filter(x => x.Status == "Current").length;
-      var expired = resData.filter(x => x.Status == "Expired").length;
-      var rejected = resData.filter(x => x.Status == "Rejected").length;
-      var approved = resData.filter(x => x.Status == "Approved").length;
+      var pending = resData.filter((x) => x.Status == "Pending").length;
+      var current = resData.filter((x) => x.Status == "Current").length;
+      var expired = resData.filter((x) => x.Status == "Expired").length;
+      var rejected = resData.filter((x) => x.Status == "Rejected").length;
+      var approved = resData.filter((x) => x.Status == "Approved").length;
 
       if (quetype != "") {
-        resData = resData.filter(item => item.Status === quetype);
+        resData = resData.filter((item) => item.Status === quetype);
         if (resData.length === 0) {
           resData = [{ type: "No record found" }];
         }
       }
 
       self.setState({ quotesData: resData });
+      if (resData.length > 0) {
+        self.setState({ isload: false });
+      } else {
+        self.setState({ isload: true });
+      }
       window.localStorage.setItem("quotepending", pending);
       window.localStorage.setItem("quotecurrent", current);
       window.localStorage.setItem("quoteexpired", expired);
@@ -104,8 +110,8 @@ class QuoteTable extends Component {
     if (filtered.length > 1 && this.state.filterAll.length) {
       const filterAll = "";
       this.setState({
-        filtered: filtered.filter(item => item.id != "all"),
-        filterAll
+        filtered: filtered.filter((item) => item.id != "all"),
+        filterAll,
       });
     } else this.setState({ filtered });
   }
@@ -122,7 +128,7 @@ class QuoteTable extends Component {
     var data = { Quotes: QuoteNo, Type: Type, Status: Status };
     this.props.history.push({
       pathname: "rate-finalizing-still",
-      state: { detail: data }
+      state: { detail: data },
     });
   }
 
@@ -138,7 +144,7 @@ class QuoteTable extends Component {
     var type = e.target.getAttribute("data-type");
     this.props.history.push({
       pathname: "rate-finalizing",
-      state: { Quote: Quote, type: type, isediting: true }
+      state: { Quote: Quote, type: type, isediting: true },
     });
   }
 
@@ -148,15 +154,15 @@ class QuoteTable extends Component {
     var type = e.target.getAttribute("data-type");
     this.props.history.push({
       pathname: "rate-finalizing",
-      state: { Quote: Quote, type: type, isediting: true, isCopy: true }
+      state: { Quote: Quote, type: type, isediting: true, isCopy: true },
     });
   }
 
-  handleChangeStart = e => {
+  handleChangeStart = (e) => {
     var strt = this.state.startDate;
     var thisE = e;
     this.setState({
-      startDate: e
+      startDate: e,
     });
     if (
       thisE.setHours(0, 0, 0, 0) >
@@ -168,19 +174,19 @@ class QuoteTable extends Component {
         type: "danger", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
       this.setState({
-        startDate: strt
+        startDate: strt,
       });
     }
   };
-  handleChangeEnd = e => {
+  handleChangeEnd = (e) => {
     var ennd = this.state.endDate;
     var thisE = e;
     this.setState({
-      endDate: e
+      endDate: e,
     });
     if (
       new Date(this.state.startDate).setHours(0, 0, 0, 0) >
@@ -192,11 +198,11 @@ class QuoteTable extends Component {
         type: "danger", // 'default', 'success', 'info', 'warning','danger'
         container: "top-right", // where to position the notifications
         dismiss: {
-          duration: appSettings.NotficationTime
-        }
+          duration: appSettings.NotficationTime,
+        },
       });
       this.setState({
-        endDate: ennd
+        endDate: ennd,
       });
     }
   };
@@ -214,13 +220,16 @@ class QuoteTable extends Component {
     );
     if (dataQuote.length > 0) {
       NewdataQuote = dataQuote.filter(
-        d =>
+        (d) =>
           new Date(d.CreatedDate) >=
             new Date(this.state.startDate).setHours(0, 0, 0, 0) &&
           new Date(d.CreatedDate) <=
             new Date(this.state.endDate).setHours(0, 0, 0, 0)
       );
     } else {
+      if (this.state.isload) {
+        NewdataQuote = [{ POD: "No Record Found" }];
+      }
     }
 
     var colClassName = "";
@@ -291,24 +300,24 @@ class QuoteTable extends Component {
                     columns: [
                       {
                         Header: "Quote No",
-                        accessor: "Quote#"
+                        accessor: "Quote#",
                       },
                       {
                         Header: "Company",
                         accessor: "Company",
-                        filterable: true
+                        filterable: true,
                       },
                       {
                         Header: "POL",
-                        accessor: "POL"
+                        accessor: "POL",
                       },
                       {
                         Header: "POD",
-                        accessor: "POD"
+                        accessor: "POD",
                       },
                       {
                         Header: "Type",
-                        accessor: "type"
+                        accessor: "type",
                       },
                       // {
                       //   Header: "Notes",
@@ -316,16 +325,16 @@ class QuoteTable extends Component {
                       // },
                       {
                         Header: "Created Date",
-                        accessor: "CreatedDate"
+                        accessor: "CreatedDate",
                       },
                       {
                         Header: "Status",
-                        accessor: "Status"
+                        accessor: "Status",
                       },
                       {
                         Header: "Action",
                         sortable: false,
-                        Cell: row => {
+                        Cell: (row) => {
                           if (row.row.POD === "No Record Found") {
                             return <></>;
                           } else {
@@ -334,7 +343,7 @@ class QuoteTable extends Component {
                                 return (
                                   <div className="action-cntr">
                                     <a
-                                      onClick={e =>
+                                      onClick={(e) =>
                                         this.HandleRowClickEvt(e, row)
                                       }
                                     >
@@ -352,9 +361,7 @@ class QuoteTable extends Component {
                                         src={Copy}
                                         title={"Copy"}
                                         alt="view-icon"
-                                        data-Quote={
-                                          row.original.QUOTE_ID_Revisions
-                                        }
+                                        data-Quote={row.original["Quote#"]}
                                         data-type={row.original.type}
                                       />
                                     </a>
@@ -364,7 +371,7 @@ class QuoteTable extends Component {
                                 return (
                                   <div className="action-cntr">
                                     <a
-                                      onClick={e =>
+                                      onClick={(e) =>
                                         this.HandleRowClickEvt(e, row)
                                       }
                                     >
@@ -382,9 +389,7 @@ class QuoteTable extends Component {
                                         src={Copy}
                                         title={"Copy"}
                                         alt="view-icon"
-                                        data-Quote={
-                                          row.original.QUOTE_ID_Revisions
-                                        }
+                                        data-Quote={row.original["Quote#"]}
                                         data-type={row.original.type}
                                       />
                                     </a>
@@ -395,9 +400,9 @@ class QuoteTable extends Component {
                               return <div></div>;
                             }
                           }
-                        }
-                      }
-                    ]
+                        },
+                      },
+                    ],
                   },
                   {
                     show: false,
@@ -422,24 +427,24 @@ class QuoteTable extends Component {
                           "POL",
                           "POD",
                           "Notes",
-                          "Status"
+                          "Status",
                         ],
-                        threshold: matchSorter.rankings.WORD_STARTS_WITH
+                        threshold: matchSorter.rankings.WORD_STARTS_WITH,
                       });
                       if (result.length > 0) {
                         return result;
                       } else {
                         result = [
                           {
-                            POD: "No Record Found"
-                          }
+                            POD: "No Record Found",
+                          },
                         ];
                         return result;
                       }
                       return result;
                     },
-                    filterAll: true
-                  }
+                    filterAll: true,
+                  },
                 ]}
                 className="-striped -highlight"
                 defaultPageSize={5}

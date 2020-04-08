@@ -6,7 +6,7 @@ import { authHeader } from "../helpers/authHeader";
 import appSettings from "../helpers/appSetting";
 import Headers from "../component/header";
 import AdminSideMenu from "../component/adminSideMenu";
-
+import { encryption } from "../helpers/encryption";
 import ReactTable from "react-table";
 
 class ActivityLog extends Component {
@@ -18,11 +18,19 @@ class ActivityLog extends Component {
       value: 50,
       viewData: [],
       selectAction: [],
-      fields: {}
+      fields: {},
     };
   }
 
   componentDidMount() {
+    var CustomerType = encryption(
+      window.localStorage.getItem("CustomerType"),
+      "desc"
+    );
+    if (CustomerType === "New") {
+      this.props.history.push("/new-rate-search");
+      return false;
+    }
     let self = this;
 
     var searchValue = "";
@@ -33,10 +41,10 @@ class ActivityLog extends Component {
       method: "post",
       url: `${appSettings.APIURL}/BindActivityLog`,
       data: {
-        SearchValue: searchValue
+        SearchValue: searchValue,
       },
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       self.setState({ viewData: response.data.Table });
     });
   }
@@ -46,8 +54,8 @@ class ActivityLog extends Component {
     axios({
       method: "post",
       url: `${appSettings.APIURL}/BindActivityLogDropdown`,
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       self.setState({ selectAction: response.data.Table });
     });
   }
@@ -56,7 +64,7 @@ class ActivityLog extends Component {
     let fields = this.state.fields;
     fields[field] = e.target.value;
     this.setState({
-      fields
+      fields,
     });
   }
 
@@ -92,7 +100,7 @@ class ActivityLog extends Component {
                   value={this.state.fields["action"]}
                   style={{ "margin-left": "-190px", "margin-right": "70px" }}
                 >
-                  {this.state.selectAction.map(team => (
+                  {this.state.selectAction.map((team) => (
                     <option key={team.Value} value={team.Value}>
                       {team.ID}
                     </option>
@@ -115,26 +123,26 @@ class ActivityLog extends Component {
                     columns: [
                       {
                         Header: "Sr. No.",
-                        accessor: "srno"
+                        accessor: "srno",
                       },
                       {
                         Header: "User Name",
-                        accessor: "UserName"
+                        accessor: "UserName",
                       },
                       {
                         Header: "Title",
-                        accessor: "log_title"
+                        accessor: "log_title",
                       },
                       {
                         Header: "Description",
-                        accessor: "description"
+                        accessor: "description",
                       },
                       {
                         Header: "Doc",
-                        accessor: "doc"
-                      }
-                    ]
-                  }
+                        accessor: "doc",
+                      },
+                    ],
+                  },
                 ]}
                 data={this.state.viewData}
                 defaultPageSize={10}

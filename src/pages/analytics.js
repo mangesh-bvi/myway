@@ -113,6 +113,14 @@ class Analytics extends Component {
   }
 
   componentDidMount() {
+    var CustomerType = encryption(
+      window.localStorage.getItem("CustomerType"),
+      "desc"
+    );
+    if (CustomerType === "New") {
+      this.props.history.push("/new-rate-search");
+      return false;
+    }
     this.HandleAnalyticsShipment(null);
   }
 

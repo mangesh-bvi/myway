@@ -20,10 +20,10 @@ class AddEventManagement extends Component {
         { key: "SELECTED", value: "SELECTED" },
         { key: "RED", value: "RED" },
         { key: "YELLOW", value: "YELLOW" },
-        { key: "GREEN", value: "GREEN" }
+        { key: "GREEN", value: "GREEN" },
       ],
       disabled: false,
-      errors: {}
+      errors: {},
     };
 
     this.HandleSubmit = this.HandleSubmit.bind(this);
@@ -45,27 +45,35 @@ class AddEventManagement extends Component {
           Differenceindays: this.state.fields["DiffInDays"],
           PTTP: this.state.fields["PTTP"],
           ActionModes: ActionModes,
-          UserID: userid
+          UserID: userid,
         },
-        headers: authHeader()
+        headers: authHeader(),
       })
-        .then(function(response) {
+        .then(function (response) {
           store.addNotification({
             // title: "Success",
             message: response.data[0].Column1,
             type: "success", // 'default', 'success', 'info', 'warning','danger'
             container: "top-right", // where to position the notifications
             dismiss: {
-              duration: appSettings.NotficationTime
-            }
+              duration: appSettings.NotficationTime,
+            },
           });
           window.location.href = "event-management";
         })
-        .catch(error => {});
+        .catch((error) => {});
     }
   }
 
   componentDidMount() {
+    var CustomerType = encryption(
+      window.localStorage.getItem("CustomerType"),
+      "desc"
+    );
+    if (CustomerType === "New") {
+      this.props.history.push("/new-rate-search");
+      return false;
+    }
     if (this.props.location.state !== undefined) {
       var data = this.props.location.state.detail;
       let fields = this.state.fields;
@@ -89,7 +97,7 @@ class AddEventManagement extends Component {
       fields[field] = e.target.value;
     }
     this.setState({
-      fields
+      fields,
     });
   }
 
@@ -97,7 +105,7 @@ class AddEventManagement extends Component {
     let fields = this.state.fields;
     fields[field] = e.target.value;
     this.setState({
-      fields
+      fields,
     });
   }
   ////Handle Input Filed Validation
@@ -138,11 +146,11 @@ class AddEventManagement extends Component {
       url: `${appSettings.APIURL}/BindEventManagementData`,
       data: {
         UserID: encryption(window.localStorage.getItem("userid"), "desc"),
-        ContainerNo: this.state.fields["ContainerNo"]
+        ContainerNo: this.state.fields["ContainerNo"],
       },
 
-      headers: authHeader()
-    }).then(function(response) {
+      headers: authHeader(),
+    }).then(function (response) {
       IsExists = true;
       fields["ContainerNo"] = response.data[0].ContainerNo;
       fields["Status"] = response.data[0].EventmanagementStatus;
@@ -214,7 +222,7 @@ class AddEventManagement extends Component {
                     name={"Status"}
                     value={this.state.fields["Status"]}
                   >
-                    {this.state.selectStatus.map(team => (
+                    {this.state.selectStatus.map((team) => (
                       <option key={team.key} value={team.key}>
                         {team.value}
                       </option>
